@@ -9,9 +9,18 @@
     if(isset($_GET["u"]))
     $userU = htmlspecialchars($_GET["u"]);
     $filter="";
-    if(isset($_GET["q"])){
+    if(isset($_GET["q"]))
         $filter = htmlspecialchars($_GET["q"]);
+    $p = 0;
+    if(isset($_GET["p"])){
+        $p = intval(htmlspecialchars($_GET["p"]));
+        if($p<0)
+            $p = 0;
+        $loweLimit = 100 * $p;
+    }else{
+        $loweLimit = 0;
     }
+    $upperLimit = $loweLimit + 100;
     require_once "../header.php";
 ?>	
     <title>File List</title>
@@ -21,16 +30,16 @@
 <body>
 <?php
     if(isset($userU)){//show selected user (?u=xyz)
-        $sql = $conn->prepare("SELECT files.*, users.name AS username FROM files INNER JOIN users on users.id = files.userId AND userId = ? AND files.ogName LIKE concat('%',?,'%') ORDER BY id DESC ");
-        $sql->bind_param("is",$userU,$filter);
+        $sql = $conn->prepare("SELECT files.*, users.name AS username FROM files INNER JOIN users on users.id = files.userId AND userId = ? AND files.ogName LIKE concat('%',?,'%') ORDER BY id DESC LIMIT ?, ?");
+        $sql->bind_param("isii",$userU,$filter,$loweLimit,$upperLimit);
     }
     else{// if($userId==0){//show all users (as admin)
-        $sql = $conn->prepare("SELECT files.*, users.name AS username FROM files INNER JOIN users on users.id = files.userId AND files.ogName LIKE concat('%',?,'%') ORDER BY id DESC");
-        $sql->bind_param("s",$filter);
+        $sql = $conn->prepare("SELECT files.*, users.name AS username FROM files INNER JOIN users on users.id = files.userId AND files.ogName LIKE concat('%',?,'%') ORDER BY id DESC LIMIT ?, ?");
+        $sql->bind_param("sii",$filter,$loweLimit,$upperLimit);
     }
     /*else{//only current user (non admin default)
-        $sql = $conn->prepare("SELECT files.* FROM files  WHERE userId = '$userId' AND files.ogName LIKE concat('%',?,'%') ORDER BY id DESC");
-        $sql->bind_param("s",$filter);
+        $sql = $conn->prepare("SELECT files.* FROM files  WHERE userId = '$userId' AND files.ogName LIKE concat('%',?,'%') ORDER BY id DESC LIMIT ?, ?");
+        $sql->bind_param("sii",$filter,$loweLimit,$upperLimit);
     }*/
     $sql->execute();
     $result = $sql->get_result();
@@ -40,7 +49,7 @@
             <th><a href="'.$domain.'/" target="_top">preview</a></th>
             <th>rating</th>
             <th>fileName</th>
-            <th>og-name</th>';
+            <th>og-name <a href="?p='.($p-1).'" target="_top"><button>←</button></a><a href="?p='.($p+1).'" target="_top"><button>→</button></a></th>';
     //if($userId==0)
         echo "<th>Username</th>";
     echo "<th><button class=\"deleteAllButton\">X</button></th></tr>";
@@ -66,4 +75,3 @@
 ?>
 </body>
 </html>
-
