@@ -30,8 +30,17 @@ function swapPic(xhr,push){
             pic: xhr
         };
         document.title = xhr;
-        if(push)
+        if(push){
             history.pushState(stateObj, xhr, ".?id="+xhr);
+            document.querySelector(".hiddenVal").value = "http://dazonia.xyz/files/"+xhr;
+        }
     }
 }
 
+function keyDown(event){
+    if(event.key=='c'){
+        let hid = document.querySelector(".hiddenVal");
+        hid.select();
+        document.execCommand("copy");
+    }
+}

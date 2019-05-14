@@ -34,8 +34,9 @@
     <script src="view.js"></script>
 </head>
 
-<body>
+<body onkeydown="keyDown(event);">
     <?php
+    echo "<input value=\"$domain/files/$id\" class=\"hiddenVal\" style=\"opacity:0;\">";
     $id = "../files/".$id;
     echo "
         <div id=\"picDiv\" class=\"center\">
@@ -43,6 +44,7 @@
             <img id=\"next\" class=\"floatLink pic\" src=\"$id\">
             <img id=\"centerImage\" class=\"pic\" src=\"$id\">
         </div>
+        
     ";
     ?>
     <footer class="bottom">
