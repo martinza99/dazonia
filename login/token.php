@@ -83,11 +83,8 @@ function deleteFile(_btn) {
             echo "</tr>";
     }
     echo "</table>";
-    
+    require_once "../footer.php";  
 ?>
-    <div class="bottom">
-        <a href="$domain" target="_top"><button>← Back</button></a>
-    </div>
 </body>
 </html>
 

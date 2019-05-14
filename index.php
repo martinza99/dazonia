@@ -45,9 +45,6 @@
     }
     echo "</div>";
 ?>
-    <div class="bottom">
-        <a href="$domain" taarget="_top"><button>← Back</button></a>
-    </div>
 </body>
 </html>
 
