@@ -17,8 +17,8 @@
     echo '
         <title>Dazonia</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
-        <script src="main.js"></script>
+        <link rel="stylesheet" type="text/css" media="screen" href="../main.css" />
+        <script src="../main.js"></script>
     </head>
     <body>
         <div class="center">
@@ -30,8 +30,7 @@
         <div class="bottom">';
        if($userId==0)
             echo '<a href="login/token.php" target="_top">create register token</a><br>';
-        echo '<a href="sideView/" target="_top">Sideview</a><br>';
-		echo '<a href="list/" target="_top">File-List</a><br>
+		echo '<a href="/list" target="_top">File-List</a><br>
             <a href="login/logout.php" target="_top"><button>Logout</button></a><span> '.$username.'</span>
         </div>
     </body>
