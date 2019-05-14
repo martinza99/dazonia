@@ -49,7 +49,7 @@
             <th><a href="'.$domain.'/" target="_top">preview</a></th>
             <th>rating</th>
             <th>fileName</th>
-            <th>og-name <a href="?p='.($p-1).'" target="_top"><button>←</button></a><a href="?p='.($p+1).'" target="_top"><button>→</button></a></th>';
+            <th>og-name <a href="'.$domain.'/list?p='.($p-1).'" target="_top"><button>←</button></a><span> '.$p.' </span><a href="'.$domain.'/list?p='.($p+1).'" target="_top"><button>→</button></a></th>';
     //if($userId==0)
         echo "<th>Username</th>";
     echo "<th><button class=\"deleteAllButton\">X</button></th></tr>";
@@ -71,7 +71,6 @@
             echo "</tr>";
     }
     echo "</table>";
-    require_once "../footer.php";
 ?>
 </body>
 </html>

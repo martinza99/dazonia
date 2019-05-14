@@ -53,8 +53,12 @@
         echo "<img src=\"../thumbnails/$rows[name]\" alt=\"$rows[name]\">";//print thumbnail
         echo "</a></div>";//close link and table cell
     }
-    echo '<a href="?p='.($p-1).'" target="_top"><button>←</button></a><a href="?p='.($p+1).'" target="_top"><button>→</button></a>';
     echo "</div>";
+    echo '<div class="pageButtons">
+        <a href="'.$domain.'/?p='.($p-1).'" target="_top"><button>←</button></a>
+        <span> '.$p.' </span>
+        <a href="'.$domain.'/?p='.($p+1).'" target="_top"><button>→</button></a>
+    </div>';
 ?>
 </body>
 </html>

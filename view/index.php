@@ -46,9 +46,7 @@
         </div>
         
     ";
+    require_once "../footer.php";
     ?>
-    <footer class="bottom">
-        <a href="../list" target="_top"><button>← Back</button></a>
-    </footer>
 </body>
 </html>

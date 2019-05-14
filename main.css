@@ -15,6 +15,10 @@ td,th{
     color: white;
 }
 
+button{
+    color: black;
+}
+
 .center{
     width: fit-content;
     border: 3px solid white;
@@ -66,4 +70,9 @@ span{
 .starContainer{
     display: grid;
     grid-template-columns: 1fr 1fr;
+}
+
+.pageButtons{
+    text-align: center;
+    margin-bottom: 40px;
 }
