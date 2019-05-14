@@ -1,7 +1,7 @@
 /*jshint esversion: 6 */
 $(function(){
-    $("#next").click(updateNext);
-    $("#prev").click(updatePrev);
+    $("#prev").click(updateNext);
+    $("#next").click(updatePrev);
 });
 
 window.onpopstate = function(event){
