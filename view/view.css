@@ -16,10 +16,11 @@
 }
 
 #picDiv{
-    max-height: -webkit-fill-available;
-    /* position: relative; */
+    max-height: 90%;
+    height: fit-content;
     width: fit-content;
     box-sizing: border-box;
+    top: 52.4%;
 }
 
 #centerImage{
