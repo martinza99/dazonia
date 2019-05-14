@@ -26,14 +26,14 @@
     list($width, $height) = getimagesize($temp_name);
     $location = 'files/';
 
-    resize(128,'./thumbnails/'.$filename, $temp_name);
+    resize(180,'./thumbnails/'.$filename, $temp_name);
     insertName($filename,$name,$userId);
     if(!move_uploaded_file($temp_name, $location.$filename))
         die('No file uploaded!');
     printLink($filename,$hideLink);
 
 function printLink($filename,$hideLink){       
-    $actual_link = $domain."/".$filename; //creates full URI
+    $actual_link = $GLOBALS["domain"]."/files/".$filename; //creates full URI
     if(!$hideLink)//enable <a> tag
         echo "<a href=\"$actual_link\" target=\"_top\">";
     echo $actual_link;
@@ -62,7 +62,7 @@ function generateRandomString($length){//generates random strings
     return $randomString;
 }
 
-function resize($newWidth, $targetFile, $originalFile) {
+function resize($factor, $targetFile, $originalFile) {
 
     $info = getimagesize($originalFile);
     $mime = $info['mime'];
@@ -93,7 +93,16 @@ function resize($newWidth, $targetFile, $originalFile) {
     $img = $image_create_func($originalFile);
     list($width, $height) = getimagesize($originalFile);
     $ratio = $height / $width;
-    $newHeight = $ratio * $newWidth;
+
+    if($ratio>1){
+        $newHeight = $factor;
+        $newWidth = $factor * ($width/$height);
+    }
+    else{
+        $newWidth = $factor;
+        $newHeight = $factor * ($ratio);
+    }
+
     $tmp = imagecreatetruecolor($newWidth, $newHeight);
     imagecopyresampled($tmp, $img, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
 
@@ -113,8 +122,6 @@ function checkName($newName,$oldname){//checks db if name is taken
     $result = $sql->get_result();
     if($result->num_rows!=0)//return false if name is taken
         return false;       //else insert into database
-
-
     return true;
 }
 

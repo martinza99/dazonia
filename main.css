@@ -46,15 +46,17 @@ span{
 }
 
 .potato{
-    display: flex;
-    flex-flow: wrap;
-    align-items: center;
-    margin-left: 50px;
-    margin-right: 0px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    grid-gap: 12px;
+    align-items: baseline;
+    margin-left: 150px;
+    margin-right: 150px;
+    text-align: -webkit-center;
 }
 
 .pics{
-    margin: 4px 10px;
+    margin: 5px 0px;
     width: fit-content;
     border: 1px #263663 solid;
     padding: 4px;
