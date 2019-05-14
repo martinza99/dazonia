@@ -1,0 +1,11 @@
+ShareX custom uploader
+{
+    "DestinationType": "ImageUploader",
+    "RequestURL": "http://dazonia.xyz/upload.php",
+    "FileFormName": "file",
+    "Arguments": {
+        "username": "USERNAME"
+        "password": "PASSWORD",
+        "hideLink": "true"
+    }
+}

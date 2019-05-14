@@ -1,0 +1,28 @@
+.floatLink {
+    width: 50%;
+    height: 100%;
+    position: absolute;
+    margin-top: -10px;
+    z-index: 1;
+    opacity: 0;
+}
+    
+.floatLink#next {
+    right: 0;
+}
+
+.floatLink#prev {
+    left: 0;
+}
+
+#picDiv{
+    max-height: -webkit-fill-available;
+    /* position: relative; */
+    width: fit-content;
+    box-sizing: border-box;
+}
+
+#centerImage{
+    max-height: -webkit-fill-available;
+    height: auto;
+}
