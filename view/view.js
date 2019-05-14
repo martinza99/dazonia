@@ -25,7 +25,7 @@ function swapHandle(data, status, xhr){
 
 function swapPic(xhr,push){
     if(xhr!="none"){
-        $(".pic").attr("src","http://localhost/files/"+xhr);
+        $(".pic").attr("src","../files/"+xhr);
         let stateObj = {
             pic: xhr
         };
