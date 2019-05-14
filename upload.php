@@ -18,6 +18,7 @@
     }
 
     $hideLink = isset($_POST['hideLink']);
+    $skip = isset($_POST['skip']);
 
     $filename = makeName();
     //create file from actual upload (ShareX)
@@ -31,6 +32,9 @@
     if(!move_uploaded_file($temp_name, $location.$filename))
         die('No file uploaded!');
     printLink($filename,$hideLink);
+    if($skip){
+        header("Location: $domain/view?id=$filename");
+    }
 
 function printLink($filename,$hideLink){       
     $actual_link = $GLOBALS["domain"]."/files/".$filename; //creates full URI

@@ -24,6 +24,7 @@
         <div class="center">
             <form action="../upload.php" method="POST" enctype="multipart/form-data" autocomplete="off">
                 <input id="fileUp" name="file" type="file"><br>
+                <input type="hidden" value="true" name="skip">
                 <input type="submit">
             </form>
         </div>
