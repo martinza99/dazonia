@@ -40,9 +40,9 @@
     $id = "../files/".$id;
     echo "
         <div id=\"picDiv\" class=\"center\">
-            <img id=\"prev\" class=\"floatLink pic\" src=\"$domain/files/$id\">
-            <img id=\"next\" class=\"floatLink pic\" src=\"$domain/files/$id\">
-            <img id=\"centerImage\" class=\"pic\" src=\"$domain/files/$id\">
+            <img id=\"prev\" class=\"floatLink pic\" src=\"../files/$id\">
+            <img id=\"next\" class=\"floatLink pic\" src=\"../files/$id\">
+            <img id=\"centerImage\" class=\"pic\" src=\"../files/$id\">
         </div>
         
     ";

@@ -55,7 +55,7 @@
     echo "<th><button class=\"deleteAllButton\">X</button></th></tr>";
     while($rows = $result->fetch_assoc()){
             echo "<tr id=\"$rows[name]\">";
-            echo "<td><a href=\"$domain/view/?id=$rows[name]\" target=\"_top\"><img src=\"$domain/thumbnails/$rows[name]\" alt=\"$rows[name]\"></a>";//print thumbnail
+            echo "<td><a href=\"$domain/view/?id=$rows[name]\" target=\"_top\"><img src=\"../thumbnails/$rows[name]\" alt=\"$rows[name]\"></a>";//print thumbnail
             echo "<td>";//<span class=\"rating\">$rows[rating]</span>";
             echo "<div class=\"starContainer\">";
             for ($i=1; $i <= 10; $i++) { 

@@ -49,8 +49,8 @@
     echo "<div class=\"potato\">";
     while($rows = $result->fetch_assoc()){
         echo "<div class=\"pics\" id=\"$rows[name]\">";//open table cell
-        echo "<a href=\"$domain/view/?id=$rows[name]\" target=\"_top\">";//open link
-        echo "<img src=\"$domain/thumbnails/$rows[name]\" alt=\"$rows[name]\">";//print thumbnail
+        echo "<a href=\"view/?id=$rows[name]\" target=\"_top\">";//open link
+        echo "<img src=\"thumbnails/$rows[name]\" alt=\"$rows[name]\">";//print thumbnail
         echo "</a></div>";//close link and table cell
     }
     echo "</div>";
