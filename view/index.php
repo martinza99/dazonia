@@ -6,23 +6,25 @@
         header("Location: ../list");
         die("No id");
     }
-    if(isset($_GET["slide"]))
-    $slide = htmlspecialchars($_GET["slide"]);
-
+    
     $sql = $conn->prepare("SELECT * FROM files WHERE name = ? ORDER BY id ASC");
     $sql->bind_param("s",$id);
     $sql->execute();
     $result = mysqli_fetch_assoc($sql->get_result());
     $currID = $result["id"];
-
+    
     $sql = $conn->prepare("SELECT * from files WHERE id < ? ORDER BY id DESC LIMIT 1");
     $sql->bind_param("i",$currID);
     $sql->execute();
     $result = mysqli_fetch_assoc($sql->get_result());
     $prev = $result["name"];
     
-    $sql = $conn->prepare("SELECT * from files WHERE id > ? ORDER BY id ASC LIMIT 1");
-    $sql->bind_param("i",$currID);
+    if(isset($_GET["random"])){
+        $sql = $conn->prepare("SELECT * FROM `files` ORDER BY rand() LIMIT 1");
+    }else{
+        $sql = $conn->prepare("SELECT * from files WHERE id > ? ORDER BY id ASC LIMIT 1");
+        $sql->bind_param("i",$currID);
+    }
     $sql->execute();
     $result = mysqli_fetch_assoc($sql->get_result());
     $next = $result["name"];
@@ -41,23 +43,18 @@
     <?php
     echo "<input value=\"$domain/files/$id\" class=\"hiddenVal\" style=\"opacity:0; height=0px;\">";
     $id = "../files/".$id;
-    if(isset($slide)){
         echo "
             <div id=\"picDiv\" class=\"center\">
                 <a href=\"$domain/view/?id=$next\" target=\"_top\"><img id=\"prev\" class=\"floatLink pic\" src=\"../files/$id\"></a>
-                <a href=\"$domain/view/?id=$prev&slide=$slide\" target=\"_top\"><img id=\"next\" class=\"floatLink pic\" src=\"../files/$id\"></a>
+                <a href=\"$domain/view/?id=$prev";
+                if(isset($slide))
+                    echo "&slide=$slide";
+                if(isset($random))
+                    echo "&slide=$random";
+                "\" target=\"_top\"><img id=\"next\" class=\"floatLink pic\" src=\"../files/$id\"></a>
                 <img id=\"centerImage\" class=\"pic\" src=\"../files/$id\">
             </div>
         ";
-    }else{
-        echo "
-        <div id=\"picDiv\" class=\"center\">
-            <a href=\"$domain/view/?id=$next\" target=\"_top\"><img id=\"prev\" class=\"floatLink pic\" src=\"../files/$id\"></a>
-            <a href=\"$domain/view/?id=$prev\" target=\"_top\"><img id=\"next\" class=\"floatLink pic\" src=\"../files/$id\"></a>
-            <img id=\"centerImage\" class=\"pic\" src=\"../files/$id\">
-        </div>
-    ";
-    }
     require_once "../footer.php";
     if(isset($slide)){
         echo '
