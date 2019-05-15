@@ -1,7 +1,7 @@
 /*jshint esversion: 6 */
 $(function(){
-    $("#prev").click(updateNext);
-    $("#next").click(updatePrev);
+    //$("#prev").click(updateNext);
+    //$("#next").click(updatePrev);
 });
 
 window.onpopstate = function(event){
@@ -38,9 +38,18 @@ function swapPic(xhr,push){
 }
 
 function keyDown(event){
-    if(event.key=='c'){
-        let hid = document.querySelector(".hiddenVal");
-        hid.select();
-        document.execCommand("copy");
+    switch(event.key){
+        case 'c':
+            let hid = document.querySelector(".hiddenVal");
+            hid.select();
+            break;
+        case 'ArrowRight':
+        case 'd':
+            document.querySelector("#next").click();
+            break;
+        case 'ArrowLeft':
+        case 'a':
+            document.querySelector("#prev").click();
+            break;
     }
 }

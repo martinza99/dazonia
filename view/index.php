@@ -5,8 +5,8 @@
     else{
         header("Location: ../list");
         die("No id");
-    }
-        
+    }    
+
     $sql = $conn->prepare("SELECT * FROM files WHERE name = ? ORDER BY id ASC");
     $sql->bind_param("s",$id);
     $sql->execute();
@@ -24,6 +24,7 @@
     $sql->execute();
     $result = mysqli_fetch_assoc($sql->get_result());
     $next = $result["name"];
+ 
     $conn->close();
 
     require_once "../header.php";
@@ -36,12 +37,12 @@
 
 <body onkeydown="keyDown(event);">
     <?php
-    echo "<input value=\"$domain/files/$id\" class=\"hiddenVal\" style=\"opacity:0;\">";
+    echo "<input value=\"$domain/files/$id\" class=\"hiddenVal\" style=\"opacity:0; height=0px;\">";
     $id = "../files/".$id;
     echo "
         <div id=\"picDiv\" class=\"center\">
-            <img id=\"prev\" class=\"floatLink pic\" src=\"../files/$id\">
-            <img id=\"next\" class=\"floatLink pic\" src=\"../files/$id\">
+            <a href=\"$domain/view/?id=$next\" target=\"_top\"><img id=\"prev\" class=\"floatLink pic\" src=\"../files/$id\"></a>
+            <a href=\"$domain/view/?id=$prev\" target=\"_top\"><img id=\"next\" class=\"floatLink pic\" src=\"../files/$id\"></a>
             <img id=\"centerImage\" class=\"pic\" src=\"../files/$id\">
         </div>
         
