@@ -2,7 +2,7 @@
     session_start();
     require_once "login/sql.php";
     if(!isset($_SESSION["userId"])){
-        header("Location: localhost/login");
+        header("Location: $domain/login");
         die();
     }
     $userId = $_SESSION["userId"];
