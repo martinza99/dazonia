@@ -65,7 +65,7 @@
             echo "<td><a href=\"$domain/files/$rows[name]\" target=\"_top\">$rows[name]</a></td>";//print filename
             echo "<td class=\"og\">$rows[ogName]</td>";//print ogName
             //if($userId==0){
-                echo "<td><a href=\"'.$domain.'/?u=$rows[userId]\ target=\"_top\">$rows[username]</a></td>";
+                echo "<td><a href=\"$domain/list?u=$rows[userId]\" target=\"_top\">$rows[username]</a></td>";
             //}
             echo "<td><button class=\"deleteButton\">X</button></td>";
             echo "</tr>";
