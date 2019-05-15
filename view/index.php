@@ -5,7 +5,9 @@
     else{
         header("Location: ../list");
         die("No id");
-    }    
+    }
+    if(isset($_GET["slide"]))
+    $slide = htmlspecialchars($_GET["slide"]);
 
     $sql = $conn->prepare("SELECT * FROM files WHERE name = ? ORDER BY id ASC");
     $sql->bind_param("s",$id);
@@ -28,7 +30,7 @@
     $conn->close();
 
     require_once "../header.php";
-?>
+    ?>
     <link rel="stylesheet" type="text/css" media="screen" href="../main.css" />
     <title><?php echo $id ?></title>
     <link rel="stylesheet" type="text/css" media="screen" href="view.css" />
@@ -39,15 +41,30 @@
     <?php
     echo "<input value=\"$domain/files/$id\" class=\"hiddenVal\" style=\"opacity:0; height=0px;\">";
     $id = "../files/".$id;
-    echo "
+    if(isset($slide)){
+        echo "
+            <div id=\"picDiv\" class=\"center\">
+                <a href=\"$domain/view/?id=$next\" target=\"_top\"><img id=\"prev\" class=\"floatLink pic\" src=\"../files/$id\"></a>
+                <a href=\"$domain/view/?id=$prev&slide=$slide\" target=\"_top\"><img id=\"next\" class=\"floatLink pic\" src=\"../files/$id\"></a>
+                <img id=\"centerImage\" class=\"pic\" src=\"../files/$id\">
+            </div>
+        ";
+    }else{
+        echo "
         <div id=\"picDiv\" class=\"center\">
             <a href=\"$domain/view/?id=$next\" target=\"_top\"><img id=\"prev\" class=\"floatLink pic\" src=\"../files/$id\"></a>
             <a href=\"$domain/view/?id=$prev\" target=\"_top\"><img id=\"next\" class=\"floatLink pic\" src=\"../files/$id\"></a>
             <img id=\"centerImage\" class=\"pic\" src=\"../files/$id\">
         </div>
-        
     ";
+    }
     require_once "../footer.php";
+    if(isset($slide)){
+        echo '
+        <script>setTimeout(next, '.$slide.');
+        function next(){document.querySelector("#next").click(); }
+        </script>';
+    }
     ?>
 </body>
 </html>
