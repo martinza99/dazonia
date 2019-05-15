@@ -6,11 +6,11 @@
         $password = htmlspecialchars($_POST['password']);
         
         if(!checkUser($username,$password)){
-            die('Wrong Username or Password <br><a href="./login/" target="_top">');
+            die('Wrong Username or Password <br><a href="'.$domain.'/login/" target="_top">');
         }
     }
     else if(!isset($_SESSION["userId"])){
-        header('Location: ./login/');
+        header("Location: $domain/login/");
         die();
     }
     else{
@@ -91,7 +91,7 @@ function resize($factor, $targetFile, $originalFile) {
                     break;
 
             default: 
-                    die('Unknown image type.<br><a href="./" target="_top">back</a>');
+                    die('Unknown image type.<br><a href="'.$domain.'/" target="_top">back</a>');
     }
 
     $img = $image_create_func($originalFile);

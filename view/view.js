@@ -25,13 +25,13 @@ function swapHandle(data, status, xhr){
 
 function swapPic(xhr,push){
     if(xhr!="none"){
-        $(".pic").attr("src","../files/"+xhr);
+        $(".pic").attr("src","http://dazonia.xyz/files/"+xhr);
         let stateObj = {
             pic: xhr
         };
         document.title = xhr;
         if(push){
-            history.pushState(stateObj, xhr, ".?id="+xhr);
+            history.pushState(stateObj, xhr, "http://dazonia.xyz/view/?id="+xhr);
             document.querySelector(".hiddenVal").value = "http://dazonia.xyz/files/"+xhr;
         }
     }

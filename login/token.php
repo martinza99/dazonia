@@ -78,7 +78,7 @@ function deleteFile(_btn) {
     while($rows = $result->fetch_assoc()){
             echo "<tr id=\"$rows[id]\">";
             echo "<td>$rows[id]</td>";
-            echo "<td><a href=\"$domain/register.php?token=$rows[token]\" target=\"_top\">$rows[token]</a>";//print token
+            echo "<td><a href=\"$domain/login/register.php?token=$rows[token]\" target=\"_top\">$rows[token]</a>";//print token
             echo "<td><button class=\"deleteButton\">X</button></td>";
             echo "</tr>";
     }

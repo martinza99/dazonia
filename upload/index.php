@@ -30,9 +30,9 @@
         </div>
         <div class="bottom">';
        if($userId==0)
-            echo '<a href="login/token.php" target="_top">create register token</a><br>';
-		echo '<a href="/list" target="_top">File-List</a><br>
-            <a href="login/logout.php" target="_top"><button>Logout</button></a><span> '.$username.'</span>
+            echo '<a href="'.$domain.'/login/token.php" target="_top">create register token</a><br>';
+		echo '<a href="'.$domain.'/list" target="_top">File-List</a><br>
+            <a href="'.$domain.'/login/logout.php" target="_top"><button>Logout</button></a><span> '.$username.'</span>
         </div>
     </body>
     </html>

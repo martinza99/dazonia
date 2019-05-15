@@ -2,7 +2,7 @@
     session_start();
     require_once 'sql.php';
         if(!isset($_POST['username'])){
-            header('Location: ./');
+            header("Location: $domain/login/");
             die();
         }
 
@@ -11,7 +11,7 @@
 
             
         if(!checkUser($username,$password,$conn))
-            die('Wrong Username or Password <br><a href="./" target=\"_top\">go to Login</a>');
+            die('Wrong Username or Password <br><a href="'.$domain.'/login/" target=\"_top\">go to Login</a>');
             
         header("Location: $domain");
 
