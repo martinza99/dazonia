@@ -16,19 +16,20 @@
     $sql->execute();
     $result = mysqli_fetch_assoc($sql->get_result());
     $currID = $result["id"];
-    
+
+    if(isset($_GET["random"])){
+        $sql = $conn->prepare("SELECT * FROM `files` ORDER BY rand() LIMIT 1");
+    }else{
     $sql = $conn->prepare("SELECT * from files WHERE id < ? ORDER BY id DESC LIMIT 1");
     $sql->bind_param("i",$currID);
+    }
     $sql->execute();
     $result = mysqli_fetch_assoc($sql->get_result());
     $prev = $result["name"];
     
-    if(isset($_GET["random"])){
-        $sql = $conn->prepare("SELECT * FROM `files` ORDER BY rand() LIMIT 1");
-    }else{
-        $sql = $conn->prepare("SELECT * from files WHERE id > ? ORDER BY id ASC LIMIT 1");
-        $sql->bind_param("i",$currID);
-    }
+
+    $sql = $conn->prepare("SELECT * from files WHERE id > ? ORDER BY id ASC LIMIT 1");
+    $sql->bind_param("i",$currID);
     $sql->execute();
     $result = mysqli_fetch_assoc($sql->get_result());
     $next = $result["name"];
