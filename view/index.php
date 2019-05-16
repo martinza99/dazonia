@@ -3,10 +3,14 @@
     if(isset($_GET["id"]))
         $id = htmlspecialchars($_GET["id"]);
     else{
-        header("Location: ../list");
+        header("Location: $domain/list");
         die("No id");
     }
-    
+    if(isset($_GET["slide"]))
+        $slide = htmlspecialchars($_GET["slide"]);
+    if(isset($_GET["random"]))
+        $random = htmlspecialchars($_GET["random"]);
+
     $sql = $conn->prepare("SELECT * FROM files WHERE name = ? ORDER BY id ASC");
     $sql->bind_param("s",$id);
     $sql->execute();
@@ -50,8 +54,8 @@
                 if(isset($slide))
                     echo "&slide=$slide";
                 if(isset($random))
-                    echo "&slide=$random";
-                "\" target=\"_top\"><img id=\"next\" class=\"floatLink pic\" src=\"../files/$id\"></a>
+                    echo "&random";
+                echo "\" target=\"_top\"><img id=\"next\" class=\"floatLink pic\" src=\"../files/$id\"></a>
                 <img id=\"centerImage\" class=\"pic\" src=\"../files/$id\">
             </div>
         ";
