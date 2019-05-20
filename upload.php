@@ -51,12 +51,13 @@ function makeName(){
     $oldname = $_FILES['file']['name'];
     $filetype = $temp->getExtension();
     do{
-        $filename = generateRandomString(3).'.'.$filetype;
+        $filename = generateRandomString(5).'.'.$filetype;
     }while(checkName($filename,$oldname)==false);
     return $filename;
 }
 
 function generateRandomString($length){//generates random strings
+    $length = rand(1,$length);
     $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-_';
     $charactersLength = strlen($characters);
     $randomString = '';
@@ -120,7 +121,7 @@ function resize($factor, $targetFile, $originalFile) {
 function checkName($newName,$oldname){//checks db if name is taken
     $conn = $GLOBALS['conn'];//db connection
     $userId = $GLOBALS['userId'];
-    $sql = $conn->prepare("SELECT * FROM files WHERE name = ?");
+    $sql = $conn->prepare("SELECT * FROM files WHERE LOWER(name) = LOWER(?)");
     $sql->bind_param("s",$newName);
     $sql->execute();
     $result = $sql->get_result();
