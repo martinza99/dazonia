@@ -6,7 +6,10 @@ echo "
 <script src=\"https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js\"></script>
 <script src=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js\"></script>
 <link rel=\"shortcut icon\" href=\"/favicon.png\" type=\"image/x-icon\">
-</head>
+</head>";
+exec('git rev-parse --verify HEAD', $output);
+echo "<!--$output[0]-->";
+echo "
 <body>
 
 <nav class=\"navbar navbar-inverse\">
