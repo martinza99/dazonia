@@ -32,9 +32,9 @@
        if($userId==0)
             echo '<a href="'.$domain.'/login/token.php" target="_top">create register token</a><br>';
 		echo '<a href="'.$domain.'/list" target="_top">File-List</a><br>
-            <a href="'.$domain.'/login/logout.php" target="_top"><button>Logout</button></a><span> '.$username.'</span>
-        </div>
-    </body>
-    </html>
-';
+            <a href="'.$domain.'/login/logout.php" target="_top"><button>Logout</button></a><span> '.$username.'</span></div>';
+        exec('git rev-parse --verify HEAD', $output);
+        echo "<span class=\"right bottom\"><b>".substr($output[0],0,6)."</b>".substr($output[0],6)."</span>";
 ?>
+</body>
+</html>
