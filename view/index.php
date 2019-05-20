@@ -38,10 +38,10 @@
 
     require_once "../header.php";
     ?>
-    <link rel="stylesheet" type="text/css" media="screen" href="../main.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="../main.css<?php echo "?$hash" ?>" />
     <title><?php echo $id ?></title>
-    <link rel="stylesheet" type="text/css" media="screen" href="view.css" />
-    <script src="view.js"></script>
+    <link rel="stylesheet" type="text/css" media="screen" href="view.css<?php echo "?$hash" ?>" />
+    <script src="view.js<?php echo "?$hash" ?>"></script>
 </head>
 
 <body onkeydown="keyDown(event);">

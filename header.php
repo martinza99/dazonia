@@ -8,7 +8,7 @@ echo "
 <link rel=\"shortcut icon\" href=\"/favicon.png\" type=\"image/x-icon\">
 </head>";
 exec('git rev-parse --verify HEAD', $output);
-echo "<!--$output[0]-->";
+echo "<!-- $output[0] -->";
 echo "
 <body>
 
