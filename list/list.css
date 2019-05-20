@@ -7,3 +7,16 @@
     width: 80%;
     margin-left: 5px;
 }
+
+th{
+    text-align: center;
+}
+
+.navButtons{
+    margin-left: 11%;
+    margin-bottom: -0.9em;
+}
+
+.listTable{
+    width: fit-content;
+}

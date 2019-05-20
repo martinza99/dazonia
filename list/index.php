@@ -45,12 +45,14 @@
     $sql->execute();
     $result = $sql->get_result();
     $conn->close();
+    echo '<div class="listTable">';
+    echo '<div class="navButtons"><a href="'.$domain.'/list?p='.($p-1).'" target="_top"><button>←</button></a><span> '.$p.' </span><a href="'.$domain.'/list?p='.($p+1).'" target="_top"><button>→</button></a></div>';
     echo '<table border="1" style="margin-left: 40px; margin-top: 22px">
         <tr>
             <th><a href="'.$domain.'/" target="_top">preview</a></th>
             <th>rating</th>
             <th>fileName</th>
-            <th>og-name <a href="'.$domain.'/list?p='.($p-1).'" target="_top"><button>←</button></a><span> '.$p.' </span><a href="'.$domain.'/list?p='.($p+1).'" target="_top"><button>→</button></a></th>';
+            <th>Title</th>';
         echo "<th>Username</th>";
     echo "<th><button class=\"deleteAllButton\">X</button></th></tr>";
     while($rows = $result->fetch_assoc()){
@@ -70,6 +72,7 @@
             echo "</tr>";
     }
     echo "</table>";
+    echo '</div>';
 ?>
 </body>
 </html>
