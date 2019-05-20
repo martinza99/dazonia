@@ -1,0 +1,9 @@
+.changeNameInput{
+    display: none;
+    color: black;
+}
+
+.changeNameInput > input{
+    width: 80%;
+    margin-left: 5px;
+}

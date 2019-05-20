@@ -25,6 +25,7 @@
 ?>	
     <title>File List</title>
     <link rel="stylesheet" type="text/css" media="screen" href="../main.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="list.css" />
     <script src="pics.js"></script>
 </head>
 <body>
@@ -50,23 +51,21 @@
             <th>rating</th>
             <th>fileName</th>
             <th>og-name <a href="'.$domain.'/list?p='.($p-1).'" target="_top"><button>←</button></a><span> '.$p.' </span><a href="'.$domain.'/list?p='.($p+1).'" target="_top"><button>→</button></a></th>';
-    //if($userId==0)
         echo "<th>Username</th>";
     echo "<th><button class=\"deleteAllButton\">X</button></th></tr>";
     while($rows = $result->fetch_assoc()){
             echo "<tr id=\"$rows[name]\">";
             echo "<td><a href=\"$domain/view/?id=$rows[name]\" target=\"_top\"><img src=\"../thumbnails/$rows[name]\" alt=\"$rows[name]\"></a>";//print thumbnail
-            echo "<td>";//<span class=\"rating\">$rows[rating]</span>";
+            echo "<td>";
             echo "<div class=\"starContainer\">";
             for ($i=1; $i <= 10; $i++) { 
                 echo "<button class=\"starButton\">$i</button>";
             }
             echo "</div></td>";
             echo "<td><a href=\"$domain/files/$rows[name]\" target=\"_top\">$rows[name]</a></td>";//print filename
-            echo "<td class=\"og\">$rows[ogName]</td>";//print ogName
-            //if($userId==0){
-                echo "<td><a href=\"$domain/list?u=$rows[userId]\" target=\"_top\">$rows[username]</a></td>";
-            //}
+            echo "<td class=\"og\"><div class=\"changeName\">$rows[ogName]</div>";//print ogName
+            echo "<div class=\"changeNameInput\"><input type=\"text\" value=\"$rows[ogName]\"><button class=\"updateName\">Update</button></div></td>";//print input
+            echo "<td><a href=\"$domain/list?u=$rows[userId]\" target=\"_top\">$rows[username]</a></td>";
             echo "<td><button class=\"deleteButton\">X</button></td>";
             echo "</tr>";
     }

@@ -11,6 +11,9 @@ $(function(){
     });
 
     $(".starButton").click(rate);
+    $(".changeName").click(swapToInput);
+    $(".updateName").click(updateName);
+    $(".changeNameInput").keydown(isEnter);
 });
 
 function doneDeleting(){
@@ -41,4 +44,34 @@ function rate() {
         id: tr.id,
         rating: btn.innerText
     })
+}
+
+function swapToInput() {
+    $(this).hide();
+    $(this).next().show();
+}
+
+function updateName() {
+    var tr = this.closest("tr");
+    var val = $(this).prev().val();
+    if(val == ""){
+        alert("Empty filename");
+        return;
+    }
+    $.post("update.php",
+    {
+        id: tr.id,
+        newName: val
+    },
+        function(_response){
+            $(tr).find(".changeName").show();
+            $(tr).find(".changeName").text(val);
+            $(tr).find(".changeNameInput").hide();
+        }
+    );
+}
+
+function isEnter(event){
+    if(event.key == "Enter")
+        console.log(this.children[1].click());
 }
