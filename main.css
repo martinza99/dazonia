@@ -71,13 +71,11 @@ span{
 .pics{
     margin: 5px 0px;
     padding: 4px;
-    display: grid;
-    grid-template-columns: repeat(8,1fr);
+    position: relative;
 }
 
-.starContainer{
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+.picsList{
+    position: relative;
 }
 
 .pageButtons{
@@ -93,31 +91,24 @@ button{
 }
 
 .thumbButton{
-    grid-area: 1/8/1/8;
     z-index: 10;
-    height: 2em;
     width: 2em;
     padding: 0px;
-}
-
-.thumbButton.sideView{
+    position: absolute;
+    top: 6px;
+    right: 6px;
     font-size: 0.7em;
-    margin-left: -3px;
-    margin-top: 2px;
-}
-
-.thumbButton.listView{
-    font-size: 0.6em;
-    margin-left: 0px;
-    margin-top: 2px;
-}
-
-.thumb{
-    grid-column: 1/9;
-    grid-row: 1/1;
 }
 
 .right{
     position: absolute;
     right: 0;
+}
+
+.starView{
+    position: absolute;
+    z-index: 10;
+    bottom: 6px;
+    right: 6px;
+    height: 30px;
 }

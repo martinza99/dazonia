@@ -4,7 +4,7 @@
 }
 
 .changeNameInput > input{
-    width: 80%;
+    width: calc(100% - 75px);
     margin-left: 5px;
 }
 
@@ -19,4 +19,17 @@ th{
 
 .listTable{
     width: fit-content;
+}
+
+.starContainer{position: relative;background: darkgreen;}
+
+.star{
+    position: absolute;
+    width: 32px;
+    align-self: center;
+    margin-left: 7px;
+    margin-top: -20px;
+}
+.tempStar{
+    background-color: #141617d9;
 }

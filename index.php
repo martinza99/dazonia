@@ -30,11 +30,11 @@
 <body>
 <?php
     if(isset($userU)){//show selected user (?u=xyz)
-        $sql = $conn->prepare("SELECT files.*, users.name AS username FROM files INNER JOIN users on users.id = files.userId AND userId = ? AND files.ogName LIKE concat('%',?,'%') ORDER BY id DESC LIMIT ?, ?");
+        $sql = $conn->prepare("SELECT files.*, users.name AS username ,AVG(userrating.rating) AS rating FROM files INNER JOIN users on users.id = files.userId  LEFT JOIN userrating on userrating.fileId = files.name AND userId = ? AND files.ogName LIKE concat('%',?,'%') GROUP BY files.id ORDER BY id DESC LIMIT ?, ?");
         $sql->bind_param("isii",$userU,$filter,$loweLimit,$upperLimit);
     }
     else{// if($userId==0){//show all users (as admin)
-        $sql = $conn->prepare("SELECT files.*, users.name AS username FROM files INNER JOIN users on users.id = files.userId AND files.ogName LIKE concat('%',?,'%') ORDER BY id DESC LIMIT ?, ?");
+        $sql = $conn->prepare("SELECT files.*, users.name AS username ,AVG(userrating.rating) AS rating FROM files INNER JOIN users on users.id = files.userId  LEFT JOIN userrating on userrating.fileId = files.name AND files.ogName LIKE concat('%',?,'%') GROUP BY files.id ORDER BY id DESC LIMIT ?, ?");
         $sql->bind_param("sii",$filter,$loweLimit,$upperLimit);
     }
     /*else{//only current user (non admin default)
@@ -52,6 +52,7 @@
         echo "<div class=\"pics picsBorder\" id=\"$rows[name]\">";//open table cell
         if(substr($rows["name"],-4)==".gif")
             echo '<button class="thumbButton sideView">►</button>';
+        echo rating($rows["rating"]);
         echo "<img class=\"thumb\" src=\"thumbnails/$rows[name]\" alt=\"$rows[name]\">";//print thumbnail
         echo "</div></a>";//close link and table cell
     }
@@ -61,6 +62,22 @@
         <span> '.$p.' </span>
         <a href="'.$domain.'/?p='.($p+1).'" target="_top"><button>→</button></a>
     </div>';
+
+function rating($i){
+    $i = round($i);
+    switch($i){
+        case 1: return  '<img class="starView" src="list/img/redGray.png">';
+        case 2: return  '<img class="starView" src="list/img/red.png">';
+        case 3: return  '<img class="starView" src="list/img/orangeGray.png">';
+        case 4: return  '<img class="starView" src="list/img/orange.png">';
+        case 5: return  '<img class="starView" src="list/img/greenGray.png">';
+        case 6: return  '<img class="starView" src="list/img/green.png">';
+        case 7: return  '<img class="starView" src="list/img/blueGray.png">';
+        case 8: return  '<img class="starView" src="list/img/blue.png">';
+        case 9: return  '<img class="starView" src="list/img/purpleGray.png">';
+        case 10: return '<img class="starView" src="list/img/purple.png">';
+    }
+}
 ?>
 </body>
 </html>
