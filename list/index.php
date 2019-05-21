@@ -33,7 +33,7 @@
     if(substr($filter,0,5)=="file:"){
         $filter = substr($filter,5);
         // if($userId==0){//show all users (as admin)
-        $sql = $conn->prepare("SELECT files.*,users.name AS username, AVG(userrating.rating) AS rating FROM `files` INNER JOIN users on users.id = files.userId INNER JOIN userrating ON userrating.fileId = files.name AND files.name LIKE CONCAT('%',?,'%') GROUP BY files.id ORDER BY id DESC LIMIT ?, ?");
+        $sql = $conn->prepare("SELECT files.*,users.name AS username, files.name AS rating FROM `files` INNER JOIN users on users.id = files.userId AND files.name LIKE CONCAT('%',?,'%') GROUP BY files.id ORDER BY id DESC LIMIT ?, ?");
         $sql->bind_param("sii",$filter,$loweLimit,$upperLimit);
     }
     else if(isset($userU)){//show selected user (?u=xyz)
