@@ -20,6 +20,11 @@
     }else{
         $loweLimit = 0;
     }
+    $r = 0;
+    if(substr($filter,0,2)=="r:"){
+        $r = substr($filter,2);
+        $filter = "";
+    }
     $upperLimit = $loweLimit + 100;
     require_once "../header.php";
 ?>	
@@ -62,6 +67,7 @@
         echo "<th>Username</th>";
     echo "<th><button class=\"deleteAllButton\">X</button></th></tr>";
     while($rows = $result->fetch_assoc()){
+        if(intval($r)<=$rows["rating"]){
             echo "<tr id=\"$rows[name]\">";
             echo "<td><a href=\"$domain/view/?id=$rows[name]\" target=\"_top\"><div class=\"picsList\">";
              if(substr($rows["name"],-4)==".gif")
@@ -77,6 +83,7 @@
             echo "<td><a href=\"$domain/list?u=$rows[userId]\" target=\"_top\">$rows[username]</a></td>";
             echo "<td><button class=\"deleteButton\">X</button></td>";
             echo "</tr>";
+        }
     }
     echo "</table>";
     echo '</div>';
