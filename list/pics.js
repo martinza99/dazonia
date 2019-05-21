@@ -1,6 +1,6 @@
 $(function(){
     $(".deleteButton").click(function(){
-        if(confirm("Delete "+$(this).closest("tr")[0][0].id))
+        if(confirm("Delete "+this.parentElement.parentElement.id))
         deleteFile(this);
     });
     $(".deleteAllButton").click(function(){        
@@ -26,7 +26,7 @@ function deleteFiles(i,_btn) {
 }
 
 function deleteFile(_btn) {
-    var tr = _btn.closest("tr")[0];
+    var tr = _btn.parentElement.parentElement;
     $.post("delete.php",
     {
         id: tr.id
