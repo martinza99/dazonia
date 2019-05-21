@@ -10,7 +10,7 @@
     $userU = htmlspecialchars($_GET["u"]);
     $filter="";
     if(isset($_GET["q"]))
-        $filter = htmlspecialchars($_GET["q"]);
+        $filter = $_GET["q"];
     $p = 0;
     if(isset($_GET["p"])){
         $p = intval(htmlspecialchars($_GET["p"]));
@@ -30,7 +30,13 @@
 </head>
 <body>
 <?php
-    if(isset($userU)){//show selected user (?u=xyz)
+    if(substr($filter,0,5)=="file:"){
+        $filter = substr($filter,5);
+        // if($userId==0){//show all users (as admin)
+        $sql = $conn->prepare("SELECT files.*,users.name AS username, AVG(userrating.rating) AS rating FROM `files` INNER JOIN users on users.id = files.userId INNER JOIN userrating ON userrating.fileId = files.name AND files.name LIKE CONCAT('%',?,'%') GROUP BY files.id ORDER BY id DESC LIMIT ?, ?");
+        $sql->bind_param("sii",$filter,$loweLimit,$upperLimit);
+    }
+    else if(isset($userU)){//show selected user (?u=xyz)
         $sql = $conn->prepare("SELECT files.*, users.name AS username ,AVG(userrating.rating) AS rating FROM files INNER JOIN users on users.id = files.userId  LEFT JOIN userrating on userrating.fileId = files.name AND userId = ? AND files.ogName LIKE concat('%',?,'%') GROUP BY files.id ORDER BY id DESC LIMIT ?, ?");
         $sql->bind_param("isii",$userU,$filter,$loweLimit,$upperLimit);
     }
