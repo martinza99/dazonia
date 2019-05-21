@@ -65,225 +65,79 @@ function isEnter(event){
         console.log(this.children[1].click());
 }
 
+function makeStar(starElement,color,moveLeft,func){
+    let star = document.createElement("img");
+    star.addEventListener("click",func)
+    star.src = "img/"+color+".png";
+    star.classList = "star tempStar "+color;
+    starElement.parentElement.appendChild(star);
+    $(star).animate({left:moveLeft+"px"});
+}
+
 function openStars(){
-    let redG = document.createElement("img");
-    redG.addEventListener("click",redGClick)
-    redG.src = "img/redGray.png";
-    redG.classList = "star tempStar redG";
-    this.parentElement.appendChild(redG);
+    makeStar(this,"redGray",32,redGClick);
+    makeStar(this,"red",64,redClick);
+    makeStar(this,"orangeGray",96,orangeGClick);
+    makeStar(this,"orange",128,orangeClick);
+    makeStar(this,"greenGray",160,greenGClick);
+    makeStar(this,"green",192,greenClick);
+    makeStar(this,"blueGray",224,blueGClick);
+    makeStar(this,"blue",256,blueClick);
+    makeStar(this,"purpleGray",288,purpleGClick);
+    makeStar(this,"purple",320,purpleClick);
+}
+
+function sendRating(starElement,val,color){
+    starElement.style.zIndex = 100;
+    $(starElement).siblings(".star").attr("src","img/"+color+".png");
+    $(starElement).siblings(".tempStar").remove();
     
-    let red = document.createElement("img");
-    red.addEventListener("click",redClick)
-    red.src = "img/red.png";
-    red.classList = "star tempStar red";
-    this.parentElement.appendChild(red);
-    
-    let orangeG = document.createElement("img");
-    orangeG.addEventListener("click",orangeGClick)
-    orangeG.src = "img/orangeGray.png";
-    orangeG.classList = "star tempStar orangeG";
-    this.parentElement.appendChild(orangeG);
-
-    let orange = document.createElement("img");
-    orange.addEventListener("click",orangeClick)
-    orange.src = "img/orange.png";
-    orange.classList = "star tempStar orange";
-    this.parentElement.appendChild(orange);
-
-    let greenG = document.createElement("img");
-    greenG.addEventListener("click",greenGClick)
-    greenG.src = "img/greenGray.png";
-    greenG.classList = "star tempStar greenG";
-    this.parentElement.appendChild(greenG);
-
-    let green = document.createElement("img");
-    green.addEventListener("click",greenClick)
-    green.src = "img/green.png";
-    green.classList = "star tempStar green";
-    this.parentElement.appendChild(green);
-
-    let blueG = document.createElement("img");
-    blueG.addEventListener("click",blueGClick)
-    blueG.src = "img/blueGray.png";
-    blueG.classList = "star tempStar blue";
-    this.parentElement.appendChild(blueG);
-
-    let blue = document.createElement("img");
-    blue.addEventListener("click",blueClick)
-    blue.src = "img/blue.png";
-    blue.classList = "star tempStar blue";
-    this.parentElement.appendChild(blue);
-
-    let purpleG = document.createElement("img");
-    purpleG.addEventListener("click",purpleGClick)
-    purpleG.src = "img/purpleGray.png";
-    purpleG.classList = "star tempStar purple";
-    this.parentElement.appendChild(purpleG);
-
-    let purple = document.createElement("img");
-    purple.addEventListener("click",purpleClick)
-    purple.src = "img/purple.png";
-    purple.classList = "star tempStar purple";
-    this.parentElement.appendChild(purple);
-
-    $(redG).animate({left:"32px"});
-    $(red).animate({left:"64px"});
-    $(orangeG).animate({left:"96px"});
-    $(orange).animate({left:"128px"});
-    $(greenG).animate({left:"160px"});
-    $(green).animate({left:"192px"});
-    $(blueG).animate({left:"224px"});
-    $(blue).animate({left:"256px"});
-    $(purpleG).animate({left:"288px"});
-    $(purple).animate({left:"320px"});
+    let tr = $(starElement).closest("tr")[0];
+    let temp = starElement;
+    $(starElement).remove();
+    $.post("rate.php",
+    {
+        id: tr.id,
+        rating: val
+    });
 }
 
 function redGClick(){
-    this.style.zIndex = 100;
-    $(this).siblings(".star").attr("src","img/redGray.png");
-    $(this).siblings(".tempStar").remove();
-    
-    let tr = $(this).closest("tr")[0];
-    let temp = this;
-    $(this).remove();
-    $.post("rate.php",
-    {
-        id: tr.id,
-        rating: 1
-    });
+    sendRating(this,1,"redGray");
 }
 
 function redClick(){
-    this.style.zIndex = 100;
-    $(this).siblings(".star").attr("src","img/red.png");
-    $(this).siblings(".tempStar").remove();
-    
-    let tr = $(this).closest("tr")[0];
-    let temp = this;
-    $(this).remove();
-    $.post("rate.php",
-    {
-        id: tr.id,
-        rating: 2
-    });
+    sendRating(this,2,"red");
 }
 
 function orangeGClick(){
-    this.style.zIndex = 100;
-    $(this).siblings(".star").attr("src","img/orangeGray.png");
-    $(this).siblings(".tempStar").remove();
-    
-    let tr = $(this).closest("tr")[0];
-    let temp = this;
-    $(this).remove();
-    $.post("rate.php",
-    {
-        id: tr.id,
-        rating: 3
-    });
+    sendRating(this,3,"orangeGray");
 }
 
 function orangeClick(){
-    this.style.zIndex = 100;
-    $(this).siblings(".star").attr("src","img/orange.png");
-    $(this).siblings(".tempStar").remove();
-    
-    let tr = $(this).closest("tr")[0];
-    let temp = this;
-    $(this).remove();
-    $.post("rate.php",
-    {
-        id: tr.id,
-        rating: 4
-    });
+    sendRating(this,4,"orange");
 }
 
 function greenGClick(){
-    this.style.zIndex = 100;
-    $(this).siblings(".star").attr("src","img/greenGray.png");
-    $(this).siblings(".tempStar").remove();
-    
-    let tr = $(this).closest("tr")[0];
-    let temp = this;
-    $(this).remove();
-    $.post("rate.php",
-    {
-        id: tr.id,
-        rating: 5
-    });
+    sendRating(this,5,"greenGray");
 }
 
 function greenClick(){
-    this.style.zIndex = 100;
-    $(this).siblings(".star").attr("src","img/green.png");
-    $(this).siblings(".tempStar").remove();
-    
-    let tr = $(this).closest("tr")[0];
-    let temp = this;
-    $(this).remove();
-    $.post("rate.php",
-    {
-        id: tr.id,
-        rating: 6
-    });
+    sendRating(this,6,"green");
 }
 
 function blueGClick(){
-    this.style.zIndex = 100;
-    $(this).siblings(".star").attr("src","img/blueGray.png");
-    $(this).siblings(".tempStar").remove();
-    
-    let tr = $(this).closest("tr")[0];
-    let temp = this;
-    $(this).remove();
-    $.post("rate.php",
-    {
-        id: tr.id,
-        rating: 7
-    });
+    sendRating(this,7,"blueGray");
 }
 
 function blueClick(){
-    this.style.zIndex = 100;
-    $(this).siblings(".star").attr("src","img/blue.png");
-    $(this).siblings(".tempStar").remove();
-    
-    let tr = $(this).closest("tr")[0];
-    let temp = this;
-    $(this).remove();
-    $.post("rate.php",
-    {
-        id: tr.id,
-        rating: 8
-    });
+    sendRating(this,8,"blue");
 }
 
 function purpleGClick(){
-    this.style.zIndex = 100;
-    $(this).siblings(".star").attr("src","img/purpleGray.png");
-    $(this).siblings(".tempStar").remove();
-    
-    let tr = $(this).closest("tr")[0];
-    let temp = this;
-    $(this).remove();
-    $.post("rate.php",
-    {
-        id: tr.id,
-        rating: 9
-    });
+    sendRating(this,9,"purpleGray");
 }
 
 function purpleClick(){
-    this.style.zIndex = 100;
-    $(this).siblings(".star").attr("src","img/purple.png");
-    $(this).siblings(".tempStar").remove();
-    
-    let tr = $(this).closest("tr")[0];
-    let temp = this;
-    $(this).remove();
-    $.post("rate.php",
-    {
-        id: tr.id,
-        rating: 10
-    });
+    sendRating(this,10,"purple");
 }
