@@ -13,6 +13,12 @@
     $rows = $result->fetch_assoc();
     $username = $rows['name'];
 
+    $sql = $conn->prepare("SELECT COUNT(files.id) AS picCount FROM files");
+    $sql->execute();
+    $result = $sql->get_result();
+    $rows = $result->fetch_assoc();
+    $picCount = $rows["picCount"];
+
     require_once "../header.php";
     echo '
         <title>Dazonia</title>
@@ -32,9 +38,13 @@
        if($userId==0)
             echo '<a href="'.$domain.'/login/token.php" target="_top">create register token</a><br>';
 		echo '<a href="'.$domain.'/list" target="_top">File-List</a><br>
-            <a href="'.$domain.'/login/logout.php" target="_top"><button>Logout</button></a><span> '.$username.'</span></div>';
+            <a href="'.$domain.'/login/logout.php" target="_top"><button>Logout</button></a><span> '.$username.'</span>
+        </div>';
         exec('git rev-parse --verify HEAD', $output);
-        echo "<span class=\"right bottom\"><b>".substr($output[0],0,6)."</b>".substr($output[0],6)."</span>";
+        echo "<div class=\"right bottom\">
+            <span><b>$picCount</b> pictures</span><br>
+            <span><b>".substr($output[0],0,6)."</b>".substr($output[0],6)."</span>
+        </div>";
 ?>
 </body>
 </html>

@@ -43,8 +43,9 @@
     }*/
 
     $sql->execute();
-    $result =  $sql->get_result();
+    $result = $sql->get_result();
     $conn->close();
+
 
     echo "<div class=\"potato\">";
     while($rows = $result->fetch_assoc()){
