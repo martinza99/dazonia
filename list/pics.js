@@ -41,7 +41,7 @@ function swapToInput() {
 }
 
 function updateName() {
-    var tr = this.closest("tr")[0];
+    var tr = $(this).closest("tr")[0];
     var val = $(this).prev().val();
     if(val == ""){
         alert("Empty filename");
@@ -62,7 +62,7 @@ function updateName() {
 
 function isEnter(event){
     if(event.key == "Enter")
-        console.log(this.children[1].click());
+        this.children[1].click();
 }
 
 function makeStar(starElement,color,moveLeft,func){
