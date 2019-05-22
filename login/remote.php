@@ -19,20 +19,17 @@
                 break;
         }
     }
+    require_once "../header.php";
 ?>
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>File List</title>
+
+    <title>Remote Server Settings</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" media="screen" href="../main.css<?php echo "?$hash" ?>" />
 </head>
 <body>
     <form action="remote.php" method="POST" autocomplete="off">
         <input type="hidden" name="action" value="sql">
-        <textarea name="sql"></textarea><br>
+        <textarea name="sql" cols="50" rows="5" placeholder="SQL query"></textarea><br>
         <input type="submit" value="Submit Query">
     </form>
     
