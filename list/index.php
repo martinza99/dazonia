@@ -86,6 +86,7 @@
         echo "</tr>";
     }
     echo "</table>";
+    echo '<div class="navButtons"><a href="'.$domain.'/list?p='.($p-1).'" target="_top"><button>←</button></a><span> '.$p.' </span><a href="'.$domain.'/list?p='.($p+1).'" target="_top"><button>→</button></a></div>';
     echo '</div>';
 
 function rating($i){
