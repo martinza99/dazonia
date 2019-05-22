@@ -8,7 +8,7 @@
     $id = htmlspecialchars($_POST['id']);
     $userId = $_SESSION["userId"];
     
-    if($userId==0){
+    if($userId<2){
         $sql = $conn->prepare("DELETE FROM files WHERE files.name = ?");
         $sql->bind_param('s', $id);
 

@@ -35,7 +35,7 @@
             </form>
         </div>
         <div class="bottom">';
-       if($userId==0||$userId==3){
+       if($userId<2){
             echo '<a href="'.$domain.'/login/token.php" target="_top">create register token</a><br>';
             echo '<a href="'.$domain.'/login/remote.php" target="_top">server settings</a><br>';
        }

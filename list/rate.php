@@ -9,7 +9,7 @@
     $rating = htmlspecialchars($_POST['rating']);
     $userId = $_SESSION["userId"];
     
-    if($_SESSION["userId"]==0||$_SESSION["userId"]==3){
+    if($_SESSION["userId"]<2){
         //delete if existed
         $sql = $conn->prepare("DELETE FROM userrating WHERE userID = ? AND fileId = ?");
         $sql->bind_param('is', $userId, $fileid);

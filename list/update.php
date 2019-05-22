@@ -9,7 +9,7 @@
     $newName = htmlspecialchars($_POST['newName']);
     $userId = $_SESSION["userId"];
     
-    if($userId==0){
+    if($userId<2){
         $sql = $conn->prepare("UPDATE files SET ogName = ? WHERE name = ?");
         $sql->bind_param('ss', $newName,$id);
     }
