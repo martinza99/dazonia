@@ -1,6 +1,10 @@
 body{
     background: #1e1e1e;
-    cursor: url(cursor.cur),default;
+    cursor: url(cursor/default.cur),default;
+}
+
+input{
+    cursor: url(cursor/text.cur),text;
 }
 
 #text{
@@ -10,6 +14,7 @@ body{
 
 a{
     color: white;
+    cursor: url(cursor/pointer.cur),pointer;
 }
 
 td,th{
