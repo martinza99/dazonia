@@ -78,6 +78,7 @@ span{
     margin: 5px 0px;
     padding: 4px;
     position: relative;
+    cursor: url(cursor/hand.cur),hand;
 }
 
 .picsList{
