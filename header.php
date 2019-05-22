@@ -25,7 +25,7 @@ echo "
         <li><a href=\"#\" target=\"_top\">Prof Pics</a></li>
         <li><a href=\"#\" target=\"_top\">Safe Mode</a></li>
     </ul>
-    <form class=\"navbar-form navbar-left\" action=\"$domain/list/\" method=\"GET\" autocomplete=\"off\">
+    <form class=\"navbar-form navbar-left\" action=\"$domain/list/search.php\" method=\"GET\" autocomplete=\"off\">
     <div class=\"input-group\">
         <input type=\"search\" class=\"form-control\" placeholder=\"Search\" name=\"q\" style=\"background-color: #04013c; border-color: #1e1b7b;\" value=\"$filter\">
         <div class=\"input-group-btn\">
