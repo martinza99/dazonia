@@ -14,7 +14,7 @@
 
     }
     else{
-        $sql = $conn->prepare("DELETE FROM userrating,files WHERE files.name = ? AND userId = ?");
+        $sql = $conn->prepare("DELETE FROM files WHERE files.name = ? AND userId = ?");
         $sql->bind_param("si", $id, $userId);
     }
 
