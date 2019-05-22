@@ -42,7 +42,7 @@
             <input type=\"hidden\" name=\"action\" value=\"u\">
             <input type=\"submit\" value=\"Update\">
         </form>
-        <span><b>".substr($output[0],0,6)."</b>".substr($output[0],6)."</span>
+        <span><a href=\"https://github.com/martinza99/dazonia/commit/$output[0]\"><b>".substr($output[0],0,6)."</b>".substr($output[0],6)."</a></span>
     </div>";
 ?>
 

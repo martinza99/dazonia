@@ -45,7 +45,7 @@
         exec('git rev-parse --verify HEAD', $output);
         echo "<div class=\"right bottom\">
             <span><b>$picCount</b> pictures</span><br>
-            <span><b>".substr($output[0],0,6)."</b>".substr($output[0],6)."</span>
+            <span><a href=\"https://github.com/martinza99/dazonia/commit/$output[0]\"><b>".substr($output[0],0,6)."</b>".substr($output[0],6)."</a></span>
         </div>";
 ?>
 </body>
