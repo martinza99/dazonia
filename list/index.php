@@ -38,15 +38,15 @@
     if(substr($filter,0,5)=="file:"){
         $filter = substr($filter,5);
         // if($userId==0){//show all users (as admin)
-        $sql = $conn->prepare("SELECT files.*,users.name AS username, files.name AS rating FROM `files` INNER JOIN users on users.id = files.userId AND files.name LIKE CONCAT('%',?,'%') GROUP BY files.id ORDER BY id DESC LIMIT ?, ?");
+        $sql = $conn->prepare("SELECT files.*,users.name AS username, files.name AS rating FROM `files` LEFT JOIN users on users.id = files.userId AND files.name LIKE CONCAT('%',?,'%') GROUP BY files.id ORDER BY id DESC LIMIT ?, ?");
         $sql->bind_param("sii",$filter,$loweLimit,$upperLimit);
     }
     else if(isset($userU)){//show selected user (?u=xyz)
-        $sql = $conn->prepare("SELECT files.*, users.name AS username ,AVG(userrating.rating) AS rating FROM files INNER JOIN users on users.id = files.userId  LEFT JOIN userrating on userrating.fileId = files.name AND userId = ? AND files.ogName LIKE concat('%',?,'%') GROUP BY files.id ORDER BY id DESC LIMIT ?, ?");
+        $sql = $conn->prepare("SELECT files.*, users.name AS username, AVG(userrating.rating) AS rating FROM files LEFT JOIN users on users.id = files.userId LEFT JOIN userrating on userrating.fileId = files.name AND users.userId = ? AND files.ogName LIKE concat('%',?,'%') GROUP BY files.id ORDER BY id DESC LIMIT ?, ?");
         $sql->bind_param("isii",$userU,$filter,$loweLimit,$upperLimit);
     }
     else{// if($userId==0){//show all users (as admin)
-        $sql = $conn->prepare("SELECT files.*, users.name AS username ,AVG(userrating.rating) AS rating FROM files INNER JOIN users on users.id = files.userId  LEFT JOIN userrating on userrating.fileId = files.name AND files.ogName LIKE concat('%',?,'%') GROUP BY files.id ORDER BY id DESC LIMIT ?, ?");
+        $sql = $conn->prepare("SELECT files.*, users.name AS username, AVG(userrating.rating) AS rating FROM files LEFT JOIN users on users.id = files.userId LEFT JOIN userrating on userrating.fileId = files.name AND files.ogName LIKE concat('%',?,'%') GROUP BY files.id ORDER BY id DESC LIMIT ?, ?");
         $sql->bind_param("sii",$filter,$loweLimit,$upperLimit);
     }
     /*else{//only current user (non admin default)
@@ -80,7 +80,12 @@
             echo "<td><a href=\"$domain/files/$rows[name]\" target=\"_top\">$rows[name]</a></td>";//print filename
             echo "<td class=\"og\"><div class=\"changeName\">$rows[ogName]</div>";//print ogName
             echo "<div class=\"changeNameInput\"><input type=\"text\" value=\"$rows[ogName]\"><button class=\"updateName\">Update</button></div></td>";//print input
-            echo "<td><a href=\"$domain/list?u=$rows[userId]\" target=\"_top\">$rows[username]</a></td>";
+            echo "<td>";
+            if($rows["username"]!=null)
+                echo "<a href=\"$domain/list?u=$rows[userId]\" target=\"_top\">$rows[username]</a>";
+            else
+                echo "deleted<br>user";
+            echo "</td>";
             echo "<td><button class=\"deleteButton\">X</button></td>";
             echo "</tr>";
         }

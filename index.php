@@ -30,11 +30,11 @@
 <body>
 <?php
     if(isset($userU)){//show selected user (?u=xyz)
-        $sql = $conn->prepare("SELECT files.*, users.name AS username ,AVG(userrating.rating) AS rating FROM files INNER JOIN users on users.id = files.userId  LEFT JOIN userrating on userrating.fileId = files.name AND userId = ? AND files.ogName LIKE concat('%',?,'%') GROUP BY files.id ORDER BY id DESC LIMIT ?, ?");
+        $sql = $conn->prepare("SELECT files.*, users.name AS username ,AVG(userrating.rating) AS rating FROM files LEFT JOIN users on users.id = files.userId  LEFT JOIN userrating on userrating.fileId = files.name AND userId = ? AND files.ogName LIKE concat('%',?,'%') GROUP BY files.id ORDER BY id DESC LIMIT ?, ?");
         $sql->bind_param("isii",$userU,$filter,$loweLimit,$upperLimit);
     }
     else{// if($userId==0){//show all users (as admin)
-        $sql = $conn->prepare("SELECT files.*, users.name AS username ,AVG(userrating.rating) AS rating FROM files INNER JOIN users on users.id = files.userId  LEFT JOIN userrating on userrating.fileId = files.name AND files.ogName LIKE concat('%',?,'%') GROUP BY files.id ORDER BY id DESC LIMIT ?, ?");
+        $sql = $conn->prepare("SELECT files.*, users.name AS username ,AVG(userrating.rating) AS rating FROM files LEFT JOIN users on users.id = files.userId  LEFT JOIN userrating on userrating.fileId = files.name AND files.ogName LIKE concat('%',?,'%') GROUP BY files.id ORDER BY id DESC LIMIT ?, ?");
         $sql->bind_param("sii",$filter,$loweLimit,$upperLimit);
     }
     /*else{//only current user (non admin default)
