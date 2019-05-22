@@ -7,11 +7,10 @@
     }
     $userId = $_SESSION["userId"];
     if(isset($_GET["u"]))
-        $userU = htmlspecialchars($_GET["u"]);
+    $userU = htmlspecialchars($_GET["u"]);
     $filter="";
-    if(isset($_GET["q"])){
-        $filter = htmlspecialchars($_GET["q"]);
-    }
+    if(isset($_GET["q"]))
+        $filter = $_GET["q"];
     $p = 0;
     if(isset($_GET["p"])){
         $p = intval(htmlspecialchars($_GET["p"]));
@@ -29,18 +28,25 @@
 </head>
 <body>
 <?php
-    if(isset($userU)){//show selected user (?u=xyz)
-        $sql = $conn->prepare("SELECT files.*, users.name AS username ,AVG(userrating.rating) AS rating FROM files LEFT JOIN users on users.id = files.userId  LEFT JOIN userrating on userrating.fileId = files.name AND userId = ? AND files.ogName LIKE concat('%',?,'%') GROUP BY files.id ORDER BY id DESC LIMIT ?, ?");
+    if(substr($filter,0,5)=="file:"){//search by filename
+        $q = substr($filter,5);
+        $sql = $conn->prepare("SELECT files.*, users.name AS username, AVG(userrating.rating) AS avgrating FROM files LEFT JOIN users on users.id = files.userId LEFT JOIN userrating on userrating.fileId = files.name WHERE files.name LIKE concat('%',?,'%') GROUP BY files.id ORDER BY id DESC LIMIT ?, ?");
+        $sql->bind_param("sii",$q,$loweLimit,$upperLimit);
+    }
+    else if(substr($filter,0,2)=="r:"){//search by minimum rating
+        $rating = substr($filter,1,2);
+        $q = substr($filter,5);
+        $sql = $conn->prepare("SELECT * FROM (SELECT files.*, users.name AS username, AVG(userrating.rating) AS avgrating FROM files LEFT JOIN users on users.id = files.userId LEFT JOIN userrating on userrating.fileId = files.name WHERE files.ogName LIKE concat('%',?,'%') GROUP BY files.id ORDER BY id) AS subtable WHERE subtable.avgrating >= ? ORDER BY id DESC LIMIT ?, ?");
+        $sql->bind_param("sdii",$q,$rating,$loweLimit,$upperLimit);
+    }
+    else if(isset($userU)){//show selected user with filter
+        $sql = $conn->prepare("SELECT files.*, users.name AS username, AVG(userrating.rating) AS avgrating FROM files LEFT JOIN users on users.id = files.userId LEFT JOIN userrating on userrating.fileId = files.name AND users.userId = ? WHERE files.ogName LIKE concat('%',?,'%') GROUP BY files.id ORDER BY id DESC LIMIT ?, ?");
         $sql->bind_param("isii",$userU,$filter,$loweLimit,$upperLimit);
     }
-    else{// if($userId==0){//show all users (as admin)
-        $sql = $conn->prepare("SELECT files.*, users.name AS username ,AVG(userrating.rating) AS rating FROM files LEFT JOIN users on users.id = files.userId  LEFT JOIN userrating on userrating.fileId = files.name AND files.ogName LIKE concat('%',?,'%') GROUP BY files.id ORDER BY id DESC LIMIT ?, ?");
+    else{//show all pics with filter
+        $sql = $conn->prepare("SELECT files.*, users.name AS username, AVG(userrating.rating) AS avgrating FROM files LEFT JOIN users on users.id = files.userId LEFT JOIN userrating on userrating.fileId = files.name WHERE files.ogName LIKE concat('%',?,'%') GROUP BY files.id ORDER BY id DESC LIMIT ?, ?");
         $sql->bind_param("sii",$filter,$loweLimit,$upperLimit);
     }
-    /*else{//only current user (non admin default)
-        $sql = $conn->prepare("SELECT files.* FROM files  WHERE userId = '$userId' AND files.ogName LIKE concat('%',?,'%') ORDER BY id DESC LIMIT ?, ?");
-        $sql->bind_param("sii",$filter,$loweLimit,$upperLimit);
-    }*/
 
     $sql->execute();
     $result = $sql->get_result();
@@ -53,7 +59,7 @@
         echo "<div class=\"pics picsBorder\" id=\"$rows[name]\">";//open table cell
         if(substr($rows["name"],-4)==".gif")
             echo '<button class="thumbButton sideView">►</button>';
-        echo rating($rows["rating"]);
+        echo rating($rows["avgrating"]);
         echo "<img class=\"thumb\" src=\"thumbnails/$rows[name]\" alt=\"$rows[name]\">";//print thumbnail
         echo "</div></a>";//close link and table cell
     }

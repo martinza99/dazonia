@@ -20,11 +20,6 @@
     }else{
         $loweLimit = 0;
     }
-    $r = 0;
-    if(substr($filter,0,2)=="r:"){
-        $r = substr($filter,2);
-        $filter = "";
-    }
     $upperLimit = $loweLimit + 100;
     require_once "../header.php";
 ?>	
@@ -35,27 +30,30 @@
 </head>
 <body>
 <?php
-    if(substr($filter,0,5)=="file:"){
-        $filter = substr($filter,5);
-        // if($userId==0){//show all users (as admin)
-        $sql = $conn->prepare("SELECT files.*,users.name AS username, files.name AS rating FROM `files` LEFT JOIN users on users.id = files.userId AND files.name LIKE CONCAT('%',?,'%') GROUP BY files.id ORDER BY id DESC LIMIT ?, ?");
-        $sql->bind_param("sii",$filter,$loweLimit,$upperLimit);
+    if(substr($filter,0,5)=="file:"){//search by filename
+        $q = substr($filter,5);
+        $sql = $conn->prepare("SELECT files.*, users.name AS username, AVG(userrating.rating) AS avgrating FROM files LEFT JOIN users on users.id = files.userId LEFT JOIN userrating on userrating.fileId = files.name WHERE files.name LIKE concat('%',?,'%') GROUP BY files.id ORDER BY id DESC LIMIT ?, ?");
+        $sql->bind_param("sii",$q,$loweLimit,$upperLimit);
     }
-    else if(isset($userU)){//show selected user (?u=xyz)
-        $sql = $conn->prepare("SELECT files.*, users.name AS username, AVG(userrating.rating) AS rating FROM files LEFT JOIN users on users.id = files.userId LEFT JOIN userrating on userrating.fileId = files.name AND users.userId = ? AND files.ogName LIKE concat('%',?,'%') GROUP BY files.id ORDER BY id DESC LIMIT ?, ?");
+    else if(substr($filter,0,2)=="r:"){//search by minimum rating
+        $rating = substr($filter,1,2);
+        $q = substr($filter,5);
+        $sql = $conn->prepare("SELECT * FROM (SELECT files.*, users.name AS username, AVG(userrating.rating) AS avgrating FROM files LEFT JOIN users on users.id = files.userId LEFT JOIN userrating on userrating.fileId = files.name WHERE files.ogName LIKE concat('%',?,'%') GROUP BY files.id ORDER BY id) AS subtable WHERE subtable.avgrating >= ? ORDER BY id DESC LIMIT ?, ?");
+        $sql->bind_param("sdii",$q,$rating,$loweLimit,$upperLimit);
+    }
+    else if(isset($userU)){//show selected user with filter
+        $sql = $conn->prepare("SELECT files.*, users.name AS username, AVG(userrating.rating) AS avgrating FROM files LEFT JOIN users on users.id = files.userId LEFT JOIN userrating on userrating.fileId = files.name WHERE files.userid = ? AND files.ogName LIKE concat('%',?,'%') GROUP BY files.id ORDER BY id DESC LIMIT ?, ?");
         $sql->bind_param("isii",$userU,$filter,$loweLimit,$upperLimit);
     }
-    else{// if($userId==0){//show all users (as admin)
-        $sql = $conn->prepare("SELECT files.*, users.name AS username, AVG(userrating.rating) AS rating FROM files LEFT JOIN users on users.id = files.userId LEFT JOIN userrating on userrating.fileId = files.name AND files.ogName LIKE concat('%',?,'%') GROUP BY files.id ORDER BY id DESC LIMIT ?, ?");
+    else{//show all pics with filter
+        $sql = $conn->prepare("SELECT files.*, users.name AS username, AVG(userrating.rating) AS avgrating FROM files LEFT JOIN users on users.id = files.userId LEFT JOIN userrating on userrating.fileId = files.name WHERE files.ogName LIKE concat('%',?,'%') GROUP BY files.id ORDER BY id DESC LIMIT ?, ?");
         $sql->bind_param("sii",$filter,$loweLimit,$upperLimit);
     }
-    /*else{//only current user (non admin default)
-        $sql = $conn->prepare("SELECT files.* FROM files  WHERE userId = '$userId' AND files.ogName LIKE concat('%',?,'%') ORDER BY id DESC LIMIT ?, ?");
-        $sql->bind_param("sii",$filter,$loweLimit,$upperLimit);
-    }*/
+
     $sql->execute();
     $result = $sql->get_result();
     $conn->close();
+
     echo '<div class="listTable">';
     echo '<div class="navButtons"><a href="'.$domain.'/list?p='.($p-1).'" target="_top"><button>←</button></a><span> '.$p.' </span><a href="'.$domain.'/list?p='.($p+1).'" target="_top"><button>→</button></a></div>';
     echo '<table border="1" style="margin-left: 40px; margin-top: 22px">
@@ -67,28 +65,25 @@
         echo "<th>Username</th>";
     echo "<th><button class=\"deleteAllButton\">X</button></th></tr>";
     while($rows = $result->fetch_assoc()){
-        if(intval($r)<=$rows["rating"]){
-            echo "<tr id=\"$rows[name]\">";
-            echo "<td><a href=\"$domain/view/?id=$rows[name]\" target=\"_top\"><div class=\"picsList\">";
-             if(substr($rows["name"],-4)==".gif")
-                echo '<button class="thumbButton listView">►</button>';
-            echo "<img class=\"thumb\" src=\"../thumbnails/$rows[name]\" alt=\"$rows[name]\">";//print thumbnail
-            echo "</div></a></td><td>";
-            echo "<div class=\"starContainer\">";
-            echo rating($rows["rating"]);
-            echo "</div></td>";
-            echo "<td><a href=\"$domain/files/$rows[name]\" target=\"_top\">$rows[name]</a></td>";//print filename
-            echo "<td class=\"og\"><div class=\"changeName\">$rows[ogName]</div>";//print ogName
-            echo "<div class=\"changeNameInput\"><input type=\"text\" value=\"$rows[ogName]\"><button class=\"updateName\">Update</button></div></td>";//print input
-            echo "<td>";
-            if($rows["username"]!=null)
-                echo "<a href=\"$domain/list?u=$rows[userId]\" target=\"_top\">$rows[username]</a>";
-            else
-                echo "deleted<br>user";
-            echo "</td>";
-            echo "<td><button class=\"deleteButton\">X</button></td>";
-            echo "</tr>";
-        }
+        echo "<tr id=\"$rows[name]\">";
+        echo "<td><a href=\"$domain/view/?id=$rows[name]\" target=\"_top\"><div class=\"picsList\">";
+            if(substr($rows["name"],-4)==".gif")
+            echo '<button class="thumbButton listView">►</button>';
+        echo "<img class=\"thumb\" src=\"../thumbnails/$rows[name]\" alt=\"$rows[name]\">";//print thumbnail
+        echo "</div></a></td><td>";
+        echo "<div class=\"starContainer\">";
+        echo rating($rows["avgrating"]);
+        echo "</div></td>";
+        echo "<td><a href=\"$domain/files/$rows[name]\" target=\"_top\">$rows[name]</a></td>";//print filename
+        echo "<td class=\"og\"><div class=\"changeName\">$rows[ogName]</div>";//print ogName
+        echo "<div class=\"changeNameInput\"><input type=\"text\" value=\"$rows[ogName]\"><button class=\"updateName\">Update</button></div></td>";//print input
+        echo "<td>";
+        if($rows["username"]==null)
+        $rows["username"] = "deleted<br>user[$rows[userId]]";
+        echo "<a href=\"$domain/list?u=$rows[userId]\" target=\"_top\">$rows[username]</a>";
+        echo "</td>";
+        echo "<td><button class=\"deleteButton\">X</button></td>";
+        echo "</tr>";
     }
     echo "</table>";
     echo '</div>';
