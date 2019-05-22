@@ -20,8 +20,8 @@
         $sql->bind_param('isi', $userId, $fileid, $rating);
         $sql->execute();
 
-        echo " rating: $rating, id: $id";
+        echo " rating: $rating, id: $fileid";
     }else{
-        echo "No! Only Lyren and I can vote :p";
+        echo "Only Lyren and Martin can vote :p";
     }    
 ?>
