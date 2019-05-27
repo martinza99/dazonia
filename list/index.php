@@ -61,8 +61,9 @@
             <th><a href="'.$domain.'/" target="_top">preview</a></th>
             <th>rating</th>
             <th>fileName</th>
-            <th>Title</th>';
-        echo "<th>Username</th>";
+            <th>Title</th>
+            <th>Username</th>
+            <th>Upload Date</th>';
     echo "<th><button class=\"deleteAllButton\">X</button></th></tr>";
     while($rows = $result->fetch_assoc()){
         echo "<tr id=\"$rows[name]\">";
@@ -82,6 +83,7 @@
         $rows["username"] = "deleted<br>user[$rows[userId]]";
         echo "<a href=\"$domain/list?u=$rows[userId]\" target=\"_top\">$rows[username]</a>";
         echo "</td>";
+        echo "<td class=\"date\">".substr($rows["created"],0,10)."</td>";
         echo "<td><button class=\"deleteButton\">X</button></td>";
         echo "</tr>";
     }
