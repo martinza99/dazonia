@@ -23,13 +23,14 @@
     $hideLink = isset($_POST['hideLink']);
     $skip = isset($_POST['skip']);
 
+    //create file from actual upload (ShareX)
+    $name = $_FILES["file"]["name"];
+    $temp_name  = $_FILES['file']['tmp_name'];
+
     if(isset($replace))
         $filename = $replace;
     else
         $filename = makeName();
-    //create file from actual upload (ShareX)
-    $name = $_FILES["file"]["name"];
-    $temp_name  = $_FILES['file']['tmp_name'];
     list($width, $height) = getimagesize($temp_name);
     $location = 'files/';
 
@@ -39,8 +40,14 @@
     if(!move_uploaded_file($temp_name, $location.$filename))
         die('No file uploaded!');
     printLink($filename,$hideLink);
-    if(isset($replace))
+
+    if(isset($replace)){
+        $hash = hash_file("md5",$location.$filename);
+        $sql = $conn->prepare("UPDATE files SET `hash` = ?, `ogname` = ? WHERE `name` = ?");
+        $sql->bind_param("sss",$hash,$name,$filename);
+        $sql->execute();
         $filename .= "&new";
+    }
     if($skip){
         header("Location: $domain/view?id=$filename");
     }
@@ -130,6 +137,16 @@ function resize($factor, $targetFile, $originalFile) {
 function checkName($newName,$oldname){//checks db if name is taken
     $conn = $GLOBALS['conn'];//db connection
     $userId = $GLOBALS['userId'];
+    //check hash
+    $temp_name = $GLOBALS["temp_name"];
+    $hash = hash_file("md5",$temp_name);
+    $sql = $conn->prepare("SELECT * FROM files WHERE hash = ?");
+    $sql->bind_param("s",$hash);
+    $sql->execute();
+    $result = $sql->get_result();
+    if($result->num_rows!=0)//return false if name is taken
+        die("File already exists");
+
     $sql = $conn->prepare("SELECT * FROM files WHERE LOWER(name) = LOWER(?)");
     $sql->bind_param("s",$newName);
     $sql->execute();
@@ -141,8 +158,10 @@ function checkName($newName,$oldname){//checks db if name is taken
 
 function insertName($newName,$oldname,$userId){
     $conn = $GLOBALS['conn'];//db connection
-    $sql = $conn->prepare("INSERT INTO `files`(`name`, `ogName`, `userId`) VALUES (?,?,?)");
-    $sql->bind_param("ssi",$newName,$oldname,$userId);
+    $temp_name = $GLOBALS["temp_name"];
+    $hash = hash_file("md5",$temp_name);
+    $sql = $conn->prepare("INSERT INTO `files`(`name`, `ogName`,`hash`, `userId`) VALUES (?,?,?,?)");
+    $sql->bind_param("sssi",$newName,$oldname,$hash,$userId);
     $sql->execute();
     $conn->close();
 }
