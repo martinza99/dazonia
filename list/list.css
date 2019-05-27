@@ -21,7 +21,9 @@ th{
     width: fit-content;
 }
 
-.starContainer{position: relative;background: darkgreen;}
+.starContainer{
+    position: relative;background: darkgreen;
+}
 
 .star{
     position: absolute;
@@ -30,6 +32,12 @@ th{
     margin-left: 7px;
     margin-top: -20px;
 }
+
 .tempStar{
     background-color: #141617d9;
+}
+
+.changeName{
+    max-width: 300px;
+    overflow-wrap: break-word;
 }
