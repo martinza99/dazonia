@@ -16,11 +16,17 @@
     else{
         $userId = $_SESSION["userId"];
     }
+    if(isset($_POST["replace"])&&$_SESSION["userId"]<2){
+        $replace = $_POST["replace"];
+    }
 
     $hideLink = isset($_POST['hideLink']);
     $skip = isset($_POST['skip']);
 
-    $filename = makeName();
+    if(isset($replace))
+        $filename = $replace;
+    else
+        $filename = makeName();
     //create file from actual upload (ShareX)
     $name = $_FILES["file"]["name"];
     $temp_name  = $_FILES['file']['tmp_name'];
@@ -28,10 +34,13 @@
     $location = 'files/';
 
     resize(180,'./thumbnails/'.$filename, $temp_name);
-    insertName($filename,$name,$userId);
+    if(!isset($replace))
+        insertName($filename,$name,$userId);
     if(!move_uploaded_file($temp_name, $location.$filename))
         die('No file uploaded!');
     printLink($filename,$hideLink);
+    if(isset($replace))
+        $filename .= "&new";
     if($skip){
         header("Location: $domain/view?id=$filename");
     }

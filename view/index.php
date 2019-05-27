@@ -1,4 +1,5 @@
 <?php
+    session_start();
     require_once '../login/sql.php';
     if(isset($_GET["id"]))
         $id = htmlspecialchars($_GET["id"]);
@@ -46,20 +47,33 @@
 
 <body onkeydown="keyDown(event);">
     <?php
-    echo "<input value=\"$domain/files/$id\" class=\"hiddenVal\" style=\"opacity:0; height=0px;\">";
-    $id = "../files/".$id;
-        echo "
-            <div id=\"picDiv\" class=\"center\">
-                <a href=\"$domain/view/?id=$next\" target=\"_top\"><img id=\"prev\" class=\"floatLink pic\" src=\"../files/$id\"></a>
-                <a href=\"$domain/view/?id=$prev";
-                if(isset($slide))
-                    echo "&slide=$slide";
-                if(isset($random))
-                    echo "&random";
-                echo "\" target=\"_top\"><img id=\"next\" class=\"floatLink pic\" src=\"../files/$id\"></a>
-                <img id=\"centerImage\" class=\"pic\" src=\"../files/$id\">
-            </div>
-        ";
+    if($_SESSION["userId"]<2){
+        echo '<div class="right top replace">';
+        echo '<a href="javascript:document.querySelector(\'#fileUp\').click();">Replace Image</a>';
+        echo '
+        <form action="../upload.php" method="POST" enctype="multipart/form-data" autocomplete="off" id="replaceForm">
+            <input id="fileUp" name="file" type="file"><br>
+            <input type="hidden" value="true" name="skip">
+            <input type="text" value="'.$id.'" name="replace">
+        </form>';
+        echo "</div>";
+    }
+
+    echo "<input value=\"$domain/files/$id\" class=\"hiddenVal\" style=\"opacity:0; height=0px;\" readonly>";
+    if(isset($_GET["new"]))
+        echo "<script>cache.delete('../files/$id');cache.delete('../thumbnails/$id');</script>";
+    echo "
+        <div id=\"picDiv\" class=\"center\">
+            <a href=\"$domain/view/?id=$next\" target=\"_top\"><img id=\"prev\" class=\"floatLink pic\" src=\"../files/$id\"></a>
+            <a href=\"$domain/view/?id=$prev";
+            if(isset($slide))
+                echo "&slide=$slide";
+            if(isset($random))
+                echo "&random";
+            echo "\" target=\"_top\"><img id=\"next\" class=\"floatLink pic\" src=\"../files/$id\"></a>
+            <img id=\"centerImage\" class=\"pic\" src=\"../files/$id\">
+        </div>
+    ";
     require_once "../footer.php";
     if(isset($slide)){
         echo '

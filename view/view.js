@@ -2,6 +2,7 @@
 $(function(){
     //$("#prev").click(updateNext);
     //$("#next").click(updatePrev);
+    $("#fileUp").change(sendReplace);
 });
 
 window.onpopstate = function(event){
@@ -52,4 +53,8 @@ function keyDown(event){
             document.querySelector("#prev").click();
             break;
     }
+}
+
+function sendReplace(){
+    this.parentElement.submit();
 }
