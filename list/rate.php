@@ -16,14 +16,18 @@
         $sql->execute();
 
         //insert new value
-        $sql = $conn->prepare("INSERT INTO userrating (userID,fileId,rating) VALUES(?,?,?)");
-        $sql->bind_param('isi', $userId, $fileid, $rating);
-        $sql->execute();
+        if($rating>0){
+            $sql = $conn->prepare("INSERT INTO userrating (userID,fileId,rating) VALUES(?,?,?)");
+            $sql->bind_param('isi', $userId, $fileid, $rating);
+            $sql->execute();
+        }
     }   
     
     $sql = $conn->prepare("SELECT ROUND(AVG(userrating.rating)) AS avgrating FROM userrating WHERE fileId = ?");
     $sql->bind_param("s",$fileid);
     $sql->execute();
     $rating = mysqli_fetch_assoc($sql->get_result());
+    if(!isset($rating["avgrating"]))
+        $rating["avgrating"] = 0;
     echo $rating["avgrating"];
 ?>

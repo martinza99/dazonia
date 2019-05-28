@@ -21,7 +21,7 @@ function doneDeleting(){
         window.location.href = ".";
 }
 
-function deleteFiles(i,_btn) {
+function deleteFiles(index,_btn) {
     deleteFile(_btn);
 }
 
@@ -60,31 +60,23 @@ function updateName() {
     );
 }
 
-function isEnter(event){
-    if(event.key == "Enter")
+function isEnter(_event){
+    if(_vent.key == "Enter")
         this.children[1].click();
 }
 
-function makeStar(starElement,rating){
+function makeStar(_starElement,_rating){
     let star = document.createElement("img");
     star.addEventListener("click",sendRating)
-    star.src = "img/"+rating+".png";
-    star.classList = "star tempStar "+rating;
-    starElement.parentElement.appendChild(star);
-    $(star).animate({left:rating*32+"px"});
+    star.src = "img/"+_rating+".png";
+    star.classList = "star tempStar "+_rating;
+    _starElement.parentElement.appendChild(star);
+    $(star).animate({left:_rating*32+"px"});
 }
 
 function openStars(){
-    makeStar(this,1);
-    makeStar(this,2);
-    makeStar(this,3);
-    makeStar(this,4);
-    makeStar(this,5);
-    makeStar(this,6);
-    makeStar(this,7);
-    makeStar(this,8);
-    makeStar(this,9);
-    makeStar(this,10);
+    for (let index = 0; index <= 10; index++)
+        makeStar(this,index);
 }
 
 function sendRating(){
@@ -104,44 +96,4 @@ function sendRating(){
             $(star).attr("src","img/"+_response+".png");
         }
     );
-}
-
-function redGClick(){
-    sendRating(this,1);
-}
-
-function redClick(){
-    sendRating(this,2);
-}
-
-function orangeGClick(){
-    sendRating(this,3);
-}
-
-function orangeClick(){
-    sendRating(this,4);
-}
-
-function greenGClick(){
-    sendRating(this,5);
-}
-
-function greenClick(){
-    sendRating(this,6);
-}
-
-function blueGClick(){
-    sendRating(this,7);
-}
-
-function blueClick(){
-    sendRating(this,8);
-}
-
-function purpleGClick(){
-    sendRating(this,9);
-}
-
-function purpleClick(){
-    sendRating(this,10);
 }
