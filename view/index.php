@@ -77,8 +77,10 @@
     ";
     echo "
     <div class=\"bottom\">
+        <div class=\"starContainer\">
+            ".rating($rating)."
+        </div>
         <a href=\"$domain\" target=\"_top\"><button>← Back</button></a>
-        ".rating($rating)."
     </div>";
     if(isset($slide)){
         echo '

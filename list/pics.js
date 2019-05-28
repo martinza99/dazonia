@@ -65,9 +65,9 @@ function isEnter(event){
         this.children[1].click();
 }
 
-function makeStar(starElement,rating,func){
+function makeStar(starElement,rating){
     let star = document.createElement("img");
-    star.addEventListener("click",func)
+    star.addEventListener("click",sendRating)
     star.src = "img/"+rating+".png";
     star.classList = "star tempStar "+rating;
     starElement.parentElement.appendChild(star);
@@ -75,25 +75,26 @@ function makeStar(starElement,rating,func){
 }
 
 function openStars(){
-    makeStar(this,1,redGClick);
-    makeStar(this,2,redClick);
-    makeStar(this,3,orangeGClick);
-    makeStar(this,4,orangeClick);
-    makeStar(this,5,greenGClick);
-    makeStar(this,6,greenClick);
-    makeStar(this,7,blueGClick);
-    makeStar(this,8,blueClick);
-    makeStar(this,9,purpleGClick);
-    makeStar(this,10,purpleClick);
+    makeStar(this,1);
+    makeStar(this,2);
+    makeStar(this,3);
+    makeStar(this,4);
+    makeStar(this,5);
+    makeStar(this,6);
+    makeStar(this,7);
+    makeStar(this,8);
+    makeStar(this,9);
+    makeStar(this,10);
 }
 
-function sendRating(starElement,val){
-    starElement.style.zIndex = 100;
-    $(starElement).siblings(".tempStar").remove();
-    let star = $(starElement).siblings(".star");
-    let tr = $(starElement).closest("tr")[0];
-    let temp = starElement;
-    $(starElement).remove();
+function sendRating(){
+    let val = this.classList[2];
+    this.style.zIndex = 100;
+    $(this).siblings(".tempStar").remove();
+    let star = $(this).siblings(".star");
+    let tr = $(this).closest("tr")[0];
+    let temp = this;
+    $(this).remove();
     $.post("rate.php",
     {
         id: tr.id,

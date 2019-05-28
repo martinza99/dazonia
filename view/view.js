@@ -60,9 +60,9 @@ function sendReplace(){
     this.parentElement.submit();
 }
 
-function makeStar(starElement,rating,func){
+function makeStar(starElement,rating){
     let star = document.createElement("img");
-    star.addEventListener("click",func)
+    star.addEventListener("click",sendRating)
     star.src = "../list/img/"+rating+".png";
     star.classList = "star tempStar "+rating;
     starElement.parentElement.appendChild(star);
@@ -70,23 +70,24 @@ function makeStar(starElement,rating,func){
 }
 
 function openStars(){
-    makeStar(this,1,redGClick);
-    makeStar(this,2,redClick);
-    makeStar(this,3,orangeGClick);
-    makeStar(this,4,orangeClick);
-    makeStar(this,5,greenGClick);
-    makeStar(this,6,greenClick);
-    makeStar(this,7,blueGClick);
-    makeStar(this,8,blueClick);
-    makeStar(this,9,purpleGClick);
-    makeStar(this,10,purpleClick);
+    makeStar(this,1);
+    makeStar(this,2);
+    makeStar(this,3);
+    makeStar(this,4);
+    makeStar(this,5);
+    makeStar(this,6);
+    makeStar(this,7);
+    makeStar(this,8);
+    makeStar(this,9);
+    makeStar(this,10);
 }
 
-function sendRating(starElement,val){
-    starElement.style.zIndex = 100;
-    $(starElement).siblings(".tempStar").remove();
+function sendRating(){
+    let val = this.classList[2];
+    this.style.zIndex = 100;
+    $(this).siblings(".tempStar").remove();
     let star = $(".star")[0];
-    $(starElement).remove();
+    $(this).remove();
     let urlParams = new URLSearchParams(window.location.search);
     let picId = urlParams.get("id");
     $.post("../list/rate.php",
@@ -98,44 +99,4 @@ function sendRating(starElement,val){
             $(star).attr("src","../list/img/"+_response+".png");
         }
     );
-}
-
-function redGClick(){
-    sendRating(this,1);
-}
-
-function redClick(){
-    sendRating(this,2);
-}
-
-function orangeGClick(){
-    sendRating(this,3);
-}
-
-function orangeClick(){
-    sendRating(this,4);
-}
-
-function greenGClick(){
-    sendRating(this,5);
-}
-
-function greenClick(){
-    sendRating(this,6);
-}
-
-function blueGClick(){
-    sendRating(this,7);
-}
-
-function blueClick(){
-    sendRating(this,8);
-}
-
-function purpleGClick(){
-    sendRating(this,9);
-}
-
-function purpleClick(){
-    sendRating(this,10);
 }
