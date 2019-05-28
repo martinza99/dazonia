@@ -65,33 +65,32 @@ function isEnter(event){
         this.children[1].click();
 }
 
-function makeStar(starElement,color,moveLeft,func){
+function makeStar(starElement,rating,func){
     let star = document.createElement("img");
     star.addEventListener("click",func)
-    star.src = "img/"+color+".png";
-    star.classList = "star tempStar "+color;
+    star.src = "img/"+rating+".png";
+    star.classList = "star tempStar "+rating;
     starElement.parentElement.appendChild(star);
-    $(star).animate({left:moveLeft+"px"});
+    $(star).animate({left:rating*32+"px"});
 }
 
 function openStars(){
-    makeStar(this,"redGray",32,redGClick);
-    makeStar(this,"red",64,redClick);
-    makeStar(this,"orangeGray",96,orangeGClick);
-    makeStar(this,"orange",128,orangeClick);
-    makeStar(this,"greenGray",160,greenGClick);
-    makeStar(this,"green",192,greenClick);
-    makeStar(this,"blueGray",224,blueGClick);
-    makeStar(this,"blue",256,blueClick);
-    makeStar(this,"purpleGray",288,purpleGClick);
-    makeStar(this,"purple",320,purpleClick);
+    makeStar(this,1,redGClick);
+    makeStar(this,2,redClick);
+    makeStar(this,3,orangeGClick);
+    makeStar(this,4,orangeClick);
+    makeStar(this,5,greenGClick);
+    makeStar(this,6,greenClick);
+    makeStar(this,7,blueGClick);
+    makeStar(this,8,blueClick);
+    makeStar(this,9,purpleGClick);
+    makeStar(this,10,purpleClick);
 }
 
-function sendRating(starElement,val,color){
+function sendRating(starElement,val){
     starElement.style.zIndex = 100;
-    $(starElement).siblings(".star").attr("src","img/"+color+".png");
     $(starElement).siblings(".tempStar").remove();
-    
+    let star = $(starElement).siblings(".star");
     let tr = $(starElement).closest("tr")[0];
     let temp = starElement;
     $(starElement).remove();
@@ -99,45 +98,49 @@ function sendRating(starElement,val,color){
     {
         id: tr.id,
         rating: val
-    });
+    },
+        function(_response){
+            $(star).attr("src","img/"+_response+".png");
+        }
+    );
 }
 
 function redGClick(){
-    sendRating(this,1,"redGray");
+    sendRating(this,1);
 }
 
 function redClick(){
-    sendRating(this,2,"red");
+    sendRating(this,2);
 }
 
 function orangeGClick(){
-    sendRating(this,3,"orangeGray");
+    sendRating(this,3);
 }
 
 function orangeClick(){
-    sendRating(this,4,"orange");
+    sendRating(this,4);
 }
 
 function greenGClick(){
-    sendRating(this,5,"greenGray");
+    sendRating(this,5);
 }
 
 function greenClick(){
-    sendRating(this,6,"green");
+    sendRating(this,6);
 }
 
 function blueGClick(){
-    sendRating(this,7,"blueGray");
+    sendRating(this,7);
 }
 
 function blueClick(){
-    sendRating(this,8,"blue");
+    sendRating(this,8);
 }
 
 function purpleGClick(){
-    sendRating(this,9,"purpleGray");
+    sendRating(this,9);
 }
 
 function purpleClick(){
-    sendRating(this,10,"purple");
+    sendRating(this,10);
 }

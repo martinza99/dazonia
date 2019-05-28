@@ -19,9 +19,11 @@
         $sql = $conn->prepare("INSERT INTO userrating (userID,fileId,rating) VALUES(?,?,?)");
         $sql->bind_param('isi', $userId, $fileid, $rating);
         $sql->execute();
-
-        echo " rating: $rating, id: $fileid";
-    }else{
-        echo "Only Lyren and Martin can vote :p";
-    }    
+    }   
+    
+    $sql = $conn->prepare("SELECT ROUND(AVG(userrating.rating)) AS avgrating FROM userrating WHERE fileId = ?");
+    $sql->bind_param("s",$fileid);
+    $sql->execute();
+    $rating = mysqli_fetch_assoc($sql->get_result());
+    echo $rating["avgrating"];
 ?>

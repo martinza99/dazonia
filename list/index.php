@@ -93,6 +93,9 @@
 
 function rating($i){
     $i = round($i);
+
+    return '<img class="star" src="img/'.$i.'.png">';
+    /*
     switch($i){
         case 0: return  '<img class="star" src="img/gray.png">';
         case 1: return  '<img class="star" src="img/redGray.png">';
@@ -105,7 +108,7 @@ function rating($i){
         case 8: return  '<img class="star" src="img/blue.png">';
         case 9: return  '<img class="star" src="img/purpleGray.png">';
         case 10: return '<img class="star" src="img/purple.png">';
-    }
+    }*/
     /*  print 5 stars
     $xf = '<img class="star" src="img/gray.png">';
     $rf = '<img class="star" src="img/red.png">';
