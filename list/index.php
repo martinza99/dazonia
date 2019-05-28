@@ -55,7 +55,7 @@
     $conn->close();
 
     echo '<div class="listTable">';
-    echo '<div class="navButtons"><a href="'.$domain.'/list?p='.($p-1).'" target="_top"><button>←</button></a><span> '.$p.' </span><a href="'.$domain.'/list?p='.($p+1).'" target="_top"><button>→</button></a></div>';
+    echo '<div class="navButtons"><a href="'.$domain.'/list?p='.($p-1).'&q='.$filter.'" target="_top"><button>←</button></a><span> '.$p.' </span><a href="'.$domain.'/list?p='.($p+1).'&q='.$filter.'" target="_top"><button>→</button></a></div>';
     echo '<table border="1" style="margin-left: 40px; margin-top: 22px">
         <tr>
             <th><a href="'.$domain.'/" target="_top">preview</a></th>
@@ -88,7 +88,7 @@
         echo "</tr>";
     }
     echo "</table>";
-    echo '<div class="navButtons"><a href="'.$domain.'/list?p='.($p-1).'" target="_top"><button>←</button></a><span> '.$p.' </span><a href="'.$domain.'/list?p='.($p+1).'" target="_top"><button>→</button></a></div>';
+    echo '<div class="navButtons"><a href="'.$domain.'/list?p='.($p-1).'&q='.$filter.'" target="_top"><button>←</button></a><span> '.$p.' </span><a href="'.$domain.'/list?p='.($p+1).'&q='.$filter.'" target="_top"><button>→</button></a></div>';
     echo '</div>';
 
 function rating($i){
