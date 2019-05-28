@@ -72,6 +72,7 @@
 
 function rating($i){
     $i = round($i);
+    if($i!=0)
     return '<img class="starView" src="list/img/'.$i.'.png">';
     /*
     switch($i){
