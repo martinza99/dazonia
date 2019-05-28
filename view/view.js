@@ -3,6 +3,7 @@ $(function(){
     //$("#prev").click(updateNext);
     //$("#next").click(updatePrev);
     $("#fileUp").change(sendReplace);
+    $(".star").click(openStars);
 });
 
 window.onpopstate = function(event){
@@ -57,4 +58,84 @@ function keyDown(event){
 
 function sendReplace(){
     this.parentElement.submit();
+}
+
+function makeStar(starElement,rating,func){
+    let star = document.createElement("img");
+    star.addEventListener("click",func)
+    star.src = "../list/img/"+rating+".png";
+    star.classList = "star tempStar "+rating;
+    starElement.parentElement.appendChild(star);
+    $(star).animate({left:rating*32+"px"});
+}
+
+function openStars(){
+    makeStar(this,1,redGClick);
+    makeStar(this,2,redClick);
+    makeStar(this,3,orangeGClick);
+    makeStar(this,4,orangeClick);
+    makeStar(this,5,greenGClick);
+    makeStar(this,6,greenClick);
+    makeStar(this,7,blueGClick);
+    makeStar(this,8,blueClick);
+    makeStar(this,9,purpleGClick);
+    makeStar(this,10,purpleClick);
+}
+
+function sendRating(starElement,val){
+    starElement.style.zIndex = 100;
+    $(starElement).siblings(".tempStar").remove();
+    let star = $(".star")[0];
+    $(starElement).remove();
+    let urlParams = new URLSearchParams(window.location.search);
+    let picId = urlParams.get("id");
+    $.post("../list/rate.php",
+    {
+        id: picId,
+        rating: val
+    },
+        function(_response){
+            $(star).attr("src","../list/img/"+_response+".png");
+        }
+    );
+}
+
+function redGClick(){
+    sendRating(this,1);
+}
+
+function redClick(){
+    sendRating(this,2);
+}
+
+function orangeGClick(){
+    sendRating(this,3);
+}
+
+function orangeClick(){
+    sendRating(this,4);
+}
+
+function greenGClick(){
+    sendRating(this,5);
+}
+
+function greenClick(){
+    sendRating(this,6);
+}
+
+function blueGClick(){
+    sendRating(this,7);
+}
+
+function blueClick(){
+    sendRating(this,8);
+}
+
+function purpleGClick(){
+    sendRating(this,9);
+}
+
+function purpleClick(){
+    sendRating(this,10);
 }

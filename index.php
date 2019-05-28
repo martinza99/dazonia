@@ -72,7 +72,7 @@
 
 function rating($i){
     $i = round($i);
-    return '<img class="star" src="img/'.$i.'.png">';
+    return '<img class="starView" src="list/img/'.$i.'.png">';
     /*
     switch($i){
         case 1: return  '<img class="starView" src="list/img/redGray.png">';

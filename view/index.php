@@ -12,11 +12,12 @@
     if(isset($_GET["random"]))
         $random = htmlspecialchars($_GET["random"]);
 
-    $sql = $conn->prepare("SELECT * FROM files WHERE name = ? ORDER BY id ASC");
+    $sql = $conn->prepare("SELECT files.*,DATE_FORMAT(created,'%d-%m-%Y') AS fCreated, users.name AS username, AVG(userrating.rating) AS avgrating FROM files LEFT JOIN users on users.id = files.userId LEFT JOIN userrating on userrating.fileId = files.name WHERE files.name = ? GROUP BY files.id");
     $sql->bind_param("s",$id);
     $sql->execute();
     $result = mysqli_fetch_assoc($sql->get_result());
     $currID = $result["id"];
+    $rating = $result["avgrating"];
 
     if(isset($_GET["random"])){
         $sql = $conn->prepare("SELECT * FROM `files` ORDER BY rand() LIMIT 1");
@@ -74,7 +75,11 @@
             <img id=\"centerImage\" class=\"pic\" src=\"../files/$id\">
         </div>
     ";
-    require_once "../footer.php";
+    echo "
+    <div class=\"bottom\">
+        <a href=\"$domain\" target=\"_top\"><button>← Back</button></a>
+        ".rating($rating)."
+    </div>";
     if(isset($slide)){
         echo '
         <script>setTimeout(next, '.$slide.');
@@ -84,3 +89,12 @@
     ?>
 </body>
 </html>
+
+
+<?php
+function rating($i){
+    $i = round($i);
+
+    return '<img class="star" src="../list/img/'.$i.'.png">';
+}
+?>
