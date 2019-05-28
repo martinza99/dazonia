@@ -11,16 +11,13 @@
     $filter="";
     if(isset($_GET["q"]))
         $filter = $_GET["q"];
-    $p = 0;
-    if(isset($_GET["p"])){
+    $p = 1;
+    if(isset($_GET["p"]))
         $p = intval(htmlspecialchars($_GET["p"]));
-        if($p<0)
-            $p = 0;
-        $loweLimit = 100 * $p;
-    }else{
-        $loweLimit = 0;
-    }
-    $upperLimit = $loweLimit + 100;
+    if($p<1)
+        $p = 1;
+    $lowerLimit = 100 * ($p-1);
+    $upperLimit = $lowerLimit + 100;
     require_once "../header.php";
 ?>	
     <title>File List</title>
@@ -33,21 +30,21 @@
     if(substr($filter,0,5)=="file:"){//search by filename
         $q = substr($filter,5);
         $sql = $conn->prepare("SELECT files.*,DATE_FORMAT(created,'%d-%m-%Y') AS fCreated, users.name AS username, AVG(userrating.rating) AS avgrating FROM files LEFT JOIN users on users.id = files.userId LEFT JOIN userrating on userrating.fileId = files.name WHERE files.name LIKE concat('%',?,'%') GROUP BY files.id ORDER BY id DESC LIMIT ?, ?");
-        $sql->bind_param("sii",$q,$loweLimit,$upperLimit);
+        $sql->bind_param("sii",$q,$lowerLimit,$upperLimit);
     }
     else if(substr($filter,0,2)=="r:"){//search by minimum rating
         $rating = substr($filter,1,2);
         $q = substr($filter,5);
         $sql = $conn->prepare("SELECT * FROM (SELECT files.*,DATE_FORMAT(created,'%d-%m-%Y') AS fCreated, users.name AS username, AVG(userrating.rating) AS avgrating FROM files LEFT JOIN users on users.id = files.userId LEFT JOIN userrating on userrating.fileId = files.name WHERE files.ogName LIKE concat('%',?,'%') GROUP BY files.id ORDER BY id) AS subtable WHERE subtable.avgrating >= ? ORDER BY id DESC LIMIT ?, ?");
-        $sql->bind_param("sdii",$q,$rating,$loweLimit,$upperLimit);
+        $sql->bind_param("sdii",$q,$rating,$lowerLimit,$upperLimit);
     }
     else if(isset($userU)){//show selected user with filter
         $sql = $conn->prepare("SELECT files.*,DATE_FORMAT(created,'%d-%m-%Y') AS fCreated, users.name AS username, AVG(userrating.rating) AS avgrating FROM files LEFT JOIN users on users.id = files.userId LEFT JOIN userrating on userrating.fileId = files.name WHERE files.userid = ? AND files.ogName LIKE concat('%',?,'%') GROUP BY files.id ORDER BY id DESC LIMIT ?, ?");
-        $sql->bind_param("isii",$userU,$filter,$loweLimit,$upperLimit);
+        $sql->bind_param("isii",$userU,$filter,$lowerLimit,$upperLimit);
     }
     else{//show all pics with filter
         $sql = $conn->prepare("SELECT files.*,DATE_FORMAT(created,'%d-%m-%Y') AS fCreated, users.name AS username, AVG(userrating.rating) AS avgrating FROM files LEFT JOIN users on users.id = files.userId LEFT JOIN userrating on userrating.fileId = files.name WHERE files.ogName LIKE concat('%',?,'%') GROUP BY files.id ORDER BY id DESC LIMIT ?, ?");
-        $sql->bind_param("sii",$filter,$loweLimit,$upperLimit);
+        $sql->bind_param("sii",$filter,$lowerLimit,$upperLimit);
     }
 
     $sql->execute();
@@ -55,7 +52,9 @@
     $conn->close();
 
     echo '<div class="listTable">';
-    echo '<div class="navButtons"><a href="'.$domain.'/list?p='.($p-1).'&q='.$filter.'" target="_top"><button>←</button></a><span> '.$p.' </span><a href="'.$domain.'/list?p='.($p+1).'&q='.$filter.'" target="_top"><button>→</button></a></div>';
+    if($filter!="")
+        $filter = "&q=".$filter;
+    echo '<div class="navButtons"><a href="'.$domain.'/list?p='.($p-1).$filter.'" target="_top"><button>←</button></a><span> '.$p.' </span><a href="'.$domain.'/list?p='.($p+1).$filter.'" target="_top"><button>→</button></a></div>';
     echo '<table border="1" style="margin-left: 40px; margin-top: 22px">
         <tr>
             <th><a href="'.$domain.'/" target="_top">preview</a></th>
@@ -88,7 +87,9 @@
         echo "</tr>";
     }
     echo "</table>";
-    echo '<div class="navButtons"><a href="'.$domain.'/list?p='.($p-1).'&q='.$filter.'" target="_top"><button>←</button></a><span> '.$p.' </span><a href="'.$domain.'/list?p='.($p+1).'&q='.$filter.'" target="_top"><button>→</button></a></div>';
+    if($filter!="")
+        $filter = "&q=".$filter;
+    echo '<div class="navButtons"><a href="'.$domain.'/list?p='.($p-1).$filter.'" target="_top"><button>←</button></a><span> '.$p.' </span><a href="'.$domain.'/list?p='.($p+1).$filter.'" target="_top"><button>→</button></a></div>';
     echo '</div>';
 
 function rating($i){
