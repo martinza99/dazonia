@@ -61,7 +61,7 @@ function updateName() {
 }
 
 function isEnter(_event){
-    if(_vent.key == "Enter")
+    if(_event.key == "Enter")
         this.children[1].click();
 }
 
