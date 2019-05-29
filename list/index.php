@@ -28,40 +28,75 @@
 </head>
 <body>
 <?php
-    echo "<br>";
+    $paramValues = array();
+    $paramType = "";
     $searchFile = filterSearch("file:");
-    $searchRating = filterSearch("r:");
+    if($searchFile!=""){
+        array_push($paramValues,$searchFile);
+        $paramType .= "s";
+    }
     $searchUser = filterSearch("u:");
+    if($searchUser!=""){
+        array_push($paramValues,intval($searchUser));
+        $paramType .= "i";
+    }
+    $searchRating = intval(filterSearch("r:"));
+    if($searchRating!=""){//int(0) == ""
+        array_push($paramValues,$searchRating);
+        $paramType .= "i";
+    }
     while(substr($filter,0,1)==" ")
         $filter = substr($filter,1);
     while(substr($filter,-1,1)==" ")
         $filter = substr($filter,0,-1);
-    $sql = "SELECT * FROM(
+        if($filter!=""){
+            array_push($paramValues,$filter);
+            $paramType .= "s";
+        }
+    //if(isset($_GET["debug"]))
+        var_dump($paramValues);
+    array_push($paramValues,$lowerLimit);
+    array_push($paramValues,$upperLimit);
+    $paramType .= "ii";
+    $sql = "SELECT * FROM (
                 SELECT
                     files.id AS fileID,
                     files.name AS fileIdName,
                     files.ogName AS fileOgName,
                     files.userId AS fileUserId,
-                    DATE_FORMAT(files.created,'%d-%m-%y') AS fCreated,
+                    DATE_FORMAT(files.created,'%d-%m-%Y') AS fCreated,
                     users.name AS username,
-                    AVG(userrating.rating) AS avgrating
+                    ROUND(AVG(userrating.rating),0) AS avgrating
                 FROM files
                 LEFT JOIN users ON users.id = files.userId
                 LEFT JOIN userrating ON userrating.fileId = files.name
-                WHERE files.ogName LIKE concat('%',?,'%')
-                AND files.name LIKE concat('%',?,'%') ";
+                WHERE files.name = files.name ";
+                if($searchFile!="")
+                $sql.="AND files.name LIKE concat('%',?,'%') "; 
                 if($searchUser!="")
                     $sql.="AND users.id = ? "; 
         $sql.="GROUP BY files.id
             ) AS subtable
-            WHERE avgrating >= ?
-            ORDER BY fileID DESC
+            WHERE fileOgName = fileOgName ";
+            if($searchRating!="")
+            $sql .= "AND avgrating >= ? ";
+            if($filter!="")
+                $sql .= "AND fileOgName LIKE concat('%',?,'%') ";
+            $sql .= "ORDER BY fileID DESC
             LIMIT ?,?";
     $sql = $conn->prepare($sql);
-    if($searchUser!="")
-        $sql->bind_param("ssiiii",$filter,$searchFile,$searchUser,$searchRating,$lowerLimit,$upperLimit);
-    else
-        $sql->bind_param("ssiii",$filter,$searchFile,$searchRating,$lowerLimit,$upperLimit);
+    if($sql === false)
+        trigger_error('Wrong SQL: ' . $sql . ' Error: ' . $conn->errno . ' ' . $conn->error, E_USER_ERROR);
+    
+    $a_params = array();
+    foreach ($paramValues as $key => $value) {
+        $a_params[$key] = &$paramValues[$key];
+    }
+    call_user_func_array(
+        array($sql, 'bind_param'), 
+        array_merge(array($paramType), $paramValues)
+    );
+
     $sql->execute();
     $result = $sql->get_result();
     $conn->close();
@@ -108,8 +143,8 @@
     echo '</div>';
 
 function rating($i){
-    $i = round($i);
-
+    if($i=="")
+        $i = 0;
     return '<img class="star" src="img/'.$i.'.png">';
     /*
     switch($i){
