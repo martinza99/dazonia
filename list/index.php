@@ -53,7 +53,7 @@
             array_push($paramValues,$filter);
             $paramType .= "s";
         }
-    //if(isset($_GET["debug"]))
+    if(isset($_GET["debug"]))
         var_dump($paramValues);
     array_push($paramValues,$lowerLimit);
     array_push($paramValues,$upperLimit);
