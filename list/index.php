@@ -6,11 +6,12 @@
         die();
     }
     $userId = $_SESSION["userId"];
-    if(isset($_GET["u"]))
-    $userU = htmlspecialchars($_GET["u"]);
     $filter="";
-    if(isset($_GET["q"]))
+    $q = "";
+    if(isset($_GET["q"])){
         $filter = $_GET["q"];
+        $q = $_GET["q"];
+    }
     $p = 1;
     if(isset($_GET["p"]))
         $p = intval(htmlspecialchars($_GET["p"]));
@@ -27,34 +28,48 @@
 </head>
 <body>
 <?php
-    if(substr($filter,0,5)=="file:"){//search by filename
-        $q = substr($filter,5);
-        $sql = $conn->prepare("SELECT files.*,DATE_FORMAT(created,'%d-%m-%Y') AS fCreated, users.name AS username, AVG(userrating.rating) AS avgrating FROM files LEFT JOIN users on users.id = files.userId LEFT JOIN userrating on userrating.fileId = files.name WHERE files.name LIKE concat('%',?,'%') GROUP BY files.id ORDER BY id DESC LIMIT ?, ?");
-        $sql->bind_param("sii",$q,$lowerLimit,$upperLimit);
-    }
-    else if(substr($filter,0,2)=="r:"){//search by minimum rating
-        $rating = substr($filter,1,2);
-        $q = substr($filter,5);
-        $sql = $conn->prepare("SELECT * FROM (SELECT files.*,DATE_FORMAT(created,'%d-%m-%Y') AS fCreated, users.name AS username, AVG(userrating.rating) AS avgrating FROM files LEFT JOIN users on users.id = files.userId LEFT JOIN userrating on userrating.fileId = files.name WHERE files.ogName LIKE concat('%',?,'%') GROUP BY files.id ORDER BY id) AS subtable WHERE subtable.avgrating >= ? ORDER BY id DESC LIMIT ?, ?");
-        $sql->bind_param("sdii",$q,$rating,$lowerLimit,$upperLimit);
-    }
-    else if(isset($userU)){//show selected user with filter
-        $sql = $conn->prepare("SELECT files.*,DATE_FORMAT(created,'%d-%m-%Y') AS fCreated, users.name AS username, AVG(userrating.rating) AS avgrating FROM files LEFT JOIN users on users.id = files.userId LEFT JOIN userrating on userrating.fileId = files.name WHERE files.userid = ? AND files.ogName LIKE concat('%',?,'%') GROUP BY files.id ORDER BY id DESC LIMIT ?, ?");
-        $sql->bind_param("isii",$userU,$filter,$lowerLimit,$upperLimit);
-    }
-    else{//show all pics with filter
-        $sql = $conn->prepare("SELECT files.*,DATE_FORMAT(created,'%d-%m-%Y') AS fCreated, users.name AS username, AVG(userrating.rating) AS avgrating FROM files LEFT JOIN users on users.id = files.userId LEFT JOIN userrating on userrating.fileId = files.name WHERE files.ogName LIKE concat('%',?,'%') GROUP BY files.id ORDER BY id DESC LIMIT ?, ?");
-        $sql->bind_param("sii",$filter,$lowerLimit,$upperLimit);
-    }
-
+    echo "<br>";
+    $searchFile = filterSearch("file:");
+    $searchRating = filterSearch("r:");
+    $searchUser = filterSearch("u:");
+    while(substr($filter,0,1)==" ")
+        $filter = substr($filter,1);
+    while(substr($filter,-1,1)==" ")
+        $filter = substr($filter,0,-1);
+    $sql = "SELECT * FROM(
+                SELECT
+                    files.id AS fileID,
+                    files.name AS fileIdName,
+                    files.ogName AS fileOgName,
+                    files.userId AS fileUserId,
+                    DATE_FORMAT(files.created,'%d-%m-%y') AS fCreated,
+                    users.name AS username,
+                    AVG(userrating.rating) AS avgrating
+                FROM files
+                LEFT JOIN users ON users.id = files.userId
+                LEFT JOIN userrating ON userrating.fileId = files.name
+                WHERE files.ogName LIKE concat('%',?,'%')
+                AND files.name LIKE concat('%',?,'%') ";
+                if($searchUser!="")
+                    $sql.="AND users.id = ? "; 
+        $sql.="GROUP BY files.id
+            ) AS subtable
+            WHERE avgrating >= ?
+            ORDER BY fileID DESC
+            LIMIT ?,?";
+    $sql = $conn->prepare($sql);
+    if($searchUser!="")
+        $sql->bind_param("ssiiii",$filter,$searchFile,$searchUser,$searchRating,$lowerLimit,$upperLimit);
+    else
+        $sql->bind_param("ssiii",$filter,$searchFile,$searchRating,$lowerLimit,$upperLimit);
     $sql->execute();
     $result = $sql->get_result();
     $conn->close();
 
     echo '<div class="listTable">';
-    if($filter!="")
-        $filter = "&q=".$filter;
-    echo '<div class="navButtons"><a href="'.$domain.'/list?p='.($p-1).$filter.'" target="_top"><button>←</button></a><span> '.$p.' </span><a href="'.$domain.'/list?p='.($p+1).$filter.'" target="_top"><button>→</button></a></div>';
+    if($q!="")
+        $q = "&q=".$q;
+    echo '<div class="navButtons"><a href="'.$domain.'/list?p='.($p-1).$q.'" target="_top"><button>←</button></a><span> '.$p.' </span><a href="'.$domain.'/list?p='.($p+1).$q.'" target="_top"><button>→</button></a></div>';
     echo '<table border="1" style="margin-left: 40px; margin-top: 22px">
         <tr>
             <th><a href="'.$domain.'/" target="_top">preview</a></th>
@@ -65,31 +80,31 @@
             <th>Upload Date</th>';
     echo "<th><button class=\"deleteAllButton\">X</button></th></tr>";
     while($rows = $result->fetch_assoc()){
-        echo "<tr id=\"$rows[name]\">";
-        echo "<td><a href=\"$domain/view/?id=$rows[name]\" target=\"_top\"><div class=\"picsList\">";
-            if(substr($rows["name"],-4)==".gif")
+        echo "<tr id=\"$rows[fileIdName]\">";
+        echo "<td><a href=\"$domain/view/?id=$rows[fileIdName]\" target=\"_top\"><div class=\"picsList\">";
+            if(substr($rows["fileIdName"],-4)==".gif")
             echo '<button class="thumbButton listView">►</button>';
-        echo "<img class=\"thumb\" src=\"../thumbnails/$rows[name]\" alt=\"$rows[name]\">";//print thumbnail
+        echo "<img class=\"thumb\" src=\"../thumbnails/$rows[fileIdName]\" alt=\"$rows[fileIdName]\">";//print thumbnail
         echo "</div></a></td><td>";
         echo "<div class=\"starContainer\">";
         echo rating($rows["avgrating"]);
         echo "</div></td>";
-        echo "<td><a href=\"$domain/files/$rows[name]\" target=\"_top\">$rows[name]</a></td>";//print filename
-        echo "<td class=\"og\"><div class=\"changeName\">$rows[ogName]</div>";//print ogName
-        echo "<div class=\"changeNameInput\"><input type=\"text\" value=\"$rows[ogName]\"><button class=\"updateName\">Update</button></div></td>";//print input
+        echo "<td><a href=\"$domain/files/$rows[fileIdName]\" target=\"_top\">$rows[fileIdName]</a></td>";//print filename
+        echo "<td class=\"og\"><div class=\"changeName\">$rows[fileOgName]</div>";//print ogName
+        echo "<div class=\"changeNameInput\"><input type=\"text\" value=\"$rows[fileOgName]\"><button class=\"updateName\">Update</button></div></td>";//print input
         echo "<td>";
         if($rows["username"]==null)
-        $rows["username"] = "deleted<br>user[$rows[userId]]";
-        echo "<a href=\"$domain/list?u=$rows[userId]\" target=\"_top\">$rows[username]</a>";
+        $rows["username"] = "deleted<br>user[$rows[fileUserId]]";
+        echo "<a href=\"$domain/list?q=u%3A$rows[fileUserId]\" target=\"_top\">$rows[username]</a>";
         echo "</td>";
         echo "<td class=\"date\">".substr($rows["fCreated"],0,10)."</td>";
         echo "<td><button class=\"deleteButton\">X</button></td>";
         echo "</tr>";
     }
     echo "</table>";
-    if($filter!="")
-        $filter = "&q=".$filter;
-    echo '<div class="navButtons"><a href="'.$domain.'/list?p='.($p-1).$filter.'" target="_top"><button>←</button></a><span> '.$p.' </span><a href="'.$domain.'/list?p='.($p+1).$filter.'" target="_top"><button>→</button></a></div>';
+    if($q!="")
+        $q = "&q=".$q;
+    echo '<div class="navButtons"><a href="'.$domain.'/list?p='.($p-1).$q.'" target="_top"><button>←</button></a><span> '.$p.' </span><a href="'.$domain.'/list?p='.($p+1).$q.'" target="_top"><button>→</button></a></div>';
     echo '</div>';
 
 function rating($i){
@@ -136,6 +151,27 @@ function rating($i){
         case 10: return "$pf$pf$pf$pf$pf";
     }*/
 }
+
+function filterSearch($find){
+    $filter = $GLOBALS["filter"];
+    $filtered = "";
+    $start = strpos($filter,$find);
+   
+   
+    if(gettype($start)!="boolean"){
+        $len = strpos($filter," ",$start) - $start - strlen($find);
+        if($len>0){
+            $filtered = substr($filter,$start+strlen($find),$len);
+            $GLOBALS["filter"] = substr_replace($filter,"",$start,strlen($find)+$len+1);
+        }
+        else{
+            $filtered = substr($filter,$start+strlen($find));
+            $GLOBALS["filter"] = substr_replace($filter,"",$start);
+        }
+    }
+    return $filtered;
+}
+
 ?>
 </body>
 </html>
