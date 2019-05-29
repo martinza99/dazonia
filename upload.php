@@ -25,6 +25,7 @@
 
     //create file from actual upload (ShareX)
     $name = $_FILES["file"]["name"];
+    $name = substr($name,0,strpos($name,".",-5));
     $temp_name  = $_FILES['file']['tmp_name'];
 
     if(isset($replace))
