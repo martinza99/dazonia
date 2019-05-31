@@ -35,6 +35,11 @@
     list($width, $height) = getimagesize($temp_name);
     $location = 'files/';
 
+    if(isset($replace)){
+        checkHash();
+        $filename .= "&new";
+    }
+
     resize(180,'./thumbnails/'.$filename, $temp_name);
     if(!isset($replace))
         insertName($filename,$name,$userId);
@@ -42,13 +47,6 @@
         die('No file uploaded!');
     printLink($filename,$hideLink);
 
-    if(isset($replace)){
-        $hash = hash_file("md5",$location.$filename);
-        $sql = $conn->prepare("UPDATE files SET `hash` = ?, `ogname` = ? WHERE `name` = ?");
-        $sql->bind_param("sss",$hash,$name,$filename);
-        $sql->execute();
-        $filename .= "&new";
-    }
     if($skip){
         header("Location: $domain/view?id=$filename");
     }
@@ -138,16 +136,7 @@ function resize($factor, $targetFile, $originalFile) {
 function checkName($newName,$oldname){//checks db if name is taken
     $conn = $GLOBALS['conn'];//db connection
     $userId = $GLOBALS['userId'];
-    //check hash
-    $temp_name = $GLOBALS["temp_name"];
-    $hash = hash_file("md5",$temp_name);
-    $sql = $conn->prepare("SELECT * FROM files WHERE hash = ?");
-    $sql->bind_param("s",$hash);
-    $sql->execute();
-    $result = $sql->get_result();
-    if($result->num_rows!=0)//return false if name is taken
-        die("File already exists");
-
+    checkHash();
     $sql = $conn->prepare("SELECT * FROM files WHERE LOWER(name) = LOWER(?)");
     $sql->bind_param("s",$newName);
     $sql->execute();
@@ -155,6 +144,23 @@ function checkName($newName,$oldname){//checks db if name is taken
     if($result->num_rows!=0)//return false if name is taken
         return false;       //else insert into database
     return true;
+}
+
+function checkHash(){
+    $conn = $GLOBALS['conn'];//db connection
+    $userId = $GLOBALS['userId'];
+    $temp_name = $GLOBALS["temp_name"];
+    $hash = hash_file("md5",$temp_name);
+    $sql = $conn->prepare("SELECT * FROM files WHERE hash = ?");
+    $sql->bind_param("s",$hash);
+    $sql->execute();
+    $result = $sql->get_result();
+    if($result->num_rows!=0){//return false if name is taken
+        echo "File already exists: ";
+        $row = mysqli_fetch_assoc($result);
+        echo "<a href=\"$GLOBALS[domain]/view/?id=$row[name]\">$row[name]</a>";
+        die();
+    }
 }
 
 function insertName($newName,$oldname,$userId){
