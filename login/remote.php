@@ -1,7 +1,7 @@
 <?php
     session_start();
     require_once "sql.php";
-    if($_SESSION["userId"]>1){
+    if($_SESSION["userId"]>1||!checkLogin($_SESSION["userId"])){
         header("Location: .");
         die();
     }

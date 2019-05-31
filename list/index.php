@@ -1,7 +1,7 @@
 <?php
     session_start();
     require_once "../login/sql.php";
-    if(!isset($_SESSION["userId"])){
+    if(!isset($_SESSION["userId"])||!checkLogin($_SESSION["userId"])){
         header("Location: $domain/login");
         die();
     }

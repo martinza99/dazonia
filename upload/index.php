@@ -1,7 +1,7 @@
 <?php
     session_start();
     require_once '../login/sql.php';
-    if(!isset($_SESSION["userId"])){
+    if(!isset($_SESSION["userId"])||!checkLogin($_SESSION["userId"])){
         header('Location: ../login/');
         die();
     }
@@ -38,6 +38,7 @@
        if($userId<2){
             echo '<a href="'.$domain.'/login/token.php" target="_top">create register token</a><br>';
             echo '<a href="'.$domain.'/login/remote.php" target="_top">server settings</a><br>';
+            echo '<a href="'.$domain.'/login/users.php" target="_top">User List</a><br>';
        }
 		echo '<a href="'.$domain.'/list" target="_top">File-List</a><br>
             <a href="'.$domain.'/login/logout.php" target="_top"><button>Logout</button></a><span> '.$username.'</span>

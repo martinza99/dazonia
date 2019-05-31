@@ -9,52 +9,36 @@
 
     if(isset($_POST["action"])){
         switch ($_POST["action"]){
-            case "c": 
-                $token = generateRandomString(32);
-                $sql = $conn->prepare("INSERT INTO register (token) VALUES (?)");
-                $sql->bind_param("s",$token);
-                $sql->execute();
-                die("Token created");
-                break;
             case "d":
-                $sql = $conn->prepare("DELETE FROM register WHERE id = ?");
+                $sql = $conn->prepare("DELETE FROM users WHERE id = ?");
                 $sql->bind_param("i",$_POST["id"]);
                 $sql->execute();
-                die("Token deleted");
+                die("User deleted");
                 break;
         }
     }
     require_once "../header.php";
 ?>
 
-    <title>Token List</title>
+    <title>User List</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" media="screen" href="../main.css<?php echo "?$hash" ?>" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script>
-function createToken(){
-    $.post("token.php",{action:"c"},location.reload());
-}
 $(function(){
     $(".deleteButton").click(function(){
         
         if(confirm("Delete "+$(this).closest("tr")[0].id))
         deleteFile(this);
     });
-    $(".deleteAllButton").click(function(){  console.log(1);      
-        if(confirm($(".deleteButton").length + ' tokens will be deleted')){
-            $(".deleteButton").each(deleteFiles);
-        }
+    $(".deleteAllButton").click(function(){
+        alert("disabled. I really don't think that's a good idea."); 
     });
 });
 
-function deleteFiles(i,_btn) {
-    deleteFile(_btn);
-}
-
 function deleteFile(_btn) {
     var tr = _btn.closest("tr");
-    $.post("token.php",
+    $.post("users.php",
     {
         id: tr.id,
         action: "d"
@@ -66,16 +50,16 @@ function deleteFile(_btn) {
 </head>
 <body>
 <?php
-    $sql = $conn->prepare("SELECT * FROM register");
+    $sql = $conn->prepare("SELECT * FROM users ORDER BY id");
     $sql->execute();
     $result = $sql->get_result();
     $conn->close();
     echo '<table border="1">';
-    echo '<th><button onclick="createToken();">#</button></th><th>Token</th><th><button class="deleteAllButton">X</button></th></th>';
+    echo '<th><a href="token.php" target="_top" style="color:#2196F3;"><button>#</a></th><th>Name</th><th><button class="deleteAllButton">X</button></th></th>';
     while($rows = $result->fetch_assoc()){
             echo "<tr id=\"$rows[id]\">";
             echo "<td>$rows[id]</td>";
-            echo "<td><a href=\"$domain/login/register.php?token=$rows[token]\" target=\"_top\">$rows[token]</a>";//print token
+            echo "<td><a href=\"$domain/list/?q=u%3A$rows[id]\" target=\"_top\">$rows[name]</a>";//print token
             echo "<td><button class=\"deleteButton\">X</button></td>";
             echo "</tr>";
     }

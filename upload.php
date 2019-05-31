@@ -9,7 +9,7 @@
             die('Wrong Username or Password <br><a href="'.$domain.'/login/" target="_top">');
         }
     }
-    else if(!isset($_SESSION["userId"])){
+    else if(!isset($_SESSION["userId"])||!checkLogin($_SESSION["userId"])){
         header("Location: $domain/login/");
         die();
     }
