@@ -58,32 +58,71 @@
     array_push($paramValues,$lowerLimit);
     array_push($paramValues,$upperLimit);
     $paramType .= "ii";
-    $sql = "SELECT * FROM (
-                SELECT
-                    files.id AS fileID,
-                    files.name AS fileIdName,
-                    files.ogName AS fileOgName,
-                    files.userId AS fileUserId,
-                    DATE_FORMAT(files.created,'%d-%m-%Y') AS fCreated,
-                    users.name AS username,
-                    ROUND(AVG(userrating.rating),0) AS avgrating
-                FROM files
-                LEFT JOIN users ON users.id = files.userId
-                LEFT JOIN userrating ON userrating.fileId = files.name
-                WHERE files.name = files.name ";
-                if($searchFile!="")
+    {$sql = "
+        SELECT
+            subtable.*,
+            lTable.lRating,
+            mTable.mRating
+        FROM
+            (
+            SELECT
+                files.id AS fileID,
+                files.name AS fileIdName,
+                files.ogName AS fileOgName,
+                files.userId AS fileUserId,
+                DATE_FORMAT(files.created, '%d-%m-%Y') AS fCreated,
+                users.name AS username,
+                ROUND(AVG(userrating.rating),
+                0) AS avgrating
+            FROM
+                files
+            LEFT JOIN users ON users.id = files.userId
+            LEFT JOIN userrating ON userrating.fileId = files.name
+            WHERE
+                files.name = files.name ";
+            if($searchFile!="")
                 $sql.="AND files.name LIKE concat('%',?,'%') "; 
-                if($searchUser!="")
-                    $sql.="AND users.id = ? "; 
-        $sql.="GROUP BY files.id
-            ) AS subtable
-            WHERE fileOgName = fileOgName ";
-            if($searchRating!="")
+            if($searchUser!="")
+                $sql.="AND users.id = ? "; 
+            $sql .= "GROUP BY
+                files.id
+        ) AS subtable
+        LEFT JOIN(
+            SELECT
+                files.id AS lfileID,
+                userrating.rating AS lRating
+            FROM
+                files
+            LEFT JOIN users ON users.id = files.userId
+            LEFT JOIN userrating ON userrating.fileId = files.name
+            WHERE
+                userrating.userID = 0
+        ) AS lTable
+        ON
+            lTable.lfileID = subtable.fileID
+        LEFT JOIN(
+            SELECT
+                files.id AS mfileID,
+                userrating.rating AS mRating
+            FROM
+                files
+            LEFT JOIN users ON users.id = files.userId
+            LEFT JOIN userrating ON userrating.fileId = files.name
+            WHERE
+                userrating.userID = 1
+        ) AS mTable
+        ON
+            mTable.mfileID = subtable.fileID
+        WHERE
+            fileIdName = fileIdName ";
+        if($searchRating!="")
             $sql .= "AND avgrating >= ? ";
-            if($filter!="")
-                $sql .= "AND fileOgName LIKE concat('%',?,'%') ";
-            $sql .= "ORDER BY fileID DESC
-            LIMIT ?,?";
+        if($filter!="")
+            $sql .= "AND fileOgName LIKE concat('%',?,'%') ";
+        $sql .= "ORDER BY
+            subtable.fileID
+        DESC
+        LIMIT ?,?";}
     $sql = $conn->prepare($sql);
     if($sql === false)
         trigger_error('Wrong SQL: ' . $sql . ' Error: ' . $conn->errno . ' ' . $conn->error, E_USER_ERROR);
@@ -113,7 +152,16 @@
             <th>Title</th>
             <th>Username</th>
             <th>Upload Date</th>';
-    echo "<th><button class=\"deleteAllButton\">X</button></th></tr>";
+    echo "<th>";
+    echo "<button class=\"deleteAllButton\">X</button>";
+    if($_SESSION["userId"]<2){
+        if($_SESSION["userId"]==0)
+            $temp = "l";
+        else
+            $temp = "m";
+        echo "<script>var USERID = '$temp';</script>";
+    }
+    echo "</th></tr>";
     while($rows = $result->fetch_assoc()){
         echo "<tr id=\"$rows[fileIdName]\">";
         echo "<td><a href=\"$domain/view/?id=$rows[fileIdName]\" target=\"_top\"><div class=\"picsList\">";
@@ -122,7 +170,11 @@
         echo "<img class=\"thumb\" src=\"../thumbnails/$rows[fileIdName]\" alt=\"$rows[fileIdName]\">";//print thumbnail
         echo "</div></a></td><td>";
         echo "<div class=\"starContainer\">";
-        echo rating($rows["avgrating"]);
+        if($_SESSION["userId"]<2){
+            echo rating($rows["lRating"],"l");
+            echo rating($rows["mRating"],"m");
+        }
+        echo rating($rows["avgrating"],"");
         echo "</div></td>";
         echo "<td><a href=\"$domain/files/$rows[fileIdName]\" target=\"_top\">$rows[fileIdName]</a></td>";//print filename
         echo "<td class=\"og\"><div class=\"changeName\">$rows[fileOgName]</div>";//print ogName
@@ -133,8 +185,10 @@
         echo "<a href=\"$domain/list?q=u%3A$rows[fileUserId]\" target=\"_top\">$rows[username]</a>";
         echo "</td>";
         echo "<td class=\"date\">".substr($rows["fCreated"],0,10)."</td>";
-        echo "<td><button class=\"deleteButton\">X</button></td>";
-        echo "</tr>";
+        echo "<td>";
+        if($_SESSION["userId"]<2 || $_SESSION["userId"]==$rows["fileUserId"])
+            echo "<button class=\"deleteButton\">X</button>";
+        echo "</td></tr>";
     }
     echo "</table>";
     if($q!="")
@@ -142,10 +196,16 @@
     echo '<div class="navButtons"><a href="'.$domain.'/list?p='.($p-1).$q.'" target="_top"><button>←</button></a><span> '.$p.' </span><a href="'.$domain.'/list?p='.($p+1).$q.'" target="_top"><button>→</button></a></div>';
     echo '</div>';
 
-function rating($i){
+function rating($i,$u){
     if($i=="")
         $i = 0;
-    return '<img class="star" src="img/'.$i.'.png">';
+    if($u!=""){
+        $u = $u."star userStar";
+    }
+    else{
+        $u = "star";
+    }
+    return '<img class="'.$u.'" src="img/'.$i.'.png">';
     /*
     switch($i){
         case 0: return  '<img class="star" src="img/gray.png">';

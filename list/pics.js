@@ -83,6 +83,8 @@ function sendRating(){
     let val = this.classList[2];
     this.style.zIndex = 100;
     $(this).siblings(".tempStar").remove();
+    
+        
     let star = $(this).siblings(".star");
     let tr = $(this).closest("tr")[0];
     let temp = this;
@@ -94,6 +96,8 @@ function sendRating(){
     },
         function(_response){
             $(star).attr("src","img/"+_response+".png");
+            if(USERID!=undefined)
+                $(star).siblings("."+USERID+"star").attr("src","img/"+val+".png");
         }
     );
 }

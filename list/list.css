@@ -42,3 +42,24 @@ th{
     width: 600px;
     overflow-wrap: break-word;
 }
+
+.lStar{
+    top:-32px;
+}
+
+.mStar{
+    top:32px;
+}
+
+.userStar{
+    position: absolute;
+    width: 32px;
+    align-self: center;
+    margin-left: 7px;
+    margin-top: -20px;
+    opacity: 0.3;
+}
+
+.userStar:hover{
+    opacity: 1;
+}
