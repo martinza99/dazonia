@@ -79,6 +79,9 @@ span{
 
 .picsList{
     position: relative;
+    display: flex;
+    align-items: center;
+    min-height: 110px;
 }
 
 .pageButtons{
