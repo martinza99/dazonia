@@ -12,12 +12,16 @@
     if(isset($_GET["random"]))
         $random = htmlspecialchars($_GET["random"]);
 
-    $sql = $conn->prepare("SELECT files.*,DATE_FORMAT(created,'%d-%m-%Y') AS fCreated, users.name AS username, AVG(userrating.rating) AS avgrating FROM files LEFT JOIN users on users.id = files.userId LEFT JOIN userrating on userrating.fileId = files.name WHERE files.name = ? GROUP BY files.id");
+    $sql = $conn->prepare("SELECT files.*,files.userId AS fileUserId, DATE_FORMAT(created,'%d-%m-%Y') AS fCreated, users.name AS username, AVG(userrating.rating) AS avgrating FROM files LEFT JOIN users on users.id = files.userId LEFT JOIN userrating on userrating.fileId = files.name WHERE files.name = ? GROUP BY files.id");
     $sql->bind_param("s",$id);
     $sql->execute();
     $result = mysqli_fetch_assoc($sql->get_result());
     $currID = $result["id"];
     $rating = $result["avgrating"];
+    $username = $result["username"];
+    $userId = $result["fileUserId"];
+    if($result["username"]==null)
+        $username = "deleted user[$userId]";
 
     if(isset($_GET["random"])){
         $sql = $conn->prepare("SELECT * FROM `files` ORDER BY rand() LIMIT 1");
@@ -81,6 +85,7 @@
             ".rating($rating)."
         </div>
         <a href=\"$domain\" target=\"_top\"><button>← Back</button></a>
+        <span>Uploaded by: <a href=\"$domain/list?q=u%3A$userId\">$username</a></span>
     </div>";
     if(isset($slide)){
         echo '
