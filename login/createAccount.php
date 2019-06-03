@@ -1,7 +1,7 @@
 <?php
     session_start();
     require_once "./sql.php";
-
+    
     if(!isset($_POST["token"]))
         die("No token!");
     if($_POST["password"]!=$_POST["password2"])

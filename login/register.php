@@ -3,6 +3,7 @@
         header("Location: .");
         die("No token!");
     }
+    require_once 'functions.php';
     require_once "../header.php";
 ?>
     <title>Register</title>

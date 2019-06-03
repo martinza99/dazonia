@@ -1,5 +1,6 @@
 <?php
     require_once '../login/sql.php';
+    require_once '../login/functions.php';
     $id = htmlspecialchars($_GET["id"]);
     $sibling = htmlspecialchars($_GET["s"]);
     $sql = $conn->prepare("SELECT * FROM files WHERE name = ? ORDER BY id ASC");

@@ -1,6 +1,7 @@
 <?php
     session_start();
     require_once '../login/sql.php';
+    require_once '../login/functions.php';
     if(isset($_GET["id"]))
         $id = htmlspecialchars($_GET["id"]);
     else{
