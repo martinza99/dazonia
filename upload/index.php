@@ -21,7 +21,7 @@
 
     require_once "../header.php";
     echo '
-        <title>Dazonia</title>
+        <title>Upload</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" type="text/css" media="screen" href="../main.css?'.$hash.'" />
         <script src="../main.js?'.$hash.'"></script>

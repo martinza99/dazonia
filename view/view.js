@@ -27,14 +27,14 @@ function swapHandle(data, status, _xhr){
 
 function swapPic(_xhr,_push){
     if(_xhr!="none"){
-        $(".pic").attr("src","http://dazonia.xyz/files/"+_xhr);
+        $(".pic").attr("src",location.origin + "/files/" +_xhr);
         let stateObj = {
             pic: _xhr
         };
         document.title = _xhr;
         if(_push){
-            history.pushState(stateObj, _xhr, "http://dazonia.xyz/view/?id="+xhr);
-            document.querySelector(".hiddenVal").value = "http://dazonia.xyz/files/"+_xhr;
+            history.pushState(stateObj, _xhr, location.origin + "/view/?id=" + xhr);
+            document.querySelector(".hiddenVal").value = location.origin + "/files/" +_xhr;
         }
     }
 }
