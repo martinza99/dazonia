@@ -18,17 +18,35 @@
     if($sql->get_result()->num_rows>0)
         die("Name already in use!");
 
-    $sql = $conn->prepare("DELETE FROM register WHERE token = ?");
+    $sql = $conn->prepare("SELECT * FROM register WHERE token = ?");
     $sql->bind_param("s",$token);
     $sql->execute();
-    if($conn->affected_rows==0)
+
+    if($sql->get_result()->num_rows==0)
         die("Wrong token!");
     else{
-        $sql = $conn->prepare("INSERT INTO users (name,password) VALUES (?,?)");
-        $sql->bind_param("ss",$username,$password);
-        $sql->execute();
+        $apiKey = generateRandomString(64);
+        $sql = $conn->prepare("INSERT INTO users (name,password,apiKey) VALUES (?,?,?)");
+        $sql->bind_param("sss",$username,$password,$apiKey);
+        
+        if(!$sql->execute()){
+            die("SQL error! - Please contact an admin.");
+        }
         $_SESSION["userId"] = $conn->insert_id;
         header("Location: $domain");
+        $sql = $conn->prepare("DELETE FROM register WHERE token = ?");
+        $sql->bind_param("s",$token);
+        $sql->execute();
         die("successfully created account");
     }
+
+function generateRandomString($length){//generates random strings
+    $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-_';
+    $charactersLength = strlen($characters);
+    $randomString = '';
+    for ($i = 0; $i < $length; $i++) {
+        $randomString .= $characters[rand(0, $charactersLength - 1)];
+    }
+    return $randomString;
+}
 ?>

@@ -1,13 +1,11 @@
 <?php
     session_start();
     require_once 'login/sql.php';
-    if(isset($_POST['username'])){
-        $username = htmlspecialchars($_POST['username']);
-        $password = htmlspecialchars($_POST['password']);
+    if(isset($_POST['key'])){
+        $apiKey = $_POST['key'];
         
-        if(!checkUser($username,$password)){
-            die('Wrong Username or Password <br><a href="'.$domain.'/login/" target="_top">');
-        }
+        if(!checkApiKey($apiKey))
+            die('Wrong API-Key');
     }
     else if(!isset($_SESSION["userId"])||!checkLogin($_SESSION["userId"])){
         header("Location: $domain/login/");
@@ -45,20 +43,19 @@
         insertName($filename,$name,$userId);
     if(!move_uploaded_file($temp_name, $location.$filename))
         die('No file uploaded!');
-    printLink($filename,$hideLink);
+    printLink($filename,$apiKey);
 
     if($skip){
         header("Location: $domain/view?id=$filename");
     }
 
-function printLink($filename,$hideLink){       
+function printLink($filename,$apiKey){       
     $actual_link = $GLOBALS["domain"]."/files/".$filename; //creates full URI
-    if(!$hideLink)//enable <a> tag
-        echo "<a href=\"$actual_link\" target=\"_top\">";
-    echo $actual_link;
-    if(!$hideLink){//closes <a> tag
-        echo '</a>';
+    if(isset($apiKey)){//print as <a> Link
+        echo $actual_link;
     }
+    else
+        echo "<a href=\"$actual_link\" target=\"_top\">$actual_link</a>";
 }
 
 function makeName(){
@@ -181,6 +178,19 @@ function checkUser($userId,$password){
     $result = $sql->get_result();
     $row = mysqli_fetch_assoc($result);
     if(password_verify($password, $row['password'])){
+        $GLOBALS['userId'] = $row['id'];
+        return true;
+    }
+}
+
+function checkApiKey($apiKey){
+    $conn = $GLOBALS['conn'];
+    $sql =  $sql = $conn->prepare("SELECT * FROM `users` WHERE `apiKey` = ?");
+    $sql->bind_param("s",$apiKey);
+    $sql->execute();
+    $result = $sql->get_result();
+    $row = mysqli_fetch_assoc($result);
+    if($result->num_rows>0){
         $GLOBALS['userId'] = $row['id'];
         return true;
     }

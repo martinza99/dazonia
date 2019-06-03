@@ -107,7 +107,6 @@ button{
 }
 
 .right{
-    position: absolute;
     right: 0;
     text-align: right;
 }
@@ -118,4 +117,8 @@ button{
     bottom: 6px;
     right: 6px;
     height: 30px;
+}
+
+.shareX{
+    width: fit-content;
 }
