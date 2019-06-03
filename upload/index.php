@@ -6,19 +6,6 @@
         header('Location: ../login/');
         die();
     }
-    $userId = $_SESSION["userId"];
-    $sql = $conn->prepare("SELECT `name` FROM `users` WHERE `id` = ?");
-    $sql->bind_param("s",$userId);
-    $sql->execute();
-    $result = $sql->get_result();
-    $rows = $result->fetch_assoc();
-    $username = $rows['name'];
-
-    $sql = $conn->prepare("SELECT COUNT(files.id) AS picCount FROM files");
-    $sql->execute();
-    $result = $sql->get_result();
-    $rows = $result->fetch_assoc();
-    $picCount = $rows["picCount"];
 
     require_once "../header.php";
     echo '
@@ -34,23 +21,8 @@
                 <input type="hidden" value="true" name="skip">
                 <input type="submit">
             </form>
-        </div>
-        <div class="bottom">';
-       if($userId<2){
-            echo '<a href="'.$domain.'/login/token.php" target="_top">create register token</a><br>';
-            echo '<a href="'.$domain.'/login/remote.php" target="_top">server settings</a><br>';
-            echo '<a href="'.$domain.'/login/users.php" target="_top">User List</a><br>';
-       }
-        echo '
-            <a href="'.$domain.'/login/api.php" target="_top">API Info</a><br>
-            <a href="'.$domain.'/list" target="_top">File-List</a><br>
-            <a href="'.$domain.'/login/logout.php" target="_top"><button>Logout</button></a><span> '.$username.'</span>
         </div>';
-        exec('git rev-parse --verify HEAD', $output);
-        echo "<div class=\"right bottom\">
-            <span><b>$picCount</b> pictures</span><br>
-            <span><a href=\"https://github.com/martinza99/dazonia/commit/$output[0]\" target=\"_top\"><b>".substr($output[0],0,6)."</b>".substr($output[0],6)."</a></span>
-        </div>";
+    require_once "../footer.php";
 ?>
 </body>
 </html>

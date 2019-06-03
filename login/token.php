@@ -70,7 +70,6 @@ function deleteFile(_btn) {
     $sql = $conn->prepare("SELECT * FROM register");
     $sql->execute();
     $result = $sql->get_result();
-    $conn->close();
     echo '<table border="1">';
     echo '<th><button onclick="createToken();">#</button></th><th>Token</th><th><button class="deleteAllButton">X</button></th></th>';
     while($rows = $result->fetch_assoc()){
@@ -81,7 +80,7 @@ function deleteFile(_btn) {
             echo "</tr>";
     }
     echo "</table>";
-    require_once "../footer.php";  
+    require_once "../footer.php";
 ?>
 </body>
 </html>

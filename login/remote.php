@@ -35,16 +35,7 @@
     </form>
     
 <?php
-    require_once "../footer.php";  
-    exec('git rev-parse --verify HEAD', $output);
-    echo "
-    <div class=\"right bottom\">
-        <form action=\"remote.php\" method=\"POST\" autocomplete=\"off\">
-            <input type=\"hidden\" name=\"action\" value=\"u\">
-            <input type=\"submit\" value=\"Update\">
-        </form>
-        <span><a href=\"https://github.com/martinza99/dazonia/commit/$output[0]\" target=\"_top\"><b>".substr($output[0],0,6)."</b>".substr($output[0],6)."</a></span>
-    </div>";
+    require_once "../footer.php"; 
 ?>
 
 </body>

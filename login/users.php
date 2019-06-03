@@ -54,7 +54,6 @@ function deleteFile(_btn) {
     $sql = $conn->prepare("SELECT * FROM users ORDER BY id");
     $sql->execute();
     $result = $sql->get_result();
-    $conn->close();
     echo '<table border="1">';
     echo '<th><a href="token.php" target="_top" style="color:#2196F3;"><button>#</a></th><th>Name</th><th><button class="deleteAllButton">X</button></th></th>';
     while($rows = $result->fetch_assoc()){
