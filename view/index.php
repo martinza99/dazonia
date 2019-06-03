@@ -99,9 +99,12 @@
 
 
 <?php
-function rating($i){
-    $i = round($i);
-
-    return '<img class="star" src="../list/img/'.$i.'.png">';
+function rating($rating){
+    if($rating=="")
+        $rating = 0;
+    if($rating - floor($rating) == 0.5)
+        $rating = floor($rating);
+    $rating = (int) $rating;// 5.000 -> 5
+    return '<img class="star" src="../list/img/'.$rating.'.png">';
 }
 ?>

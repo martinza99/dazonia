@@ -70,23 +70,13 @@
         <a href="'.$domain.'/?p='.($p+1).'" target="_top"><button>→</button></a>
     </div>';
 
-function rating($i){
-    $i = round($i);
-    if($i!=0)
-    return '<img class="starView" src="list/img/'.$i.'.png">';
-    /*
-    switch($i){
-        case 1: return  '<img class="starView" src="list/img/redGray.png">';
-        case 2: return  '<img class="starView" src="list/img/red.png">';
-        case 3: return  '<img class="starView" src="list/img/orangeGray.png">';
-        case 4: return  '<img class="starView" src="list/img/orange.png">';
-        case 5: return  '<img class="starView" src="list/img/greenGray.png">';
-        case 6: return  '<img class="starView" src="list/img/green.png">';
-        case 7: return  '<img class="starView" src="list/img/blueGray.png">';
-        case 8: return  '<img class="starView" src="list/img/blue.png">';
-        case 9: return  '<img class="starView" src="list/img/purpleGray.png">';
-        case 10: return '<img class="starView" src="list/img/purple.png">';
-    }*/
+function rating($rating){
+    if($rating==""||$rating==0)
+        return;
+    if($rating - floor($rating) == 0.5)
+        $rating = floor($rating);
+    $rating = (int) $rating;// 5.000 -> 5
+    return '<img class="starView" src="list/img/'.$rating.'.png">';
 }
 ?>
 </body>

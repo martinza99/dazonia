@@ -72,8 +72,7 @@
                 files.userId AS fileUserId,
                 DATE_FORMAT(files.created, '%d-%m-%Y') AS fCreated,
                 users.name AS username,
-                ROUND(AVG(userrating.rating),
-                0) AS avgrating
+               AVG(userrating.rating) AS avgrating
             FROM
                 files
             LEFT JOIN users ON users.id = files.userId
@@ -196,55 +195,19 @@
     echo '<div class="navButtons"><a href="'.$domain.'/list?p='.($p-1).$q.'" target="_top"><button>←</button></a><span> '.$p.' </span><a href="'.$domain.'/list?p='.($p+1).$q.'" target="_top"><button>→</button></a></div>';
     echo '</div>';
 
-function rating($i,$u){
-    if($i=="")
-        $i = 0;
+function rating($rating,$u){
+    if($rating=="")
+        $rating = 0;
     if($u!=""){
         $u = $u."star userStar";
     }
     else{
         $u = "star";
     }
-    return '<img class="'.$u.'" src="img/'.$i.'.png">';
-    /*
-    switch($i){
-        case 0: return  '<img class="star" src="img/gray.png">';
-        case 1: return  '<img class="star" src="img/redGray.png">';
-        case 2: return  '<img class="star" src="img/red.png">';
-        case 3: return  '<img class="star" src="img/orangeGray.png">';
-        case 4: return  '<img class="star" src="img/orange.png">';
-        case 5: return  '<img class="star" src="img/greenGray.png">';
-        case 6: return  '<img class="star" src="img/green.png">';
-        case 7: return  '<img class="star" src="img/blueGray.png">';
-        case 8: return  '<img class="star" src="img/blue.png">';
-        case 9: return  '<img class="star" src="img/purpleGray.png">';
-        case 10: return '<img class="star" src="img/purple.png">';
-    }*/
-    /*  print 5 stars
-    $xf = '<img class="star" src="img/gray.png">';
-    $rf = '<img class="star" src="img/red.png">';
-    $of = '<img class="star" src="img/orange.png">';
-    $gf = '<img class="star" src="img/green.png">';
-    $bf = '<img class="star" src="img/blue.png">';
-    $pf = '<img class="star" src="img/purple.png">';
-    $rg = '<img class="star" src="img/redGray.png">';
-    $og = '<img class="star" src="img/orangeGray.png">';
-    $gg = '<img class="star" src="img/greenGray.png">';
-    $bg = '<img class="star" src="img/blueGray.png">';
-    $pg = '<img class="star" src="img/purpleGray.png">';
-    switch($i){
-        case 0: return  "$xf$xf$xf$xf$xf";
-        case 1: return  "$rg$xf$xf$xf$xf";
-        case 2: return  "$rf$xf$xf$xf$xf";
-        case 3: return  "$of$og$xf$xf$xf";
-        case 4: return  "$of$of$xf$xf$xf";
-        case 5: return  "$gf$gf$gg$xf$xf";
-        case 6: return  "$gf$gf$gf$gf$xf";
-        case 7: return  "$bf$bf$bf$bg$xf";
-        case 8: return  "$bf$bf$bf$bf$xf";
-        case 9: return  "$pf$pf$pf$pf$pg";
-        case 10: return "$pf$pf$pf$pf$pf";
-    }*/
+    if($rating - floor($rating) == 0.5)
+        $rating = floor($rating);
+    $rating = (int) $rating;// 5.000 -> 5
+    return '<img class="'.$u.'" src="img/'.$rating.'.png">';
 }
 
 function filterSearch($find){

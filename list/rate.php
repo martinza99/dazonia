@@ -23,11 +23,14 @@
         }
     }   
     
-    $sql = $conn->prepare("SELECT ROUND(AVG(userrating.rating)) AS avgrating FROM userrating WHERE fileId = ?");
+    $sql = $conn->prepare("SELECT AVG(userrating.rating) AS avgrating FROM userrating WHERE fileId = ?");
     $sql->bind_param("s",$fileid);
     $sql->execute();
     $rating = mysqli_fetch_assoc($sql->get_result());
     if(!isset($rating["avgrating"]))
         $rating["avgrating"] = 0;
+    if($rating - floor($rating) == 0.5)
+        $rating = floor($rating);
+    $rating = (int) $rating;// 5.000 -> 5
     echo $rating["avgrating"];
 ?>
