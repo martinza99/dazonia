@@ -1,7 +1,5 @@
 <?php
-    require_once "sql.php";
 
-    $domain = "http://localhost/dazonia";
     exec('git rev-parse --verify HEAD', $output);//requires git
     $hash = substr($output[0],0,6);
     
