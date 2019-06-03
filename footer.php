@@ -34,7 +34,7 @@ echo "
 
     if($userId<2)//update server button
         echo "
-            <form action=\"$domain/remote.php\" method=\"POST\" autocomplete=\"off\">
+            <form action=\"$domain/login/remote.php\" method=\"POST\" autocomplete=\"off\">
                 <input type=\"hidden\" name=\"action\" value=\"u\">
                 <input type=\"submit\" value=\"Update\">
             </form>";
