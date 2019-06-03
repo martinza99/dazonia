@@ -31,10 +31,13 @@ echo "<div class=\"right bottom\">";
 
 echo "
 <div class=\"right bottom\">";
-
+$temp = "";
+if($_SERVER["SCRIPT_NAME"]=="/upload/index.php")
+    $temp = "login/";
+    echo $_SERVER["SCRIPT_NAME"];
     if($userId<2)//update server button
         echo "
-            <form action=\"$domain/login/remote.php\" method=\"POST\" autocomplete=\"off\">
+            <form action=\"".$temp."remote.php\" method=\"POST\" autocomplete=\"off\">
                 <input type=\"hidden\" name=\"action\" value=\"u\">
                 <input type=\"submit\" value=\"Update\">
             </form>";
