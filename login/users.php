@@ -55,7 +55,7 @@ function deleteFile(_btn) {
     $sql->execute();
     $result = $sql->get_result();
     echo '<table border="1">';
-    echo '<th><a href="token.php" target="_top" style="color:#2196F3;"><button>#</a></th><th>Name</th><th><button class="deleteAllButton">X</button></th></th>';
+    echo '<th><a href="'.$domain.'/login/token.php" target="_top" style="color:#2196F3;"><button>#</a></th><th>Name</th><th><button class="deleteAllButton">X</button></th></th>';
     while($rows = $result->fetch_assoc()){
             echo "<tr id=\"$rows[id]\">";
             echo "<td>$rows[id]</td>";
