@@ -66,7 +66,7 @@
     "Name": "Dazonia",
     "DestinationType": "ImageUploader",
     "RequestMethod": "POST",
-    "RequestURL": "'.$domain.'/upload.php",
+    "RequestURL": "'.$_SERVER["REQUEST_SCHEME"].'://'.$_SERVER["HTTP_HOST"].'/upload.php",
     "Body": "MultipartFormData",
     "Arguments": {
         "key": "'.$apiKey.'"
