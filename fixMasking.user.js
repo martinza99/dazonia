@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         dazoniaFixMaskin
 // @namespace    https://github.com/martinza99/dazonia
-// @version      0.1
+// @version      0.2
 // @description  fixes domain masking stuff
 // @author       martin
 // @match        http://dazonia.xyz/*
@@ -14,5 +14,5 @@
     link.rel = "shortcut icon";
     link.href = "https://ma.2ix.ch/favicon";
     link.type = "image/x-icon";
-    $("head").appendChild(link);
+    document.querySelector("head").appendChild(link);
 });
