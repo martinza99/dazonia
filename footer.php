@@ -23,7 +23,7 @@ if($userId<2){
 }
 echo '
     <a href="'.$domain.'/login/api.php" target="_top">API Info</a><br>
-    <a href="'.$domain.'/fixMasking.user.js" target="_blank">Userscript</a><br>
+    <a href="https://github.com/martinza99/dazonia/raw/master/fixMasking.user.js" target="_blank">Userscript</a><br>
     <a href="'.$domain.'/login/logout.php" target="_top"><button>Logout</button></a><span> '.$username.'</span>
 </div>';
 
