@@ -36,7 +36,6 @@
 
     if(isset($replace)){
         checkHash();
-        $filename .= "&new";
     }
 
     resize(180,'./thumbnails/'.$filename, $temp_name);
@@ -47,6 +46,8 @@
     printLink($filename,$apiKey);
 
     if($skip){
+        if(isset($replace))
+            $filename .= "&new";
         header("Location: $domain/view?id=$filename");
     }
 
