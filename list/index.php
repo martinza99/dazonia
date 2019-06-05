@@ -41,9 +41,9 @@
         array_push($paramValues,intval($searchUser));
         $paramType .= "i";
     }
-    $searchRating = intval(filterSearch("r:"));
-    if($searchRating!=""){//int(0) == ""
-        array_push($paramValues,$searchRating);
+    $searchRating = filterSearch("r:");
+    if($searchRating>0){
+        array_push($paramValues,intval($searchRating));
         $paramType .= "i";
     }
     while(substr($filter,0,1)==" ")
@@ -115,8 +115,10 @@
             mTable.mfileID = subtable.fileID
         WHERE
             fileIdName = fileIdName ";
-        if($searchRating!="")
+        if($searchRating > 0)
             $sql .= "AND avgrating >= ? ";
+        if($searchRating === "0")
+            $sql .= "AND avgrating IS NULL ";
         if($filter!="")
             $sql .= "AND fileOgName LIKE concat('%',?,'%') ";
         $sql .= "ORDER BY
