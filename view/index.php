@@ -34,14 +34,11 @@
     $result = mysqli_fetch_assoc($sql->get_result());
     $prev = $result["name"];
     
-
     $sql = $conn->prepare("SELECT * from files WHERE id > ? ORDER BY id ASC LIMIT 1");
     $sql->bind_param("i",$currID);
     $sql->execute();
     $result = mysqli_fetch_assoc($sql->get_result());
     $next = $result["name"];
- 
-    $conn->close();
 
     require_once "../header.php";
     ?>
@@ -53,7 +50,7 @@
 
 <body onkeydown="keyDown(event);">
     <?php
-    if($_SESSION["userId"]<2){
+    if(isset($_SESSION["userId"])&&$_SESSION["userId"]<2){
         echo '<div class="right top replace">';
         echo '<a href="javascript:document.querySelector(\'#fileUp\').click();">Replace Image</a>';
         echo '
@@ -94,7 +91,29 @@
         function next(){document.querySelector("#next").click(); }
         </script>';
     }
-    ?>
+    echo '
+    <div class="tagContainer bottom right">';
+
+    $sql = $conn->prepare("SELECT tags.id AS tagID, tags.name AS tagName FROM files LEFT JOIN tagfile ON tagfile.fileId = files.name INNER JOIN tags ON tags.id = tagfile.tagId WHERE files.name = ?");
+    $sql->bind_param("s",$id);
+    $sql->execute();
+    if($sql === false)
+        trigger_error('Wrong SQL: ' . $sql . ' Error: ' . $conn->errno . ' ' . $conn->error, E_USER_ERROR);
+    $result = $sql->get_result();
+    while($rows = $result->fetch_assoc()){
+        echo "<div class=\"sugg\"><a href=\"$domain/list?q=tag%3A$rows[tagID]\" target=\"_top\">$rows[tagName]</a>";
+        if(isset($_SESSION["userId"])&&$_SESSION["userId"]<2)
+            echo "<span class=\"deleteTag glyphicon glyphicon-remove\"></span>";
+        echo "</div>";
+    }
+    if(isset($_SESSION["userId"])&&$_SESSION["userId"]<2){
+        echo'
+        <input type="text" placeholder="add tag" style="width: 85%;" class="tagInput">
+        <button class="ogButton">+</button>
+        ';
+    }
+?>
+</div>
 </body>
 </html>
 

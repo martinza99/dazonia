@@ -4,6 +4,9 @@ $(function(){
     //$("#next").click(updatePrev);
     $("#fileUp").change(sendReplace);
     $(".star").click(openStars);
+    $(".ogButton").click(sendTag);
+    $(".tagInput").keydown(isEnter);
+    $(".deleteTag").click(deleteTag);
 });
 
 window.onpopstate = function(_event){
@@ -40,6 +43,8 @@ function swapPic(_xhr,_push){
 }
 
 function keyDown(_event){
+    if(document.querySelector(".tagInput")==document.activeElement)
+        return;
     switch(_event.key){
         case 'c':
             let hid = document.querySelector(".hiddenVal");
@@ -90,5 +95,58 @@ function sendRating(){
         function(_response){
             $(star).attr("src","../list/img/"+_response+".png");
         }
+    );
+}
+
+function sendTag(){
+    let tagName = $(".tagInput").val();
+    $(".tagInput").val("");
+    let urlParams = new URLSearchParams(window.location.search);
+    let picId = urlParams.get("id");
+    let temp = this;
+    $.post("../list/tag.php",
+    {
+        id: picId,
+        tag: tagName,
+        action: "c"
+    },
+    function(_response){
+        let container = document.createElement("div");
+        container.classList = "sugg";
+        
+        let link = document.createElement("a");
+        link.href = location.origin + "/list?q=tag%3A"+ _response;
+        link.target = "_top";
+        link.innerText = tagName;
+        container.appendChild(link);
+
+        let delBut = document.createElement("span");
+        delBut.classList = "deleteTag glyphicon glyphicon-remove";
+        delBut.addEventListener("click",sendTag);
+        container.appendChild(delBut);
+
+        let parent = document.querySelector(".tagContainer");//insert as 2nd last element
+        parent.insertBefore(container,parent.childNodes[parent.childElementCount-2]);
+    }
+    );
+}
+
+function isEnter(_event){
+    if(_event.key == "Enter")
+        sendTag();
+}
+
+function deleteTag() {
+    var tr = $(this).closest(".sugg");    
+    var tagName = $(this).closest(".sugg").children()[0].text;
+    let urlParams = new URLSearchParams(window.location.search);
+    let picId = urlParams.get("id");
+    $.post("../list/tag.php",
+    {
+        tag: tagName,
+        id: picId,
+        action: "d"
+    },
+        function(){tr.remove();}
     );
 }
