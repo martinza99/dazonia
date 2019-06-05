@@ -67,7 +67,7 @@
 
     echo "<input value=\"$domain/files/$id\" class=\"hiddenVal\" style=\"opacity:0; height=0px;\" readonly>";
     if(isset($_GET["new"]))
-        echo "<script>cache.delete('../files/$id');cache.delete('../thumbnails/$id');</script>";
+        $id .= "?new";
     echo "
         <div id=\"picDiv\" class=\"center\">
             <a href=\"$domain/view/?id=$next\" target=\"_top\"><img id=\"prev\" class=\"floatLink pic\" src=\"../files/$id\"></a>
