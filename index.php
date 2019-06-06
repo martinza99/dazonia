@@ -25,7 +25,6 @@
     require_once "header.php";
 ?>
     <title>sideView</title>
-    <link rel="stylesheet" type="text/css" media="screen" href="main.css<?php echo "?$hash" ?>" />
 </head>
 <body>
 <?php

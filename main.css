@@ -7,6 +7,12 @@ input{
     cursor: url(cursor/text.cur),text;
 }
 
+.navbar{
+    z-index: 100;
+    position: absolute;
+    width: 100%;
+}
+
 #text{
     color: white;
     background-color: #1e1e1e
@@ -121,4 +127,12 @@ button{
 
 .shareX{
     width: fit-content;
+}
+
+/* mobile css */
+@media screen and (max-width: 768px){
+.potato{
+    margin-left: 0;
+    margin-right: 0;
+}
 }

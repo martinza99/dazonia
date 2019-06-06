@@ -25,7 +25,6 @@
 
     <title>Remote Server Settings</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" media="screen" href="../main.css<?php echo "?$hash" ?>" />
 </head>
 <body>
     <form action="remote.php" method="POST" autocomplete="off">

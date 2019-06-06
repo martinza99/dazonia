@@ -23,7 +23,6 @@
     require_once "../header.php";
 ?>	
     <title>File List</title>
-    <link rel="stylesheet" type="text/css" media="screen" href="../main.css<?php echo "?$hash" ?>" />
     <link rel="stylesheet" type="text/css" media="screen" href="list.css<?php echo "?$hash" ?>" />
     <script src="pics.js<?php echo "?$hash" ?>"></script>
 </head>
