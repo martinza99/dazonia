@@ -10,7 +10,7 @@ $(function(){
         }
     });
 
-    $(".changeName").click(swapToInput);
+    $(".changeName").dblclick(swapToInput);
     $(".updateName").click(updateName);
     $(".changeNameInput").keydown(isEnter);
     $(".star").click(openStars);
