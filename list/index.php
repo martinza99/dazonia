@@ -18,8 +18,7 @@
         $p = intval(htmlspecialchars($_GET["p"]));
     if($p<1)
         $p = 1;
-    $lowerLimit = 100 * ($p-1);
-    $upperLimit = $lowerLimit + 100;
+    $offset = 100 * ($p-1);
     require_once "../header.php";
 ?>	
     <title>File List</title>
@@ -55,9 +54,8 @@
         }
     if(isset($_GET["debug"]))
         var_dump($paramValues);
-    array_push($paramValues,$lowerLimit);
-    array_push($paramValues,$upperLimit);
-    $paramType .= "ii";
+    array_push($paramValues,$offset);
+    $paramType .= "i";
     {$sql = "
         SELECT
             subtable.*,
@@ -67,7 +65,7 @@
             (
             SELECT
                 files.id AS fileID,
-                files.name AS fileIdName,
+                files.name AS fileName,
                 files.ogName AS fileOgName,
                 files.userId AS fileUserId,
                 DATE_FORMAT(files.created, '%d-%m-%Y') AS fCreated,
@@ -76,7 +74,7 @@
             FROM
                 files
             LEFT JOIN users ON users.id = files.userId
-            LEFT JOIN userrating ON userrating.fileId = files.name
+            LEFT JOIN userrating ON userrating.fileId = files.id
             WHERE
                 files.name = files.name ";
             if($searchFile!="")
@@ -93,7 +91,7 @@
             FROM
                 files
             LEFT JOIN users ON users.id = files.userId
-            LEFT JOIN userrating ON userrating.fileId = files.name
+            LEFT JOIN userrating ON userrating.fileId = files.id
             WHERE
                 userrating.userID = 0
         ) AS lTable
@@ -106,14 +104,14 @@
             FROM
                 files
             LEFT JOIN users ON users.id = files.userId
-            LEFT JOIN userrating ON userrating.fileId = files.name
+            LEFT JOIN userrating ON userrating.fileId = files.id
             WHERE
                 userrating.userID = 1
         ) AS mTable
         ON
             mTable.mfileID = subtable.fileID
         WHERE
-            fileIdName = fileIdName ";
+            fileName = fileName ";
         if($searchRating > 0)
             $sql .= "AND avgrating >= ? ";
         if($searchRating === "0")
@@ -123,7 +121,7 @@
         $sql .= "ORDER BY
             subtable.fileID
         DESC
-        LIMIT ?,?";}
+        LIMIT 100 OFFSET ?";}
     $sql = $conn->prepare($sql);
     if($sql === false)
         trigger_error('Wrong SQL: ' . $sql . ' Error: ' . $conn->errno . ' ' . $conn->error, E_USER_ERROR);
@@ -164,11 +162,11 @@
     }
     echo "</th></tr>";
     while($rows = $result->fetch_assoc()){
-        echo "<tr id=\"$rows[fileIdName]\">";
-        echo "<td><a href=\"$domain/view/?id=$rows[fileIdName]\" target=\"_top\"><div class=\"picsList\">";
-            if(substr($rows["fileIdName"],-4)==".gif")
+        echo "<tr id=\"$rows[fileName]\">";
+        echo "<td><a href=\"$domain/view/?id=$rows[fileName]\" target=\"_top\"><div class=\"picsList\">";
+            if(substr($rows["fileName"],-4)==".gif")
             echo '<button class="thumbButton listView">►</button>';
-        echo "<img class=\"thumb\" src=\"../thumbnails/$rows[fileIdName]\" alt=\"$rows[fileIdName]\">";//print thumbnail
+        echo "<img class=\"thumb\" src=\"../thumbnails/$rows[fileName]\" alt=\"$rows[fileName]\">";//print thumbnail
         echo "</div></a></td><td>";
         echo "<div class=\"starContainer\">";
         if($_SESSION["userId"]<2){
@@ -177,7 +175,7 @@
         }
         echo rating($rows["avgrating"],"");
         echo "</div></td>";
-        echo "<td><a href=\"$domain/files/$rows[fileIdName]\" target=\"_top\">$rows[fileIdName]</a></td>";//print filename
+        echo "<td><a href=\"$domain/files/$rows[fileName]\" target=\"_top\">$rows[fileName]</a></td>";//print filename
         echo "<td class=\"og\"><div class=\"changeName\">$rows[fileOgName]</div>";//print ogName
         echo "<div class=\"changeNameInput\"><input type=\"text\" value=\"$rows[fileOgName]\"><button class=\"updateName\">Update</button></div></td>";//print input
         echo "<td>";

@@ -9,7 +9,7 @@
 
     $userId = $_SESSION["userId"];
     $sql = $conn->prepare("SELECT users.* FROM `users` WHERE `id` = ?");
-    $sql->bind_param("s",$userId);
+    $sql->bind_param("i",$userId);
     $sql->execute();
     $result = $sql->get_result();
     $rows = $result->fetch_assoc();
@@ -43,23 +43,22 @@
             <br><br>
             <span>ShareX custom uploader config:</span>
             <button onclick="copyKey(\'shareX\');" style="height:22px;"><i class="glyphicon glyphicon-copy"></i></button>
-            <button onclick="copyKey(\'shareX\');" style="height:22px;"  type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample"><i class="glyphicon glyphicon-question-sign"></i></button>
-            <div class="collapse" id="collapseExample">
-            <div class="card card-body shareXguide" id="text">
-                <ul>
-                    <li>Get ShareX on <a href="https://getsharex.com/" target="_blank">https://getsharex.com/</a></li>
-                    <li>Click the clipboard button</li>
-                    <li>Open ShareX</li>
-                    <li>Go to <kbd>Destinations</kbd> → <kbd>Image uploader</kbd></li>
-                    <li>Click <kbd>Custom image uploader</kbd></li>
-                    <li>Go to <kbd>Destinations</kbd> → <kbd>Custom uploader settings...</kbd></li>
-                    <li>Click <kbd>Import</kbd></li>
-                    <li>Click <kbd>From Clipboard...</kbd></li>
-                    <li>Right below that choose <kbd>Dazonia</kbd> as <kbd>Image uploader</kbd></li>
-                </ul>
+            <button onclick="copyKey(\'shareX\');" style="height:22px;"  type="button" data-toggle="collapse" data-target="#collapseGuide" aria-expanded="false" aria-controls="collapseExample"><i class="glyphicon glyphicon-question-sign"></i></button>
+            <div class="collapse" id="collapseGuide">
+                <div class="card card-body shareXguide" id="text">
+                    <ul>
+                        <li>Get ShareX on <a href="https://getsharex.com/" target="_blank">https://getsharex.com/</a></li>
+                        <li>Click the clipboard button</li>
+                        <li>Open ShareX</li>
+                        <li>Go to <kbd>Destinations</kbd> → <kbd>Image uploader</kbd></li>
+                        <li>Click <kbd>Custom image uploader</kbd></li>
+                        <li>Go to <kbd>Destinations</kbd> → <kbd>Custom uploader settings...</kbd></li>
+                        <li>Click <kbd>Import</kbd></li>
+                        <li>Click <kbd>From Clipboard...</kbd></li>
+                        <li>Right below that choose <kbd>Dazonia</kbd> as <kbd>Image uploader</kbd></li>
+                    </ul>
+                </div>
             </div>
-</div>
-        </div>
         <div>
 <pre class="shareX"><code>{
     "Version": "12.4.1",

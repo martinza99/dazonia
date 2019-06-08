@@ -111,6 +111,8 @@ function sendTag(){
         action: "c"
     },
     function(_response){
+        if(_response=="error")
+            return;
         let container = document.createElement("div");
         container.classList = "sugg";
         
@@ -122,7 +124,7 @@ function sendTag(){
 
         let delBut = document.createElement("span");
         delBut.classList = "deleteTag glyphicon glyphicon-remove";
-        delBut.addEventListener("click",sendTag);
+        delBut.addEventListener("click",deleteTag);
         container.appendChild(delBut);
 
         let parent = document.querySelector(".tagContainer");//insert as 2nd last element

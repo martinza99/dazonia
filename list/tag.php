@@ -8,12 +8,17 @@
     if($_SESSION["userId"]>1)
         die("Admin only");
 
-    $fileid = htmlspecialchars($_POST['id']);
-    $tagName = htmlspecialchars($_POST['tag']);
+    $fileName = htmlspecialchars($_POST['id']);
+    $tagName = trim(htmlspecialchars($_POST['tag']));
 
-    if(empty($tagName)||empty($fileid))
+    $sql = $conn->prepare("SELECT id FROM files WHERE name = ?");
+    $sql->bind_param("s",$fileName);
+    $sql->execute();
+    $fileId = mysqli_fetch_assoc($sql->get_result())["id"];
+
+    if(empty($tagName)||empty($fileName))
         die("error");
-
+    
     //get tag id
     $sql = $conn->prepare("SELECT * FROM tags WHERE LOWER(name) = LOWER(?)");
     $sql->bind_param('s', $tagName);
@@ -29,14 +34,14 @@
     switch($_POST['action']){
     case 'c'://create tag
         $sql = $conn->prepare("SELECT *  FROM tagfile WHERE tagId = ? AND fileId = ?");
-        $sql->bind_param('is', $tagId, $fileid);
+        $sql->bind_param('ii', $tagId, $fileId);
         $sql->execute();
 
         $linkId = mysqli_fetch_assoc($sql->get_result())["tagId"];
 
         if(!isset($linkId)){
             $sql = $conn->prepare("INSERT INTO tagfile (tagId,fileId) VALUES (?,?)");
-            $sql->bind_param('is', $tagId, $fileid);
+            $sql->bind_param('ii', $tagId, $fileId);
             $sql->execute();
         }
         echo $tagId;
@@ -44,7 +49,7 @@
         
     case 'd'://delete tag
         $sql = $conn->prepare("DELETE FROM tagfile WHERE tagId = ? AND fileId = ?");
-        $sql->bind_param('is', $tagId, $fileid);
+        $sql->bind_param('ii', $tagId, $fileId);
         $sql->execute();
         break;
     }
