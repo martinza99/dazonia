@@ -1,6 +1,11 @@
 body{
     background: #1e1e1e;
     cursor: url(cursor/default.cur),default;
+    color: white;
+}
+
+input[type=button], input[type=reset], input[type=submit]{
+    color: black;
 }
 
 input{
@@ -14,17 +19,12 @@ input{
 }
 
 #text{
-    color: white;
     background-color: #1e1e1e
 }
 
 a{
     color: white;
     cursor: url(cursor/pointer.cur),pointer;
-}
-
-td,th{
-    color: white;
 }
 
 button{
@@ -50,10 +50,6 @@ button{
     z-index: 100;
     bottom: 0px;
     position: fixed;
-}
-
-span{
-    color:white;
 }
 
 .floatRight{
@@ -127,6 +123,20 @@ button{
 
 .shareX{
     width: fit-content;
+}
+
+.dropdown-menu-inverse{
+    background-color: #1f1d1d;
+    border: 1px #1462a0 solid;
+}
+
+.dropdown-menu>li>a{
+    color: white;
+}
+
+.dropdown-menu>li>a:focus, .dropdown-menu>li>a:hover{
+    background: #29689a;
+    color: white;
 }
 
 /* mobile css */
