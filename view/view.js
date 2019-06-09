@@ -117,7 +117,7 @@ function sendTag(){
         container.classList = "sugg";
         
         let link = document.createElement("a");
-        link.href = location.origin + "/list?q=tag%3A"+ _response;
+        link.href = location.origin + "/list?q=tag%3A"+tagName;
         link.target = "_top";
         link.innerText = tagName;
         container.appendChild(link);

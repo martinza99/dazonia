@@ -104,7 +104,7 @@
         trigger_error('Wrong SQL: ' . $sql . ' Error: ' . $conn->errno . ' ' . $conn->error, E_USER_ERROR);
     $result = $sql->get_result();
     while($rows = $result->fetch_assoc()){
-        echo "<div class=\"sugg\"><a href=\"$domain/list?q=tag%3A$rows[tagID]\" target=\"_top\">$rows[tagName]</a>";
+        echo "<div class=\"sugg\"><a href=\"$domain/list?q=tag%3A$rows[tagName]\" target=\"_top\">$rows[tagName]</a>";
         if(isset($_SESSION["userId"])&&$_SESSION["userId"]<2)
             echo "<span class=\"deleteTag glyphicon glyphicon-remove\"></span>";
         echo "</div>";

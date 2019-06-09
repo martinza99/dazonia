@@ -4,7 +4,7 @@ body{
     color: white;
 }
 
-input[type=button], input[type=reset], input[type=submit]{
+input[type=button], input[type=reset], input[type=submit], textarea{
     color: black;
 }
 

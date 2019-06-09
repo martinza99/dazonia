@@ -44,6 +44,11 @@
         array_push($paramValues,intval($searchRating));
         $paramType .= "i";
     }
+    $searchTag = filterSearch("tag:");
+    if($searchTag!=""){
+        array_push($paramValues,$searchTag);
+        $paramType .= "s";
+    }
     while(substr($filter,0,1)==" ")
         $filter = substr($filter,1);
     while(substr($filter,-1,1)==" ")
@@ -70,11 +75,14 @@
                 files.userId AS fileUserId,
                 DATE_FORMAT(files.created, '%d-%m-%Y') AS fCreated,
                 users.name AS username,
-               AVG(userrating.rating) AS avgrating
+                AVG(userrating.rating) AS avgrating,
+                tags.name AS tagname
             FROM
                 files
             LEFT JOIN users ON users.id = files.userId
             LEFT JOIN userrating ON userrating.fileId = files.id
+            LEFT JOIN tagFile ON tagfile.fileId = files.id
+            LEFT JOIN tags ON tags.id = tagfile.tagId
             WHERE
                 files.name = files.name ";
             if($searchFile!="")
@@ -116,6 +124,8 @@
             $sql .= "AND avgrating >= ? ";
         if($searchRating === "0")
             $sql .= "AND avgrating IS NULL ";
+        if($searchTag!="")
+            $sql.="AND tagname = ? "; 
         if($filter!="")
             $sql .= "AND fileOgName LIKE concat('%',?,'%') ";
         $sql .= "ORDER BY
@@ -125,7 +135,7 @@
     $sql = $conn->prepare($sql);
     if($sql === false)
         trigger_error('Wrong SQL: ' . $sql . ' Error: ' . $conn->errno . ' ' . $conn->error, E_USER_ERROR);
-    
+
     $a_params = array();
     foreach ($paramValues as $key => $value) {
         $a_params[$key] = &$paramValues[$key];
