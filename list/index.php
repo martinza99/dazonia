@@ -29,43 +29,36 @@
 <?php
     $paramValues = array();
     $paramType = "";
-
-    $searchTag = filterSearch("tag:");
-    if($searchTag!=""){
-        array_push($paramValues,$searchTag);
-        $paramType .= "s";
-    }
-
     $searchFile = filterSearch("file:");
     if($searchFile!=""){
         array_push($paramValues,$searchFile);
         $paramType .= "s";
     }
-
     $searchUser = filterSearch("u:");
     if($searchUser!=""){
         array_push($paramValues,intval($searchUser));
         $paramType .= "i";
     }
-
     $searchRating = filterSearch("r:");
     if($searchRating>0){
         array_push($paramValues,intval($searchRating));
         $paramType .= "i";
     }
-
+    $searchTag = filterSearch("tag:");
+    if($searchTag!=""){
+        array_push($paramValues,$searchTag);
+        $paramType .= "s";
+    }
     while(substr($filter,0,1)==" ")
         $filter = substr($filter,1);
     while(substr($filter,-1,1)==" ")
-    $filter = substr($filter,0,-1);
-    if($filter!=""){
-        array_push($paramValues,$filter);
-        $paramType .= "s";
-    }
-    if(isset($_GET["debug"])){
+        $filter = substr($filter,0,-1);
+        if($filter!=""){
+            array_push($paramValues,$filter);
+            $paramType .= "s";
+        }
+    if(isset($_GET["debug"]))
         var_dump($paramValues);
-    }
-    
     array_push($paramValues,$offset);
     $paramType .= "i";
     {$sql = "
@@ -92,8 +85,6 @@
             LEFT JOIN tags ON tags.id = tagfile.tagId
             WHERE
                 files.name = files.name ";
-            if($searchTag!="")
-                $sql.="AND tags.name = ? "; 
             if($searchFile!="")
                 $sql.="AND files.name LIKE concat('%',?,'%') "; 
             if($searchUser!="")
@@ -133,6 +124,8 @@
             $sql .= "AND avgrating >= ? ";
         if($searchRating === "0")
             $sql .= "AND avgrating IS NULL ";
+        if($searchTag!="")
+            $sql.="AND tagname = ? "; 
         if($filter!="")
             $sql .= "AND fileOgName LIKE concat('%',?,'%') ";
         $sql .= "ORDER BY
@@ -180,7 +173,7 @@
     echo "</th></tr>";
     while($rows = $result->fetch_assoc()){
         echo "<tr id=\"$rows[fileName]\">";
-        echo "<td><a href=\"$domain/view/?id=$rows[fileName]$q\" target=\"_top\"><div class=\"picsList\">";
+        echo "<td><a href=\"$domain/view/?id=$rows[fileName]\" target=\"_top\"><div class=\"picsList\">";
             if(substr($rows["fileName"],-4)==".gif")
             echo '<button class="thumbButton listView">►</button>';
         echo "<img class=\"thumb\" src=\"../thumbnails/$rows[fileName]\" alt=\"$rows[fileName]\">";//print thumbnail
@@ -206,8 +199,6 @@
             echo "<button class=\"deleteButton\">X</button>";
         echo "</td></tr>";
     }
-    if($result->num_rows==0)
-        echo "<tr><td>No Results</td></tr>";
     echo "</table>";
     if($q!="")
         $q = "&q=".$q;
