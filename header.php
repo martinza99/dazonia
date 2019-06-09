@@ -43,7 +43,7 @@ echo "
         </ul>
         <form class=\"navbar-form navbar-left\" action=\"$domain/list/search.php\" method=\"GET\" autocomplete=\"off\">
         <div class=\"input-group\">
-            <input type=\"search\" class=\"form-control\" placeholder=\"Search\" name=\"q\" style=\"background-color: #04013c; border-color: #1e1b7b;\" value=\"$filter\">
+        <input type=\"search\" class=\"form-control disableHotkeys\" placeholder=\"Search\" name=\"q\" style=\"background-color: #04013c; border-color: #1e1b7b;\" value=\"$filter\">
             <div class=\"input-group-btn\">
             <button class=\"btn btn-default\" type=\"submit\" style=\"height: 34px; background-color: #131a63; border-color: #1e1b7b;\">
                 <i class=\"glyphicon glyphicon-search\" style=\"color: #c5c0c0;\"></i>
