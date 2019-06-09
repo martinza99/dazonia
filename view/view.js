@@ -43,7 +43,7 @@ function swapPic(_xhr,_push){
 }
 
 function keyDown(_event){
-    if(document.querySelector(".tagInput")==document.activeElement)
+    if(document.activeElement.classList.contains("disableHotkey"))
         return;
     switch(_event.key){
         case 'c':
