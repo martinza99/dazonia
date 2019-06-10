@@ -198,15 +198,19 @@
     if(isset($_GET["new"]))
         $fileName .= "?new";
     echo "
-        <div id=\"picDiv\" class=\"center\">
-        <a href=\"$domain/view/?id=$next$q\" target=\"_top\"><img id=\"prev\" class=\"floatLink pic\" src=\"../files/$fileName\"></a>
-        <a href=\"$domain/view/?id=$prev$q";
+        <div id=\"picDiv\" class=\"center\">";
+        if($next!="")
+            echo "<a href=\"$domain/view/?id=$next$q\" target=\"_top\"><img id=\"prev\" class=\"floatLink pic\" src=\"../files/$fileName\"></a>";
+        if($prev!=""){
+        echo "<a href=\"$domain/view/?id=$prev$q";
             if(isset($slide))
                 echo "&slide=$slide";
             if(isset($random))
                 echo "&random";
-            echo "\" target=\"_top\"><img id=\"next\" class=\"floatLink pic\" src=\"../files/$fileName\"></a>
-            <img id=\"centerImage\" class=\"pic\" src=\"../files/$fileName\">
+            echo "\" target=\"_top\">";
+        }
+        echo "<img id=\"next\" class=\"floatLink pic\" src=\"../files/$fileName\"></a>
+        <img id=\"centerImage\" class=\"pic\" src=\"../files/$fileName\">
         </div>
     ";
     echo "
