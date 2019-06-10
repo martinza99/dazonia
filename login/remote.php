@@ -22,6 +22,10 @@
                 exec('git pull https://github.com/martinza99/dazonia.git master');
                 header("Location: remote.php");
                 break;
+            case "b":
+                exec('git pull https://github.com/martinza99/dazonia.git beta');
+                header("Location: remote.php");
+                break;
             case "cmd":
                 exec($sql,$outputExec);
                 $result = $outputExec[0];
@@ -45,12 +49,31 @@
         <input type="button" value="Run CMD" onclick="setForm('cmd');">
         <?php if($action=="sql")
             echo '<button type="button" data-toggle="collapse" data-target="#collapseRemote" aria-expanded="false" aria-controls="collapseRemote">mysqli Object</button>';
+            echo '<button type="button" onclick="copyKey(\'csv\');">CSV <i class="glyphicon glyphicon-copy"></i></button>';
         ?>
     </form>
     <script>
         function setForm(_value){
             document.querySelector(".formAction").value = _value;
             document.querySelector(".queryForm").submit();
+        }
+
+        function copyKey(_target){
+            let node = document.querySelector("."+_target);
+            if (document.body.createTextRange) {
+                const range = document.body.createTextRange();
+                range.moveToElementText(node);
+                range.select();
+            } else if (window.getSelection) {
+                const selection = window.getSelection();
+                const range = document.createRange();
+                range.selectNodeContents(node);
+                selection.removeAllRanges();
+                selection.addRange(range);
+                document.execCommand("copy");
+                selection.removeAllRanges();
+            } else
+                console.warn("Could not select text in node: Unsupported browser.");
         }
     </script>
     <div class="result" style="color:black;">
@@ -67,24 +90,35 @@
                 print_r($conn);
                 echo "</pre>
                 </div>
-                    </div>";
+                </div>";
                 if(gettype($result)!="boolean"){
+                    $csv = "";
+                    $names = $result->fetch_assoc();//column names
                     echo "<table border=\"1\">";
-                    $names = $result->fetch_assoc();
-                        echo "<tr>";
-                        foreach($names as $key => $value)
-                            echo "<th>$key</th>";
-                        echo "</tr><tr>";
-                        foreach($names as $value)
-                            echo "<td>$value</td>";
-                        echo "<tr>";
+                    echo "<tr>";
+                    foreach($names as $key => $value){
+                        echo "<th>$key</th>";
+                    }
+                    echo "</tr><tr>";
+                    foreach($names as $value){
+    
+                        echo "<td>$value</td>";
+                        $csv .= "\"$value\",";
+                    }
+                    $csv = rtrim($csv,',');
+                    echo "<tr>";
                     while($rows = $result->fetch_assoc()){
                         echo "<tr>";
-                        foreach($rows as $value)
+                        $csv .= "\n";
+                        foreach($rows as $value){
                             echo "<td>$value</td>";
+                            $csv .= "\"$value\",";
+                        }
+                        $csv = rtrim($csv,',');
                         echo "<tr>";
                     }
                     echo "</table>";
+                    echo '<pre class="csv" style="z-index:-1000;position:absolute; opacity:0; top:0;">'.$csv.'</pre>';
                 }
             }
         ?>
