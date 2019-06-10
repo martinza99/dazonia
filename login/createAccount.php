@@ -8,6 +8,13 @@
         die("Passwords don't match!");
         
     $token = $_POST["token"];
+    $sql = $conn->prepare("SELECT * FROM register WHERE token = ?");
+    $sql->bind_param("s",$token);
+    $sql->execute();
+
+    if($sql->get_result()->num_rows==0)
+        die("Wrong token!");
+
     $username = htmlspecialchars($_POST["username"]);
     $password =  password_hash(htmlspecialchars($_POST["password"]),PASSWORD_DEFAULT);
 
@@ -18,12 +25,6 @@
     if($sql->get_result()->num_rows>0)
         die("Name already in use!");
 
-    $sql = $conn->prepare("SELECT * FROM register WHERE token = ?");
-    $sql->bind_param("s",$token);
-    $sql->execute();
-
-    if($sql->get_result()->num_rows==0)
-        die("Wrong token!");
     else{
         $apiKey = generateRandomString(64);
         $sql = $conn->prepare("INSERT INTO users (name,password,apiKey) VALUES (?,?,?)");
