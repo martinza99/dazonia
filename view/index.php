@@ -209,7 +209,7 @@
             ".rating($rating)."
         </div>
         <a href=\"$domain\" target=\"_top\"><button>← Back</button></a>
-        <span>Uploaded by: <a href=\"$domain/list?q=u%3A$userId\">$username</a></span>
+        <span>Uploaded by: <a href=\"$domain/list?q=u%3A$userId\" target=\"_top\">$username</a></span>
     </div>";
     if(isset($slide)){
         echo '
