@@ -47,9 +47,10 @@
         <textarea name="sql" cols="50" rows="5" placeholder="query"><?php if(!empty($action))echo $sql ?></textarea><br>
         <input type="button" value="Submit SQL" onclick="setForm('sql');">
         <input type="button" value="Run CMD" onclick="setForm('cmd');">
-        <?php if($action=="sql")
+        <?php if($action=="sql"){
             echo '<button type="button" data-toggle="collapse" data-target="#collapseRemote" aria-expanded="false" aria-controls="collapseRemote">mysqli Object</button>';
             echo '<button type="button" onclick="copyKey(\'csv\');">CSV <i class="glyphicon glyphicon-copy"></i></button>';
+        }
         ?>
     </form>
     <script>
