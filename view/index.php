@@ -165,6 +165,10 @@
         $prev = "";
     if(!isset($next))
         $next = "";
+    if(!isset($_SESSION["userId"])){
+        $next = $fileName;
+        $prev = $fileName;
+    }
 
     require_once "../header.php";
 
@@ -195,8 +199,8 @@
         $fileName .= "?new";
     echo "
         <div id=\"picDiv\" class=\"center\">
-            <a href=\"$domain/view/?id=$next$q\" target=\"_top\"><img id=\"prev\" class=\"floatLink pic\" src=\"../files/$fileName\"></a>
-            <a href=\"$domain/view/?id=$prev$q";
+        <a href=\"$domain/view/?id=$next$q\" target=\"_top\"><img id=\"prev\" class=\"floatLink pic\" src=\"../files/$fileName\"></a>
+        <a href=\"$domain/view/?id=$prev$q";
             if(isset($slide))
                 echo "&slide=$slide";
             if(isset($random))
@@ -231,10 +235,12 @@
     while($rows = $result->fetch_assoc()){
         echo "<div class=\"sugg\"><a href=\"$domain/list?q=tag%3A$rows[tagName]\" target=\"_top\">$rows[tagName]</a>";
         // if(isset($_SESSION["userId"])&&$_SESSION["userId"]<2)//if user is admin
+        if(isset($_SESSION["userId"]))
             echo "<span class=\"deleteTag glyphicon glyphicon-remove\"></span>";
         echo "</div>";
     }
     // if(isset($_SESSION["userId"])&&$_SESSION["userId"]<2){//if user is admin
+    if(isset($_SESSION["userId"]))
         echo'
         <input type="text" placeholder="add tag" style="width: 85%;" class="tagInput disableHotkeys">
         <button class="ogButton">+</button>

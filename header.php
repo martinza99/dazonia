@@ -29,7 +29,7 @@ echo "
         <ul class=\"nav navbar-nav\">
             <li><a href=\"$domain/list\" target=\"_top\">List View</a></li>
             <li><a href=\"$domain/tags\" target=\"_top\">Tags</a></li>
-            <li><a href=\"$domain#\" target=\"_top\">Prof Pics</a></li>
+            <li><a href=\"$domain/list/?q=tag%3Aprofile_picture\" target=\"_top\">Prof Pics</a></li>
             <li class=\"dropdown\">
             <a class=\"dropdown-toggle\" data-toggle=\"dropdown\" href=\"$domain#\">Mode
             <span class=\"caret\"></span></a>
