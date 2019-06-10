@@ -60,7 +60,7 @@
     echo "<div class=\"potato\">";
     while($rows = $result->fetch_assoc()){
         echo "<a href=\"$domain/list/?q=tag%3A$rows[name]\" target=\"_top\">";//open link
-        echo "<div class=\"pics picsBorder\" id=\"$rows[name]\">";//open table cell
+        echo "<div class=\"pics\" id=\"$rows[name]\">";//open table cell
         echo "<img class=\"thumb\" src=\"img/$rows[id].png\">";//print thumbnail
         echo "<br><span class=\"tagName\">$rows[name]</span>";//print name
         echo "</div></a>";//close link and table cell
