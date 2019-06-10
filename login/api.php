@@ -43,7 +43,7 @@
             <br><br>
             <span>ShareX custom uploader config:</span>
             <button onclick="copyKey(\'shareX\');" style="height:22px;"><i class="glyphicon glyphicon-copy"></i></button>
-            <button onclick="copyKey(\'shareX\');" style="height:22px;"  type="button" data-toggle="collapse" data-target="#collapseGuide" aria-expanded="false" aria-controls="collapseExample"><i class="glyphicon glyphicon-question-sign"></i></button>
+            <button style="height:22px;"  type="button" data-toggle="collapse" data-target="#collapseGuide" aria-expanded="false" aria-controls="collapseExample"><i class="glyphicon glyphicon-question-sign"></i></button>
             <div class="collapse" id="collapseGuide">
                 <div class="card card-body shareXguide" id="text">
                     <ul>
