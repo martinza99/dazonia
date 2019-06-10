@@ -27,7 +27,7 @@
                 $sql->execute();
                 if($sql->get_result()->num_rows!=0)
                     die("Tag already exists");
-                $sql = $conn->prepare("UPDATE tags SET name = ? WHERE name = ?");
+                $sql = $conn->prepare("UPDATE tags SET name = ? WHERE id = ?");
                 $sql->bind_param('si', $newName,$tagId);
                 $sql->execute();
                 die("Tag updated");
@@ -113,6 +113,10 @@ function resize($factor, $targetFile, $originalFile) {
     }
 
     $tmp = imagecreatetruecolor($newWidth, $newHeight);
+    imagealphablending($tmp, false);
+    imagesavealpha($tmp,true);
+    $transparent = imagecolorallocatealpha($tmp, 255, 255, 255, 127);
+    imagefilledrectangle($tmp, 0, 0, $nWidth, $nHeight, $transparent);
     imagecopyresampled($tmp, $img, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
 
     if (file_exists($targetFile)) {

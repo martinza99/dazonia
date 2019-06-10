@@ -123,6 +123,10 @@ function resize($factor, $targetFile, $originalFile) {
     }
 
     $tmp = imagecreatetruecolor($newWidth, $newHeight);
+    imagealphablending($tmp, false);
+    imagesavealpha($tmp,true);
+    $transparent = imagecolorallocatealpha($tmp, 255, 255, 255, 127);
+    imagefilledrectangle($tmp, 0, 0, $nWidth, $nHeight, $transparent);
     imagecopyresampled($tmp, $img, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
 
     if (file_exists($targetFile)) {
