@@ -6,12 +6,13 @@ $(function(){
     $(".star").click(openStars);
     $(".ogButton").click(sendTag);
     $(".tagInput").keydown(isEnter);
+    $(".tagInput").keyup(forceLower);
     $(".deleteTag").click(deleteTag);
 });
 
 window.onpopstate = function(_event){
     if(_event.state.pic!=undefined)
-        swapPic(eve_eventnt.state.pic);
+        swapPic(_event.state.pic);
 };
 
 function updateNext(){
@@ -119,7 +120,7 @@ function sendTag(){
         let link = document.createElement("a");
         link.href = location.origin + "/list?q=tag%3A"+tagName;
         link.target = "_top";
-        link.innerText = tagName;
+        link.innerText = tagName.toLowerCase();
         container.appendChild(link);
 
         let delBut = document.createElement("span");
@@ -134,6 +135,7 @@ function sendTag(){
 }
 
 function isEnter(_event){
+    
     if(_event.key == "Enter")
         sendTag();
 }
@@ -151,4 +153,8 @@ function deleteTag() {
     },
         function(){tr.remove();}
     );
+}
+
+function forceLower(){
+    $(this).val($(this).val().toLowerCase());
 }

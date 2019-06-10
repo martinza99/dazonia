@@ -176,6 +176,8 @@
 
 <body onkeydown="keyDown(event);">
     <?php
+    if($q!="")
+        $q = "&q=".$q;
     if(isset($_SESSION["userId"])&&$_SESSION["userId"]<2){
         echo '<div class="right top replace">';
         echo '<a href="javascript:document.querySelector(\'#fileUp\').click();">Replace Image</a>';
@@ -193,8 +195,8 @@
         $fileName .= "?new";
     echo "
         <div id=\"picDiv\" class=\"center\">
-            <a href=\"$domain/view/?id=$next&q=$q\" target=\"_top\"><img id=\"prev\" class=\"floatLink pic\" src=\"../files/$fileName\"></a>
-            <a href=\"$domain/view/?id=$prev&q=$q";
+            <a href=\"$domain/view/?id=$next$q\" target=\"_top\"><img id=\"prev\" class=\"floatLink pic\" src=\"../files/$fileName\"></a>
+            <a href=\"$domain/view/?id=$prev$q";
             if(isset($slide))
                 echo "&slide=$slide";
             if(isset($random))
@@ -228,16 +230,16 @@
     $result = $sql->get_result();
     while($rows = $result->fetch_assoc()){
         echo "<div class=\"sugg\"><a href=\"$domain/list?q=tag%3A$rows[tagName]\" target=\"_top\">$rows[tagName]</a>";
-        if(isset($_SESSION["userId"])&&$_SESSION["userId"]<2)
+        // if(isset($_SESSION["userId"])&&$_SESSION["userId"]<2)//if user is admin
             echo "<span class=\"deleteTag glyphicon glyphicon-remove\"></span>";
         echo "</div>";
     }
-    if(isset($_SESSION["userId"])&&$_SESSION["userId"]<2){
+    // if(isset($_SESSION["userId"])&&$_SESSION["userId"]<2){//if user is admin
         echo'
-        <input type="text" placeholder="add tag" style="width: 85%;" class="tagInput disableHotkey">
+        <input type="text" placeholder="add tag" style="width: 85%;" class="tagInput disableHotkeys">
         <button class="ogButton">+</button>
         ';
-    }
+    // }
 ?>
 </div>
 </body>

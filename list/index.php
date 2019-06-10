@@ -162,9 +162,9 @@
     echo '<div class="navButtons"><a href="'.$domain.'/list?p='.($p-1).$q.'" target="_top"><button>←</button></a><span> '.$p.' </span><a href="'.$domain.'/list?p='.($p+1).$q.'" target="_top"><button>→</button></a></div>';
     echo '<table border="1" style="margin-left: 40px; margin-top: 22px">
         <tr>
-            <th><a href="'.$domain.'/" target="_top">preview</a></th>
-            <th>rating</th>
-            <th>fileName</th>
+            <th>Preview</th>
+            <th>Rating</th>
+            <th>Filename</th>
             <th>Title</th>
             <th>Username</th>
             <th>Upload Date</th>';
@@ -193,8 +193,12 @@
         echo rating($rows["avgrating"],"");
         echo "</div></td>";
         echo "<td><a href=\"$domain/files/$rows[fileName]\" target=\"_top\">$rows[fileName]</a></td>";//print filename
-        echo "<td class=\"og\"><div class=\"changeName\">$rows[fileOgName]</div>";//print ogName
-        echo "<div class=\"changeNameInput\"><input type=\"text\" value=\"$rows[fileOgName]\"><button class=\"updateName\">Update</button></div></td>";//print input
+        echo "<td class=\"og\"><div class=\"fileName";//print ogName
+        if($userId<2)//add click listener if admin
+            echo " changeName";
+        echo "\">$rows[fileOgName]</div>";//print ogName
+        if($userId<2)//print replace input element
+            echo "<div class=\"changeNameInput\"><input type=\"text\" value=\"$rows[fileOgName]\"><button class=\"updateName\">Update</button></div></td>";//print input
         echo "<td>";
         if($rows["username"]==null)
         $rows["username"] = "deleted<br>user[$rows[fileUserId]]";
@@ -207,9 +211,9 @@
         echo "</td></tr>";
     }
     if($result->num_rows==0)
-        echo "<tr><td>No Results</td></tr>";
+        echo "<tr><th colspan=\"7\">No Results</th></tr>";
     echo "</table>";
-    if($q!="")
+    if(isset($q))
         $q = "&q=".$q;
     echo '<div class="navButtons"><a href="'.$domain.'/list?p='.($p-1).$q.'" target="_top"><button>←</button></a><span> '.$p.' </span><a href="'.$domain.'/list?p='.($p+1).$q.'" target="_top"><button>→</button></a></div>';
     echo '</div>';

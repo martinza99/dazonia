@@ -10,15 +10,17 @@ $(function(){
         }
     });
 
-    $(".tagName").contextmenu(updateName);
-    $(".thumb").contextmenu(function(){
-        $(".tagNameInput").val(this.nextSibling.nextSibling.innerText);
-        $(".fileUp").click();
-    });
+    $(".nameScript").contextmenu(updateName);
+    $(".thumbScript").contextmenu(changeImage);
     $(".fileUp").change(function(){
         this.parentElement.submit();
     });
 });
+
+function changeImage(){
+    $(".tagNameInput").val(this.nextSibling.nextSibling.innerText);
+    $(".fileUp").click();
+}
 
 function doneDeleting(){
     if($(".deleteButton").length==0)
@@ -41,10 +43,10 @@ function deleteFile(_btn) {
 
 function updateName() {
     event.preventDefault();
-    let name = prompt("New name");
+    let element = this;
+    let name = prompt("New name",element.innerText);
     if(!name)
         return;
-    let element = this;
     $.post("index.php",
     {
         tagName: element.innerText,

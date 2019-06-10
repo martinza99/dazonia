@@ -5,11 +5,11 @@
     if(!isset($_SESSION["userId"])||!checkLogin($_SESSION["userId"])){
         die('Not logged in!');
     }
-    if($_SESSION["userId"]>1)
-        die("Admin only");
+    // if($_SESSION["userId"]>1)
+        // die("Admin only");
 
     $fileName = htmlspecialchars($_POST['id']);
-    $tagName = trim(htmlspecialchars($_POST['tag']));
+    $tagName = strtolower(trim(htmlspecialchars($_POST['tag'])));
 
     $sql = $conn->prepare("SELECT id FROM files WHERE name = ?");
     $sql->bind_param("s",$fileName);
@@ -31,7 +31,7 @@
         $sql->execute();
         $tagId = $conn->insert_id;//get new id
     }
-    switch($_POST['action']){
+    switch(htmlspecialchars($_POST['action'])){
     case 'c'://create tag
         $sql = $conn->prepare("SELECT *  FROM tagfile WHERE tagId = ? AND fileId = ?");
         $sql->bind_param('ii', $tagId, $fileId);

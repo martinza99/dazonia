@@ -17,6 +17,7 @@
 
 #picDiv{
     max-height: 90%;
+    max-width: 100%;
     height: fit-content;
     width: fit-content;
     box-sizing: border-box;

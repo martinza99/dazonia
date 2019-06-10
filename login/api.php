@@ -17,7 +17,7 @@
     $apiKey = $rows['apiKey'];
 
     if(isset($_POST["action"])){
-        switch ($_POST["action"]){
+        switch (htmlspecialchars($_POST["action"])){
             case "reset": 
                 $apiKey = generateRandomString(64);
                 $sql = $conn->prepare("UPDATE users SET apiKey = ? WHERE id = ?");

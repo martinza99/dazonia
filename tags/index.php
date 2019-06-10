@@ -10,7 +10,7 @@
 
     if(isset($_POST["action"])){
         if($userId>1)
-            die();
+            die("Only Admins can change tags");
         $tagName = $_POST["tagName"];
         $sql = $conn->prepare("SELECT id FROM tags WHERE name = ?");
         $sql->bind_param("s",$tagName);
@@ -61,8 +61,14 @@
     while($rows = $result->fetch_assoc()){
         echo "<a href=\"$domain/list/?q=tag%3A$rows[name]\" target=\"_top\">";//open link
         echo "<div class=\"pics\" id=\"$rows[name]\">";//open table cell
-        echo "<img class=\"thumb\" src=\"img/$rows[id].png\">";//print thumbnail
-        echo "<br><span class=\"tagName\">$rows[name]</span>";//print name
+        echo "<img class=\"thumb";//print thumbnail
+        if($userId<2)//add click listener if admin
+            echo " thumbScript";
+        echo "\" src=\"img/$rows[id].png\">";//print thumbnail
+        echo "<br><span class=\"tagName";//print name
+        if($userId<2)//add click listener if admin
+            echo " nameScript";
+        echo "\">$rows[name]</span>";//print name
         echo "</div></a>";//close link and table cell
     }
     echo "</div>";
