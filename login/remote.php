@@ -61,6 +61,7 @@
 
         function copyKey(_target){
             let node = document.querySelector("."+_target);
+            node.style.display = "block";
             if (document.body.createTextRange) {
                 const range = document.body.createTextRange();
                 range.moveToElementText(node);
@@ -73,6 +74,7 @@
                 selection.addRange(range);
                 document.execCommand("copy");
                 selection.removeAllRanges();
+                node.style.display = "none";
             } else
                 console.warn("Could not select text in node: Unsupported browser.");
         }
@@ -119,7 +121,7 @@
                         echo "<tr>";
                     }
                     echo "</table>";
-                    echo '<pre class="csv" style="z-index:-1000;position:absolute; opacity:0; top:0;">'.$csv.'</pre>';
+                    echo '<pre class="csv" style="z-index:-1000;position:absolute; display:none; opacity:0; top:0;">'.$csv.'</pre>';
                 }
             }
         ?>
