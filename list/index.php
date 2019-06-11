@@ -135,9 +135,7 @@
             $sql .= "AND avgrating IS NULL ";
         if($filter!="")
             $sql .= "AND fileOgName LIKE concat('%',?,'%') ";
-        $sql .= "ORDER BY
-            subtable.fileID
-        DESC
+        $sql .= "ORDER BY subtable.fileID DESC
         LIMIT 100 OFFSET ?";}
     $sql = $conn->prepare($sql);
     if($sql === false)
@@ -158,7 +156,7 @@
 
     echo '<div class="listTable">';
     if($q!="")
-        $q = "&q=".$q;
+        $q = "&q=".urlencode($q);
     echo '<div class="navButtons"><a href="'.$domain.'/list?p='.($p-1).$q.'" target="_top"><button>←</button></a><span> '.$p.' </span><a href="'.$domain.'/list?p='.($p+1).$q.'" target="_top"><button>→</button></a></div>';
     echo '<table border="1" style="margin-left: 40px; margin-top: 22px">
         <tr>

@@ -24,23 +24,29 @@
     $sql->bind_param("s",$fileName);
     $sql->execute();
     $fileId = mysqli_fetch_assoc($sql->get_result())["id"];
-
+    if($fileId==NULL)
+        die("ID not found");
 
     if(isset($_GET["random"])){
         $sql = $conn->prepare("SELECT * FROM `files` ORDER BY rand() LIMIT 1");
     }
-
+    #region sql
     $paramValues = array();
     $paramType = "";
-    filterSearch("file:");
+    
+    array_push($paramValues,$fileId);
+    $paramType .= "i";
 
     $searchTag = filterSearch("tag:");
     if($searchTag!=""){
         array_push($paramValues,$searchTag);
         $paramType .= "s";
     }
-    array_push($paramValues,-1);
-    $paramType .= "i";
+    $searchFile = filterSearch("file:");
+    if($searchFile!=""){
+        array_push($paramValues,$searchFile);
+        $paramType .= "s";
+    }
 
     $searchUser = filterSearch("u:");
     if($searchUser!=""){
@@ -60,22 +66,79 @@
         array_push($paramValues,$filter);
         $paramType .= "s";
     }
-    {$sql = "
-        SELECT
-            subtable.*,
-            lTable.lRating,
-            mTable.mRating
-        FROM
-            (
+
+    array_push($paramValues,$fileId);
+    $paramType .= "i";
+
+    if($searchTag!=""){
+        array_push($paramValues,$searchTag);
+        $paramType .= "s";
+    }
+    if($searchFile!=""){
+        array_push($paramValues,$searchFile);
+        $paramType .= "s";
+    }
+
+    if($searchUser!=""){
+        array_push($paramValues,intval($searchUser));
+        $paramType .= "i";
+    }
+    if($searchRating>0){
+        array_push($paramValues,intval($searchRating));
+        $paramType .= "i";
+    }
+    if($filter!=""){
+        array_push($paramValues,$filter);
+        $paramType .= "s";
+    }
+    $sql = "
+        SELECT * FROM(
+            SELECT * FROM(
+                SELECT
+                    files.id AS fileID,
+                    files.name AS fileName,
+                    files.ogName AS fileOgName,
+                    files.userId AS fileUserId,
+                    users.name AS username,
+                    AVG(userrating.rating) AS avgrating
+                FROM
+                    files
+                LEFT JOIN users ON users.id = files.userId
+                LEFT JOIN userrating ON userrating.fileId = files.id
+                LEFT JOIN tagFile ON tagfile.fileId = files.id
+                LEFT JOIN tags ON tags.id = tagfile.tagId
+                WHERE
+                    files.id > ? ";//current ID > files.id - left
+                if($searchTag!="")
+                    $sql.="AND tags.name = ? ";//filter tags
+                if($searchFile!="")
+                    $sql.="AND files.name LIKE concat('%',?,'%') ";//filter name
+                if($searchUser!="")
+                    $sql.="AND users.id = ? ";//filter upload user
+                $sql .= "GROUP BY files.id
+                ORDER BY files.id DESC
+                LIMIT 1 -- only prev
+            ) AS subtable
+        WHERE
+            0 = 0 "; // placeholder WHERE in case no filter
+        if($searchRating > 0)
+            $sql .= "AND avgrating >= ? ";//min rating search
+        if($searchRating === "0")
+            $sql .= "AND avgrating IS NULL ";//unrated search
+        if($filter!="")
+            $sql .= "AND fileOgName LIKE concat('%',?,'%') ";//filter title
+        $sql .= "
+        )AS currNext
+    UNION
+    SELECT * FROM(
+        SELECT * FROM(
             SELECT
                 files.id AS fileID,
                 files.name AS fileName,
                 files.ogName AS fileOgName,
                 files.userId AS fileUserId,
-                DATE_FORMAT(files.created, '%d-%m-%Y') AS fCreated,
                 users.name AS username,
-                AVG(userrating.rating) AS avgrating,
-                tags.name AS tagname
+                AVG(userrating.rating) AS avgrating
             FROM
                 files
             LEFT JOIN users ON users.id = files.userId
@@ -83,51 +146,30 @@
             LEFT JOIN tagFile ON tagfile.fileId = files.id
             LEFT JOIN tags ON tags.id = tagfile.tagId
             WHERE
-                files.id > ? ";
+                files.id <= ? ";//current ID <= files.id - curr + right
             if($searchTag!="")
-                $sql.="AND tags.name = ? "; 
+                $sql.="AND tags.name = ? ";//filter tags
+            if($searchFile!="")
+                $sql.="AND files.name LIKE concat('%',?,'%') ";//filter name
             if($searchUser!="")
-                $sql.="AND users.id = ? "; 
-            $sql .= "GROUP BY
-                files.id
+                $sql.="AND users.id = ? ";//filter upload user
+            $sql .= "GROUP BY files.id
+            ORDER BY files.id DESC
         ) AS subtable
-        LEFT JOIN(
-            SELECT
-                files.id AS lfileID,
-                userrating.rating AS lRating
-            FROM
-                files
-            LEFT JOIN users ON users.id = files.userId
-            LEFT JOIN userrating ON userrating.fileId = files.id
-            WHERE
-                userrating.userID = 0
-        ) AS lTable
-        ON
-            lTable.lfileID = subtable.fileID
-        LEFT JOIN(
-            SELECT
-                files.id AS mfileID,
-                userrating.rating AS mRating
-            FROM
-                files
-            LEFT JOIN users ON users.id = files.userId
-            LEFT JOIN userrating ON userrating.fileId = files.id
-            WHERE
-                userrating.userID = 1
-        ) AS mTable
-        ON
-            mTable.mfileID = subtable.fileID
+
         WHERE
-            fileName = fileName ";
+            0 = 0 "; // placeholder WHERE in case no filter
         if($searchRating > 0)
-            $sql .= "AND avgrating >= ? ";
+            $sql .= "AND avgrating <= ? ";//min rating search
         if($searchRating === "0")
-            $sql .= "AND avgrating IS NULL ";
+            $sql .= "AND avgrating IS NULL ";//unrated search
         if($filter!="")
-            $sql .= "AND fileOgName LIKE concat('%',?,'%') ";
-        $sql .= "ORDER BY
-            subtable.fileID DESC";}
-            $sql = $conn->prepare($sql);
+            $sql .= "AND fileOgName LIKE concat('%',?,'%') ";//filter title
+        $sql .= "
+            LIMIT 2 -- only current and next
+        )AS prev";
+    #endregion sql
+    $sql = $conn->prepare($sql);
     if($sql === false)
         trigger_error('Wrong SQL: ' . $sql . ' Error: ' . $conn->errno . ' ' . $conn->error, E_USER_ERROR);
     $a_params = array();
@@ -141,33 +183,30 @@
 
     $sql->execute();
     $result = $sql->get_result();
-    
-    $prev;
-    $next;
+    $left;
+    $right;
     $username;
     $userId;
     $rating;
-    while($rows = $result->fetch_assoc()){
-        if($rows["fileID"]==$fileId){
-            $username = $rows["username"];
-            $userId = $rows["fileUserId"];
-            $rating = $rows["avgrating"];
-
-            if($rows = $result->fetch_assoc())
-                $prev = $rows["fileName"];
-            break;
+    if($rows = $result->fetch_assoc()){
+        if($rows["fileID"]>$fileId){
+            $left = $rows["fileName"];
+            $rows = $result->fetch_assoc();
         }
-        $next = $rows["fileName"];
+        $username = $rows["username"];
+        $rating = $rows["avgrating"];
+        $userId = $rows["fileUserId"];
+        $username = $rows["username"];
+        if($rows = $result->fetch_assoc())
+            $right = $rows["fileName"];
+    }else{
+        die("No result");
     }
     if($username==null)
         $username = "deleted user[$userId]";
-    if(!isset($prev))
-        $prev = "";
-    if(!isset($next))
-        $next = "";
     if(!isset($_SESSION["userId"])){
-        $next = $fileName;
-        $prev = $fileName;
+        $left = $fileName;
+        $right = $fileName;
     }
 
     require_once "../header.php";
@@ -181,7 +220,7 @@
 <body onkeydown="keyDown(event);">
     <?php
     if($q!="")
-        $q = "&q=".$q;
+        $q = "&q=".urlencode($q);
     if(isset($_SESSION["userId"])&&$_SESSION["userId"]<2){
         echo '<div class="right top replace">';
         echo '<a href="javascript:document.querySelector(\'#fileUp\').click();">Replace Image</a>';
@@ -199,10 +238,10 @@
         $fileName .= "?new";
     echo "
         <div id=\"picDiv\" class=\"center\">";
-        if($next!="")
-            echo "<a href=\"$domain/view/?id=$next$q\" target=\"_top\"><img id=\"prev\" class=\"floatLink pic\" src=\"../files/$fileName\"></a>";
-        if($prev!=""){
-        echo "<a href=\"$domain/view/?id=$prev$q";
+        if(isset($left))
+            echo "<a href=\"$domain/view/?id=$left$q\" target=\"_top\"><img id=\"prev\" class=\"floatLink pic\" src=\"../files/$fileName\"></a>";
+        if(isset($right)){
+        echo "<a href=\"$domain/view/?id=$right$q";
             if(isset($slide))
                 echo "&slide=$slide";
             if(isset($random))

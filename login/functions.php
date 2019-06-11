@@ -14,4 +14,10 @@
         }
         return true;
     }
+
+    function prePrint($var){
+        echo "<pre>";
+        print_r($var);
+        echo "</pre>";
+    }
 ?>
