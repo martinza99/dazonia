@@ -94,7 +94,7 @@
                 echo "</pre>
                 </div>
                 </div>";
-                if(gettype($result)!="boolean"){
+                if(gettype($result)!="boolean"&&$conn->affected_rows>0){
                     $csv = "";
                     $names = $result->fetch_assoc();//column names
                     echo "<table border=\"1\">";
