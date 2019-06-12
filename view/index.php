@@ -116,7 +116,7 @@
                 if($searchUser!="")
                     $sql.="AND users.id = ? ";//filter upload user
                 $sql .= "GROUP BY files.id
-                ORDER BY files.id DESC
+                ORDER BY files.id ASC
                 LIMIT 1 -- only prev
             ) AS subtable
         WHERE
