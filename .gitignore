@@ -1,4 +1,7 @@
-login/sql.php
-files/
-thumbnails/
-tags/img/
+#SQL and Server login data
+/login/sql.php
+
+#uploaded files thumbnails and tag images
+/files/
+/thumbnails/
+/tags/img/
