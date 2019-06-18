@@ -20,6 +20,7 @@ if($userId<2){
     echo '<a href="'.$domain.'/login/token.php" target="_top">create register token</a><br>';
     echo '<a href="'.$domain.'/login/remote.php" target="_top">remote SQL query</a><br>';
     echo '<a href="'.$domain.'/login/users.php" target="_top">User List</a><br>';
+    echo '<a href="'.$domain.'/tags/editor.php" target="_top">Tag Editor</a><br>';
 }
 echo '
     <a href="'.$domain.'/login/api.php" target="_top">API Info</a><br>
