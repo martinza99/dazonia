@@ -173,6 +173,10 @@ function insertName($newName,$oldname,$userId){
     $sql = $conn->prepare("INSERT INTO `files`(`name`, `ogName`,`hash`, `userId`) VALUES (?,?,?,?)");
     $sql->bind_param("sssi",$newName,$oldname,$hash,$userId);
     $sql->execute();
+
+    $fileId = $conn->insert_id;
+    autoTag("gif",$newName, $fileId);
+
     $conn->close();
 }
 
@@ -199,6 +203,36 @@ function checkApiKey($apiKey){
     if($result->num_rows>0){
         $GLOBALS['userId'] = $row['id'];
         return true;
+    }
+}
+
+function autoTag($tagName, $filename, $fileId){  
+    if(substr($filename,-strlen($tagName)) != $tagName)
+        return;
+    $conn = $GLOBALS['conn'];  
+    //get tag id
+    $sql = $conn->prepare("SELECT * FROM tags WHERE LOWER(name) = LOWER(?)");
+    $sql->bind_param('s', $tagName);
+    $sql->execute();
+    $tagId = mysqli_fetch_assoc($sql->get_result())["id"];
+
+    if($tagId==NULL){//insert new tag if it doesn't exist
+        $sql = $conn->prepare("INSERT INTO tags (name) VALUES (?)");
+        $sql->bind_param('s', $tagName);
+        $sql->execute();
+        $tagId = $conn->insert_id;//get new id
+    }
+
+    $sql = $conn->prepare("SELECT *  FROM tagfile WHERE tagId = ? AND fileId = ?");
+    $sql->bind_param('ii', $tagId, $fileId);
+    $sql->execute();
+
+    $linkId = mysqli_fetch_assoc($sql->get_result())["tagId"];
+
+    if(!isset($linkId)){
+        $sql = $conn->prepare("INSERT INTO tagfile (tagId,fileId) VALUES (?,?)");
+        $sql->bind_param('ii', $tagId, $fileId);
+        $sql->execute();
     }
 }
 
