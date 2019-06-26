@@ -59,22 +59,53 @@
     <input type="text" name="action" value="img">
 </form>
 <?php
-    $sql = $conn->prepare("SELECT tags.id AS tagsid, tags.name AS tagname, COUNT(tagId) AS amount FROM `tagfile` INNER JOIN tags ON tagfile.tagId = tags.id GROUP BY tagId ORDER BY tags.id");
+    $orderBy = "tagsid";
+    if(isset($_GET["order"]))
+        $orderBy = $_GET["order"];
+    if($orderBy=="count")
+        $orderBy = "amount";
+
+    $orderDir = "ASC";
+    if(isset($_GET["dir"]))
+        $orderDir = $_GET["dir"];
+
+    $allowed_order_by  = array('tagsid', 'tagname', 'amount');
+    $allowed_order_dir = array('ASC', 'DESC');
+    if (!in_array(strtolower($orderBy), $allowed_order_by)||!in_array(strtoupper($orderDir), $allowed_order_dir))
+        die("not allowed");
+    $sql = $conn->prepare("SELECT tags.id AS tagsid, tags.name AS tagname, COUNT(tags.id) AS amount, tagFile.fileId AS fileid FROM `tags` LEFT JOIN tagFile ON tagfile.tagId = tags.id GROUP BY tags.Id ORDER BY $orderBy $orderDir, fileId $orderDir");
     $sql->execute();
     $result = $sql->get_result();
     echo '<table border="1">';
-    echo '<th>Image</th><th>ID</th><th>Name</th><th>count</th><th><button class="deleteAllButton">X</button></th></th>';
+    echo '<th>Image</th>';
+
+    echo "<th><a href=\"$domain/tags/editor.php?order=tagsid";
+    if($orderBy == "tagsid" && $orderDir == "ASC")
+        echo "&dir=desc";
+    echo "\">ID</a></th>";
+
+    echo "<th><a href=\"$domain/tags/editor.php?order=tagname";
+    if($orderBy == "tagname" && $orderDir == "ASC")
+        echo "&dir=desc";
+    echo "\">Name</a></th>";
+
+    echo "<th><a href=\"$domain/tags/editor.php?order=count";
+    if($orderBy == "amount" && $orderDir == "ASC")
+        echo "&dir=desc";
+    echo "\">Count</a></th>";
+    echo '<th><button class="deleteAllButton">X</button></th></th>';
     while($rows = $result->fetch_assoc()){
             echo "<tr id=\"$rows[tagname]\">";
             echo "<td><img class=\"thumbScript\" src=\"img/$rows[tagsid].png\"></td>";
             echo "<td>$rows[tagsid]</td>";
-            echo "<td class=\"nameScript\">$rows[tagname]</td>";//print token
+            echo "<td class=\"nameScript\"><a href=\"$domain/list/?q=tag%3A$rows[tagname]\">$rows[tagname]</a></td>";//print token
+            if($rows["fileid"] == null)
+                $rows["amount"] = 0;
             echo "<td>$rows[amount]</td>";//print count
             echo "<td><button class=\"deleteButton\">X</button></td>";
             echo "</tr>";
     }
     echo "</table>";
-    require_once "../footer.php";
 ?>
 </body>
 </html>
