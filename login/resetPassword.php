@@ -4,10 +4,10 @@
     require_once 'functions.php';
     require_once "../header.php";
 
-    // if(!isset($_GET["resetKey"])&&(!isset($_SESSION["userId"])||!checkLogin($_SESSION["userId"]))){
-    //     header("Location: $domain/login");
-    //     die();
-    // }
+    if(!isset($_GET["resetKey"])&&(!isset($_SESSION["userId"])||!checkLogin($_SESSION["userId"]))){
+        header("Location: $domain/login");
+        die();
+    }
 ?>
 
 <!DOCTYPE html>
