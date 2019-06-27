@@ -139,6 +139,11 @@ button{
     color: white;
 }
 
+html input:disabled, .disabled{
+    color: #adadad;
+    cursor: not-allowed;
+}
+
 /* mobile css */
 @media screen and (max-width: 768px){
 .potato{

@@ -4,8 +4,6 @@
     
     if(!isset($_POST["token"]))
         die("No token!");
-    if($_POST["password"]!=$_POST["password2"])
-        die("Passwords don't match!");
         
     $token = $_POST["token"];
     $sql = $conn->prepare("SELECT * FROM register WHERE token = ?");

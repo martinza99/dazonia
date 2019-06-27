@@ -13,8 +13,8 @@
 </head>
 <body>
     <form action="loginPost.php" method="POST" class="center">
-        <input type="text" placeholder="Username" name="username" require_onced><br>
-        <input type="password" placeholder="Password" name="password" require_onced><br>
+        <input type="text" placeholder="Username" name="username" autocomplete="username" required><br>
+        <input type="password" placeholder="Password" name="password" autocomplete="current-password" required><br>
         <input type="text" value="true" name="forward" hidden>
         <input type="submit">
     </form>

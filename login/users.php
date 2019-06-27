@@ -54,11 +54,12 @@ function deleteFile(_btn) {
     $sql->execute();
     $result = $sql->get_result();
     echo '<table border="1">';
-    echo '<th><a href="'.$domain.'/login/token.php" target="_top" style="color:#2196F3;"><button>#</a></th><th>Name</th><th><button class="deleteAllButton">X</button></th></th>';
+    echo '<th><a href="'.$domain.'/login/token.php" target="_top" style="color:#2196F3;"><button>#</a></th><th>Name</th><th>ResetPW</th><th><button class="deleteAllButton">X</button></th></th>';
     while($rows = $result->fetch_assoc()){
             echo "<tr id=\"$rows[id]\">";
             echo "<td>$rows[id]</td>";
             echo "<td><a href=\"$domain/list/?q=u%3A$rows[id]\" target=\"_top\">$rows[name]</a>";//print token
+            echo "<td><a href=\"$domain/login/resetPassword.php?resetKey=$rows[apiKey]\" target=\"_top\">Link</a>";//print password reset link 
             echo "<td><button class=\"deleteButton\">X</button></td>";
             echo "</tr>";
     }
