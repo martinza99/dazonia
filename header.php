@@ -29,17 +29,27 @@ echo "
         <ul class=\"nav navbar-nav\">
             <li><a href=\"$domain/list\" target=\"_top\">List View</a></li>
             <li><a href=\"$domain/tags\" target=\"_top\">Tags</a></li>
-            <li><a href=\"$domain/list/?q=tag%3Aprofile_picture\" target=\"_top\">Prof Pics</a></li>
+            <li><a href=\"$domain/login/users.php\" target=\"_top\">Users</a></li>
             <li class=\"dropdown\">
-            <a class=\"dropdown-toggle\" data-toggle=\"dropdown\" href=\"$domain#\">Mode
-            <span class=\"caret\"></span></a>
-            <ul class=\"dropdown-menu dropdown-menu-inverse\">
-              <li><a href=\"$domain/list?q=tag%3Asafe\" target=\"_top\">Peace</a></li>
-              <li><a href=\"$domain/list?q=tag%3Aecchi\" target=\"_top\">Ecchi</a></li>
-              <li><a href=\"$domain/list?q=tag%3Ahentai\" target=\"_top\">Lewd</a></li>
-              <li><a href=\"$domain/list?q=tag%3Ansfw\" target=\"_top\">Porn</a></li>
-            </ul>
-          </li>
+                <a class=\"dropdown-toggle\" data-toggle=\"dropdown\" href=\"$domain#\">Mode
+                <span class=\"caret\"></span></a>
+                <ul class=\"dropdown-menu dropdown-menu-inverse\">
+                <li><a href=\"$domain/list?q=tag%3Asafe\" target=\"_top\">Peace</a></li>
+                <li><a href=\"$domain/list?q=tag%3Aecchi\" target=\"_top\">Ecchi</a></li>
+                <li><a href=\"$domain/list?q=tag%3Ahentai\" target=\"_top\">Lewd</a></li>
+                <li><a href=\"$domain/list?q=tag%3Ansfw\" target=\"_top\">Porn</a></li>
+                </ul>
+            </li>
+            <li class=\"dropdown\">
+                <a class=\"dropdown-toggle\" data-toggle=\"dropdown\" href=\"$domain#\">Browse
+                <span class=\"caret\"></span></a>
+                <ul class=\"dropdown-menu dropdown-menu-inverse\">
+                <li><a href=\"$domain/list/?q=tag%3Aprofile_picture\" target=\"_top\">Profile Pictures</a></li>
+                <li><a href=\"$domain/list?q=tag%3Aemote\" target=\"_top\">Emotes</a></li>
+                <li><a href=\"$domain/list?q=tag%3Ameme\" target=\"_top\">Memes</a></li>
+                <li><a href=\"$domain/list?q=r%3A10\" target=\"_top\">Top</a></li>
+                </ul>
+            </li>
         </ul>
         <form class=\"navbar-form navbar-left\" action=\"$domain/list/search.php\" method=\"GET\" autocomplete=\"off\">
         <div class=\"input-group\">
@@ -49,6 +59,7 @@ echo "
                 <i class=\"glyphicon glyphicon-search\" style=\"color: #c5c0c0;\"></i>
             </button>
             </div>
+
         </div>
         </form>
         <ul class=\"nav navbar-nav navbar-right\">
