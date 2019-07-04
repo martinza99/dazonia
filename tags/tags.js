@@ -97,5 +97,14 @@ function tagSearchFormSubmit() {
 }
 
 function showSearchBar() {
+    let btn = document.querySelector(".tagSearchButton");
+    if(btn.style.borderTopLeftRadius=="4px"){
+        btn.style.borderTopLeftRadius="0px"
+        btn.style.borderBottomLeftRadius="0px"
+    }
+    else{
+        btn.style.borderTopLeftRadius="4px"
+        btn.style.borderBottomLeftRadius="4px"
+    }
     $(".searchInputTags").animate({width:'toggle'},350);
 }
