@@ -1,3 +1,21 @@
+$(function(){
+    $(".deleteButtonToken").click(function(){
+        
+        if(confirm("Delete "+$(this).closest("tr")[0].id))
+            deleteToken(this);
+    });
+    $(".deleteAllButtonToken").click(function(){     
+        if(confirm($(".deleteButtonToken").length + ' Tokens will be deleted')){
+            $(".deleteButtonToken").each(deleteToken);
+        }
+    });
+    $(".deleteButtonUser").click(function(){
+        
+        if(confirm("Delete "+$(this).closest("tr")[0].id))
+        deleteUser(this);
+    });
+});
+
 function equals(_source, _target) {
     let sourceValue = _source.value;
     let targetValue = document.querySelector(_target).value;
@@ -10,4 +28,59 @@ function equals(_source, _target) {
         submitButton.disabled = true;//disable submit button
         return false;
     }
+}
+
+function copyKey(_target){
+    let node = document.querySelector("."+_target);
+    node.style.display = "block";
+    if (document.body.createTextRange) {
+        const range = document.body.createTextRange();
+        range.moveToElementText(node);
+        range.select();
+    } else if (window.getSelection) {
+        const selection = window.getSelection();
+        const range = document.createRange();
+        range.selectNodeContents(node);
+        selection.removeAllRanges();
+        selection.addRange(range);
+        document.execCommand("copy");
+        selection.removeAllRanges();
+        node.style.display = "none";
+    } else
+        console.warn("Could not select text in node: Unsupported browser.");
+}
+
+function setForm(_value){
+    document.querySelector(".formAction").value = _value;
+    document.querySelector(".queryForm").submit();
+}
+
+function createToken(){
+    $.post("token.php",{action:"c"},location.reload());
+}
+
+function deleteTokens(i,_btn) {
+    deleteToken(_btn);
+}
+
+function deleteToken(_btn) {
+    var tr = _btn.closest("tr");
+    $.post("token.php",
+    {
+        id: tr.id,
+        action: "d"
+    },
+        function(){tr.remove();}
+    );
+}
+
+function deleteUser(_btn) {
+    var tr = _btn.closest("tr");
+    $.post("users.php",
+    {
+        id: tr.id,
+        action: "d"
+    },
+        function(){tr.remove();}
+    );
 }

@@ -8,7 +8,7 @@
     require_once "../header.php";
 ?>
     <title>Register</title>
-    <script src="login.js"></script>
+    <script src="login.js<?php echo "?$hash" ?>"></script>
 </head>
 <body>
     <form action="createAccount.php" method="POST" class="center">

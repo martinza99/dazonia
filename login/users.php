@@ -24,29 +24,7 @@
     <title>User List</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script>
-$(function(){
-    $(".deleteButton").click(function(){
-        
-        if(confirm("Delete "+$(this).closest("tr")[0].id))
-        deleteFile(this);
-    });
-    $(".deleteAllButton").click(function(){
-        alert("disabled. I really don't think that's a good idea."); 
-    });
-});
-
-function deleteFile(_btn) {
-    var tr = _btn.closest("tr");
-    $.post("users.php",
-    {
-        id: tr.id,
-        action: "d"
-    },
-        function(){tr.remove();}
-    );
-}
-</script>
+    <script src="login.js<?php echo "?$hash" ?>"></script>
 </head>
 <body>
 <?php
@@ -54,13 +32,13 @@ function deleteFile(_btn) {
     $sql->execute();
     $result = $sql->get_result();
     echo '<table border="1">';
-    echo '<th><a href="'.$domain.'/login/token.php" target="_top" style="color:#2196F3;"><button>#</a></th><th>Name</th><th>ResetPW</th><th><button class="deleteAllButton">X</button></th></th>';
+    echo '<th><a href="'.$domain.'/login/token.php" target="_top" style="color:#2196F3;"><button>#</a></th><th>Name</th><th>ResetPW</th><th><button>X</button></th></th>';
     while($rows = $result->fetch_assoc()){
             echo "<tr id=\"$rows[id]\">";
             echo "<td>$rows[id]</td>";
             echo "<td><a href=\"$domain/list/?q=u%3A$rows[id]\" target=\"_top\">$rows[name]</a>";//print token
             echo "<td><a href=\"$domain/login/resetPassword.php?resetKey=$rows[apiKey]\" target=\"_top\">Link</a>";//print password reset link 
-            echo "<td><button class=\"deleteButton\">X</button></td>";
+            echo "<td><button class=\"deleteButtonUser\">X</button></td>";
             echo "</tr>";
     }
     echo "</table>";

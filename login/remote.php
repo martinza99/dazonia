@@ -40,6 +40,7 @@
 
     <title>Remote Server Settings</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="login.js<?php echo "?$hash" ?>"></script>
 </head>
 <body>
     <form action="remote.php" method="POST" autocomplete="off" class="queryForm">
@@ -53,32 +54,6 @@
         }
         ?>
     </form>
-    <script>
-        function setForm(_value){
-            document.querySelector(".formAction").value = _value;
-            document.querySelector(".queryForm").submit();
-        }
-
-        function copyKey(_target){
-            let node = document.querySelector("."+_target);
-            node.style.display = "block";
-            if (document.body.createTextRange) {
-                const range = document.body.createTextRange();
-                range.moveToElementText(node);
-                range.select();
-            } else if (window.getSelection) {
-                const selection = window.getSelection();
-                const range = document.createRange();
-                range.selectNodeContents(node);
-                selection.removeAllRanges();
-                selection.addRange(range);
-                document.execCommand("copy");
-                selection.removeAllRanges();
-                node.style.display = "none";
-            } else
-                console.warn("Could not select text in node: Unsupported browser.");
-        }
-    </script>
     <div class="result" style="color:black;">
         <?php
             if($action=="cmd"){

@@ -31,38 +31,7 @@
     <title>Token List</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script>
-function createToken(){
-    $.post("token.php",{action:"c"},location.reload());
-}
-$(function(){
-    $(".deleteButton").click(function(){
-        
-        if(confirm("Delete "+$(this).closest("tr")[0].id))
-        deleteFile(this);
-    });
-    $(".deleteAllButton").click(function(){  console.log(1);      
-        if(confirm($(".deleteButton").length + ' tokens will be deleted')){
-            $(".deleteButton").each(deleteFiles);
-        }
-    });
-});
-
-function deleteFiles(i,_btn) {
-    deleteFile(_btn);
-}
-
-function deleteFile(_btn) {
-    var tr = _btn.closest("tr");
-    $.post("token.php",
-    {
-        id: tr.id,
-        action: "d"
-    },
-        function(){tr.remove();}
-    );
-}
-</script>
+    <script src="login.js<?php echo "?$hash" ?>"></script>
 </head>
 <body>
 <?php
@@ -70,12 +39,12 @@ function deleteFile(_btn) {
     $sql->execute();
     $result = $sql->get_result();
     echo '<table border="1">';
-    echo '<th><button onclick="createToken();">#</button></th><th>Token</th><th><button class="deleteAllButton">X</button></th></th>';
+    echo '<th><button onclick="createToken();">#</button></th><th>Token</th><th><button class="deleteAllButtonToken">X</button></th></th>';
     while($rows = $result->fetch_assoc()){
             echo "<tr id=\"$rows[id]\">";
             echo "<td>$rows[id]</td>";
             echo "<td><a href=\"$domain/login/register.php?token=$rows[token]\" target=\"_top\">$rows[token]</a>";//print token
-            echo "<td><button class=\"deleteButton\">X</button></td>";
+            echo "<td><button class=\"deleteButtonToken\">X</button></td>";
             echo "</tr>";
     }
     echo "</table>";
