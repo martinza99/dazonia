@@ -27,6 +27,14 @@
 </head>
 <body>
 <?php
+    $dir = scandir("../bg/");
+    if(count($dir)>3){
+        $randBG;
+        do
+            $randBG = $dir[rand(2,count($dir)-1)];
+        while($randBG=="index.php");
+        echo "<img src=\"/bg/$randBG\" style=\"position:fixed; right:0; bottom:0; z-index:-1; max-width: 35%; max-height:100%;\">";
+    }
     $paramValues = array();
     $paramType = "";
 
