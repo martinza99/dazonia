@@ -36,6 +36,12 @@
         $paramType .= "s";
     }
 
+    $searchParent = filterSearch("p:");
+    if($searchParent!=""){
+        array_push($paramValues,$searchParent);
+        $paramType .= "i";
+    }
+
     $searchFile = filterSearch("file:");
     if($searchFile!=""){
         array_push($paramValues,$searchFile);
@@ -94,6 +100,8 @@
                 files.name = files.name ";
             if($searchTag!="")
                 $sql.="AND tags.name = ? "; 
+            if($searchParent!="")
+                $sql.="AND tags.parentId = ? ";
             if($searchFile!="")
                 $sql.="AND files.name LIKE concat('%',?,'%') "; 
             if($searchUser!="")

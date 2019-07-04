@@ -37,7 +37,7 @@
     $result = $sql->get_result();
 
     echo "
-    <div class=\"right\" style=\"position:absolute; margin-right: 13px;\">
+    <div class=\"right\" style=\"position:absolute; margin-right: 13px; margin-top:6px\">
         <a href=\"$domain/tags/?q=\" class=\"searchLinkTags\" target=\"_top\" hidden></a>
         <form class=\"navbar-form navbar-left\" action=\".\" autocomplete=\"off\" onsubmit=\"tagSearchFormSubmit();\">
             <div class=\"input-group\">
