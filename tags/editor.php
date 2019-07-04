@@ -36,11 +36,34 @@
                 header("Location: editor.php");
                 break;
             case "delete":
+                //delete tag
                 $sql = $conn->prepare("DELETE tags, tagfile FROM tags LEFT JOIN tagFile ON tagFile.tagid = tags.id WHERE tags.id = ?");
                 $sql->bind_param('i', $tagId);
                 $sql->execute();
                 unlink("img/$tagId.png");
-                break;   
+                //remove all parent references
+                $sql = $conn->prepare("UPDATE tags SET parentId = 0 WHERE id = ?");
+                $sql->bind_param('i', $tagId);
+                $sql->execute();
+                die("Tag deleted");
+                break;
+            case "parent":
+                $parentName = $_POST["newParent"];
+                //get parent id
+                $parentId = 0;
+                if($parentName!=" "){
+                    $sql = $conn->prepare("SELECT id FROM tags WHERE name = ?");
+                    $sql->bind_param("s",$parentName);
+                    $sql->execute();
+                    $parentId = mysqli_fetch_assoc($sql->get_result())["id"];
+                    if($sql->affected_rows==0)
+                        die("Parent doesn't exist");
+                }
+                //update parent id on selected tag
+                $sql = $conn->prepare("UPDATE tags SET parentId = ? WHERE id = ?");
+                $sql->bind_param('ii', $parentId,$tagId);
+                $sql->execute();
+                die("Parent updated");
         }
     }
 
@@ -69,11 +92,12 @@
     if(isset($_GET["dir"]))
         $orderDir = $_GET["dir"];
 
-    $allowed_order_by  = array('tagsid', 'tagname', 'amount');
+    $allowed_order_by  = array('tagsid', 'tagname', 'parent', 'amount');
     $allowed_order_dir = array('ASC', 'DESC');
     if (!in_array(strtolower($orderBy), $allowed_order_by)||!in_array(strtoupper($orderDir), $allowed_order_dir))
         die("not allowed");
-    $sql = $conn->prepare("SELECT tags.id AS tagsid, tags.name AS tagname, COUNT(tags.id) AS amount, tagFile.fileId AS fileid FROM `tags` LEFT JOIN tagFile ON tagfile.tagId = tags.id GROUP BY tags.Id ORDER BY $orderBy $orderDir, fileId $orderDir");
+    $sql = $conn->prepare("SELECT realTags.id AS tagsid, realTags.name AS tagname, realTags.parentId AS parentId, parentTags.name AS parentName, COUNT(realTags.id)
+    AS amount, tagFile.fileId AS fileid FROM `tags` AS realTags LEFT JOIN tagFile ON tagfile.tagId = realTags.id LEFT JOIN tags AS parentTags ON parentTags.id = realTags.parentId GROUP BY realTags.Id ORDER BY $orderBy $orderDir, fileId $orderDir");
     $sql->execute();
     $result = $sql->get_result();
     echo '<table border="1">';
@@ -89,6 +113,11 @@
         echo "&dir=desc";
     echo "\">Name</a></th>";
 
+    echo "<th><a href=\"$domain/tags/editor.php?order=parent";
+    if($orderBy == "parent" && $orderDir == "ASC")
+        echo "&dir=desc";
+    echo "\">Parent</a></th>";
+
     echo "<th><a href=\"$domain/tags/editor.php?order=count";
     if($orderBy == "amount" && $orderDir == "ASC")
         echo "&dir=desc";
@@ -97,8 +126,9 @@
     while($rows = $result->fetch_assoc()){
             echo "<tr id=\"$rows[tagname]\">";
             echo "<td><img class=\"thumbScript\" src=\"img/$rows[tagsid].png\"></td>";
-            echo "<td>$rows[tagsid]</td>";
-            echo "<td class=\"nameScript\"><a href=\"$domain/list/?q=tag%3A$rows[tagname]\">$rows[tagname]</a></td>";//print token
+            echo "<td><a href=\"$domain/tags?t=$rows[tagname]\" target=\"_top\">$rows[tagsid]</a></td>";
+            echo "<td class=\"nameScript\"><a href=\"$domain/list/?q=tag%3A$rows[tagname]\">$rows[tagname]</a></td>";//print tag name
+            echo "<td class=\"parentScript\"><a href=\"$domain/tags?t=$rows[parentName]\" target=\"_top\">$rows[parentName]</a></td>";//print parent name
             if($rows["fileid"] == null)
                 $rows["amount"] = 0;
             echo "<td>$rows[amount]</td>";//print count
