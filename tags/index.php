@@ -26,11 +26,31 @@
         if($sql->affected_rows==0)
             die("Parent doesn't exist");
     }
-
-    $sql = $conn->prepare("SELECT * FROM tags WHERE parentId = ? ORDER BY name");
-    $sql->bind_param("i",$parentId);
+    if(isset($_GET["q"])){
+        $sql = $conn->prepare("SELECT * FROM tags WHERE name LIKE concat('%',?,'%') ORDER BY name");
+        $sql->bind_param("s",$_GET["q"]);
+    }else{
+        $sql = $conn->prepare("SELECT * FROM tags WHERE parentId = ? ORDER BY name");
+        $sql->bind_param("i",$parentId);
+    }
     $sql->execute();
     $result = $sql->get_result();
+
+    echo "
+    <div class=\"right\" style=\"position:absolute;\">
+        <a href=\"$domain/tags/?q=\" class=\"searchLinkTags\" target=\"_top\" hidden></a>
+        <form class=\"navbar-form navbar-left\" action=\".\" autocomplete=\"off\" onsubmit=\"tagSearchFormSubmit();\">
+            <div class=\"input-group\">
+                <input type=\"search\" class=\"form-control disableHotkeys searchInputTags\" placeholder=\"Tag search\" name=\"q\" style=\"background-color: #04013c; border-color: #1e1b7b; display:none;\" value=\"$filter\">
+                <div class=\"input-group-btn\">
+                <button class=\"btn btn-default\" type=\"button\" onclick=\"showSearchBar();\" style=\"height: 34px; background-color: #131a63; border-color: #1e1b7b;\">
+                    <i class=\"glyphicon glyphicon-search\" style=\"color: #c5c0c0;\"></i>
+                </button>
+                </div>
+
+            </div>
+        </form>
+    </div>";
 
     echo "<div class=\"potato\">";
     while($rows = $result->fetch_assoc()){

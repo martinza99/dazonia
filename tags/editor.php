@@ -14,8 +14,20 @@
         $sql->bind_param("s",$tagName);
         $sql->execute();
         $tagId = mysqli_fetch_assoc($sql->get_result())["id"];
-        if($sql->affected_rows==0)
-            die("Tag doesn't exist");
+        if($sql->affected_rows==0){
+            if($_POST["action"]!="new")
+                die("Tag doesn't exist");
+            else{
+                $sql = $conn->prepare("INSERT INTO tags (name) VALUES (?)");
+                $sql->bind_param('s', $tagName);
+                $sql->execute();
+
+                die("Tag created: $tagName [$conn->insert_id]");
+            }
+        }
+
+        if($_POST["action"]=="new")
+            die("Tag already exist");
 
         switch ($_POST["action"]){
             case "name": 
@@ -64,6 +76,7 @@
                 $sql->bind_param('ii', $parentId,$tagId);
                 $sql->execute();
                 die("Parent updated");
+                break;
         }
     }
 
@@ -101,7 +114,7 @@
     $sql->execute();
     $result = $sql->get_result();
     echo '<table border="1">';
-    echo '<th>Image</th>';
+    echo '<th>Image<button class="newTagButton">New Tag</button></th>';
 
     echo "<th><a href=\"$domain/tags/editor.php?order=tagsid";
     if($orderBy == "tagsid" && $orderDir == "ASC")

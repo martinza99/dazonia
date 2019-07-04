@@ -3,7 +3,7 @@ $(function(){
         if(confirm("Delete "+this.parentElement.parentElement.id))
         deleteTag(this);
     });
-
+    $(".newTagButton").click(newTag);
     $(".nameScript").contextmenu(updateName);
     $(".parentScript").contextmenu(updateParent);
     $(".thumbScript").contextmenu(changeImage);
@@ -71,4 +71,31 @@ function updateParent() {
                 alert(_response);
         }
     );
+}
+
+function newTag(){
+    let tag = prompt("Tag name");
+    if(tag == false)
+        return;
+    $.post("editor.php",
+    {
+        tagName: tag,
+        action: "new"
+    },
+    function(_response){
+        alert(_response);
+        location.reload();
+    });
+}
+
+function tagSearchFormSubmit() {
+    event.preventDefault();
+    let query = document.querySelector(".searchInputTags").value;
+    let searchLink = document.querySelector(".searchLinkTags");
+    searchLink.href += query;
+    searchLink.click();
+}
+
+function showSearchBar() {
+    $(".searchInputTags").animate({width:'toggle'},350);
 }
