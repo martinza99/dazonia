@@ -100,17 +100,18 @@
         $orderBy = $_GET["order"];
     if($orderBy=="count")
         $orderBy = "amount";
+    if($orderBy=="parent")
+        $orderBy = "parentname";
 
     $orderDir = "ASC";
     if(isset($_GET["dir"]))
         $orderDir = $_GET["dir"];
 
-    $allowed_order_by  = array('tagsid', 'tagname', 'parent', 'amount');
+    $allowed_order_by  = array('tagsid', 'tagname', 'parentname', 'amount');
     $allowed_order_dir = array('ASC', 'DESC');
     if (!in_array(strtolower($orderBy), $allowed_order_by)||!in_array(strtoupper($orderDir), $allowed_order_dir))
         die("not allowed");
-    $sql = $conn->prepare("SELECT realTags.id AS tagsid, realTags.name AS tagname, realTags.parentId AS parentId, parentTags.name AS parentName, COUNT(realTags.id)
-    AS amount, tagFile.fileId AS fileid FROM `tags` AS realTags LEFT JOIN tagFile ON tagfile.tagId = realTags.id LEFT JOIN tags AS parentTags ON parentTags.id = realTags.parentId GROUP BY realTags.Id ORDER BY $orderBy $orderDir, fileId $orderDir");
+    $sql = $conn->prepare("SELECT realTags.id AS tagsid, realTags.name AS tagname, realTags.parentId AS parentId, parentTags.name AS parentname, COUNT(realTags.id) AS amount, tagFile.fileId AS fileid FROM `tags` AS realTags LEFT JOIN tagFile ON tagfile.tagId = realTags.id LEFT JOIN tags AS parentTags ON parentTags.id = realTags.parentId GROUP BY realTags.Id ORDER BY $orderBy $orderDir, fileId $orderDir");
     $sql->execute();
     $result = $sql->get_result();
     echo '<table border="1">';
@@ -119,29 +120,29 @@
     echo "<th><a href=\"$domain/tags/editor.php?order=tagsid";
     if($orderBy == "tagsid" && $orderDir == "ASC")
         echo "&dir=desc";
-    echo "\">ID</a></th>";
+    echo "\" target=\"_top\">ID</a></th>";
 
     echo "<th><a href=\"$domain/tags/editor.php?order=tagname";
     if($orderBy == "tagname" && $orderDir == "ASC")
         echo "&dir=desc";
-    echo "\">Name</a></th>";
+    echo "\" target=\"_top\">Name</a></th>";
 
     echo "<th><a href=\"$domain/tags/editor.php?order=parent";
-    if($orderBy == "parent" && $orderDir == "ASC")
+    if($orderBy == "parentname" && $orderDir == "ASC")
         echo "&dir=desc";
-    echo "\">Parent</a></th>";
+    echo "\" target=\"_top\">Parent</a></th>";
 
     echo "<th><a href=\"$domain/tags/editor.php?order=count";
     if($orderBy == "amount" && $orderDir == "ASC")
         echo "&dir=desc";
-    echo "\">Count</a></th>";
+    echo "\" target=\"_top\">Count</a></th>";
     echo '<th><button class="deleteAllButton">X</button></th></th>';
     while($rows = $result->fetch_assoc()){
             echo "<tr id=\"$rows[tagname]\">";
             echo "<td><img class=\"thumbScript\" src=\"img/$rows[tagsid].png\"></td>";
             echo "<td><a href=\"$domain/tags?t=$rows[tagname]\" target=\"_top\">$rows[tagsid]</a></td>";
-            echo "<td class=\"nameScript\"><a href=\"$domain/list/?q=tag%3A$rows[tagname]\">$rows[tagname]</a></td>";//print tag name
-            echo "<td class=\"parentScript\"><a href=\"$domain/tags?t=$rows[parentName]\" target=\"_top\">$rows[parentName]</a></td>";//print parent name
+            echo "<td class=\"nameScript\"><a href=\"$domain/list/?q=tag%3A$rows[tagname]\" target=\"_top\">$rows[tagname]</a></td>";//print tag name
+            echo "<td class=\"parentScript\"><a href=\"$domain/tags?t=$rows[parentname]\" target=\"_top\">$rows[parentname]</a></td>";//print parent name
             if($rows["fileid"] == null)
                 $rows["amount"] = 0;
             echo "<td>$rows[amount]</td>";//print count
