@@ -4,7 +4,7 @@
     require_once 'functions.php';
     require_once "../header.php";
 
-    if(!isset($_GET["resetKey"])&&(!isset($_SESSION["userId"])||!checkLogin($_SESSION["userId"]))){
+    if(!isset($_GET["resetKey"])&&!isset($_POST["resetKey"])&&(!isset($_SESSION["userId"])||!checkLogin($_SESSION["userId"]))){
         header("Location: $domain/login");
         die();
     }
