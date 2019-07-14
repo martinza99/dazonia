@@ -255,9 +255,9 @@
             echo "<a href=\"$domain/view/?id=$left$q\" target=\"_top\"><img id=\"prev\" class=\"floatLink pic\" src=\"../files/$fileName\"></a>";
         if(isset($right)){
         echo "<a href=\"$domain/view/?id=$right$q";
-            if(isset($slide))
+            if($slide > 0)
                 echo "&slide=$slide";
-            if(isset($random))
+            if(!empty($random))
                 echo "&random";
             echo "\" target=\"_top\">";
         }
