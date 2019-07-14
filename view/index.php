@@ -8,6 +8,8 @@
         header("Location: $domain/list");
         die("No id");
     }
+    $random = "";
+    $slide = 0;
     if(isset($_GET["slide"]))
         $slide = htmlspecialchars($_GET["slide"]);
     if(isset($_GET["random"]))
@@ -108,7 +110,7 @@
                 LEFT JOIN tagFile ON tagfile.fileId = files.id
                 LEFT JOIN tags ON tags.id = tagfile.tagId
                 WHERE
-                    files.id > ? ";//current ID > files.id - left
+                    files.id >= ? ";//current ID >= files.id - left + mid
                 if($searchTag!="")
                     $sql.="AND tags.name = ? ";//filter tags
                 if($searchFile!="")
@@ -117,8 +119,8 @@
                     $sql.="AND users.id = ? ";//filter upload user
                 $sql .= "GROUP BY files.id
                 ORDER BY files.id ASC
-                LIMIT 1 -- only prev
-            ) AS subtable
+                LIMIT 2 -- prev current
+            ) AS innerPrevCurr
         WHERE
             0 = 0 "; // placeholder WHERE in case no filter
         if($searchRating > 0)
@@ -128,7 +130,9 @@
         if($filter!="")
             $sql .= "AND fileOgName LIKE concat('%',?,'%') ";//filter title
         $sql .= "
-        )AS currNext
+        ORDER BY innerPrevCurr.fileID DESC
+        LIMIT 2 -- SQL bug
+        )AS prevCurr
     UNION
     SELECT * FROM(
         SELECT * FROM(
@@ -145,17 +149,24 @@
             LEFT JOIN userrating ON userrating.fileId = files.id
             LEFT JOIN tagFile ON tagfile.fileId = files.id
             LEFT JOIN tags ON tags.id = tagfile.tagId
-            WHERE
-                files.id <= ? ";//current ID <= files.id - curr + right
+            WHERE ";
+            if(!isset($_GET["random"]))
+                $sql .= "files.id < ? ";//current ID <= files.id - curr + right
+            else 
+                $sql .= "files.id <> ? ";
             if($searchTag!="")
                 $sql.="AND tags.name = ? ";//filter tags
             if($searchFile!="")
                 $sql.="AND files.name LIKE concat('%',?,'%') ";//filter name
             if($searchUser!="")
                 $sql.="AND users.id = ? ";//filter upload user
-            $sql .= "GROUP BY files.id
-            ORDER BY files.id DESC
-        ) AS subtable
+            $sql .= "GROUP BY files.id ORDER BY ";
+            if(!isset($_GET["random"]))
+                $sql .= "files.id DESC ";
+            else
+                $sql .= "RAND() ";
+            $sql .= "
+        ) AS innerNext
 
         WHERE
             0 = 0 "; // placeholder WHERE in case no filter
@@ -166,8 +177,8 @@
         if($filter!="")
             $sql .= "AND fileOgName LIKE concat('%',?,'%') ";//filter title
         $sql .= "
-            LIMIT 2 -- only current and next
-        )AS prev";
+            LIMIT 1 -- only next
+        )AS next";
     #endregion sql
     $sql = $conn->prepare($sql);
     if($sql === false)
@@ -183,6 +194,7 @@
 
     $sql->execute();
     $result = $sql->get_result();
+
     $left;
     $right;
     $username;
@@ -221,6 +233,7 @@
     <?php
     if($q!="")
         $q = "&q=".urlencode($q);
+
     if(isset($_SESSION["userId"])&&$_SESSION["userId"]<2){
         echo '<div class="right top replace">';
         echo '<a href="javascript:document.querySelector(\'#fileUp\').click();">Replace Image</a>';
@@ -257,12 +270,29 @@
         <div class=\"starContainer\">
             ".rating($rating)."
         </div>
-        <a href=\"$domain\" target=\"_top\"><button>← Back</button></a>
-        <span>Uploaded by: <a href=\"$domain/list?q=u%3A$userId\" target=\"_top\">$username</a></span>
+        <a href=\"$domain\" target=\"_top\"><button>← Back</button></a>";
+        if(isset($userId)){
+            echo '
+            <button type="button" data-toggle="collapse" data-target="#collapseRandom" aria-expanded="false" aria-controls="collapseRandom" onclick="stopSlide();">&nbsp;<span class="glyphicon glyphicon-picture"></span></button>
+            <div class="collapse" id="collapseRandom" style="position:absolute; margin-top: -100px; margin-left: 48px;">
+                <div class="card card-body" id="text">
+                    <form action="/view" method="GET">
+                    <label>Random</label> <input type="checkbox" name="random" checked="'.isset($random).'">
+                    <button type="submit">Start</button><br>
+                        <label>Delay</label> <input type="number" name="slide" value="'; if($slide == 0) echo "3"; else echo $slide; echo '" min="0" step="0.5" placeholder="seconds" style="width:80px;">
+                        <input type="hidden" name="id" value="'.$_GET["id"].'">';
+                        if(isset($q))
+                            '<input type="hidden" name="q" value="'.$q.'">';
+                echo'</form>
+                </div>
+            </div>';
+        }
+        echo "<span>Uploaded by: <a href=\"$domain/list?q=u%3A$userId\" target=\"_top\">$username</a></span>
     </div>";
-    if(isset($slide)){
+    if($slide > 0){
+        $slide *= 1000;
         echo '
-        <script>setTimeout(next, '.$slide.');
+        <script>let slide = setTimeout(next, '.$slide.');
         function next(){document.querySelector("#next").click(); }
         </script>';
     }

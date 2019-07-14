@@ -158,3 +158,8 @@ function deleteTag() {
 function forceLower(){
     $(this).val($(this).val().toLowerCase());
 }
+
+function stopSlide(){
+    if(slide != undefined)
+        clearInterval(slide);
+}
