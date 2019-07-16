@@ -32,6 +32,7 @@
     if(isset($_GET["random"])){
         $sql = $conn->prepare("SELECT * FROM `files` ORDER BY rand() LIMIT 1");
     }
+
     #region sql
     $paramValues = array();
     $paramType = "";
@@ -179,7 +180,6 @@
         $sql .= "
             LIMIT 1 -- only next
         )AS next";
-    #endregion sql
     $sql = $conn->prepare($sql);
     if($sql === false)
         trigger_error('Wrong SQL: ' . $sql . ' Error: ' . $conn->errno . ' ' . $conn->error, E_USER_ERROR);
@@ -194,6 +194,7 @@
 
     $sql->execute();
     $result = $sql->get_result();
+    #endregion sql
 
     $left;
     $right;
@@ -274,12 +275,12 @@
         if(isset($userId)){
             echo '
             <button type="button" data-toggle="collapse" data-target="#collapseRandom" aria-expanded="false" aria-controls="collapseRandom" onclick="stopSlide();">&nbsp;<span class="glyphicon glyphicon-picture"></span></button>
-            <div class="collapse" id="collapseRandom" style="position:absolute; margin-top: -100px; margin-left: 48px;">
-                <div class="card card-body" id="text">
+            <div class="collapse slideContainer" id="collapseRandom">
+                <div class="card card-body">
                     <form action="/view" method="GET">
                     <label>Random</label> <input type="checkbox" name="random" checked="'.isset($random).'">
                     <button type="submit">Start</button><br>
-                        <label>Delay</label> <input type="number" name="slide" value="'; if($slide == 0) echo "3"; else echo $slide; echo '" min="0" step="0.5" placeholder="seconds" style="width:80px;">
+                        <label>Delay</label> <input type="number" class="darkInput" name="slide" value="'; if($slide == 0) echo "3"; else echo $slide; echo '" min="0" step="0.5" placeholder="seconds" style="width:80px;">
                         <input type="hidden" name="id" value="'.$_GET["id"].'">';
                         if(isset($q))
                             '<input type="hidden" name="q" value="'.$q.'">';
@@ -292,7 +293,7 @@
     if($slide > 0){
         $slide *= 1000;
         echo '
-        <script>let slide = setTimeout(next, '.$slide.');
+        <script>slide = setTimeout(next, '.$slide.');
         function next(){document.querySelector("#next").click(); }
         </script>';
     }
@@ -315,7 +316,7 @@
     // if(isset($_SESSION["userId"])&&$_SESSION["userId"]<2){//if user is admin
     if(isset($_SESSION["userId"]))
         echo'
-        <input type="text" placeholder="add tag" style="width: 85%;" class="tagInput disableHotkeys">
+        <input type="text" placeholder="add tag" class="tagInput disableHotkeys darkInput">
         <button class="ogButton">+</button>
         ';
     // }

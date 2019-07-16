@@ -1,4 +1,6 @@
 /*jshint esversion: 6 */
+let slide;
+
 $(function(){
     //$("#prev").click(updateNext);
     //$("#next").click(updatePrev);

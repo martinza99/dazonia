@@ -64,17 +64,18 @@
 }
 
 .tagContainer{
-    background-color: gray;
+    background-color: #394c94;
     width: fit-content;
 }
 
 .sugg{
-    border-top: 1px white solid;
+    border-top: 1px #333333 solid;
     text-align: left;
+    background-color: #3c4043;
 }
 
 .ogButton{
-    background-color: white;
+    background-color: #181a1b;
     border-width: 3px;
     margin-left: 0;
     font-size: 1em;
@@ -86,4 +87,19 @@
     position: absolute;
     top: auto;
     width: 11px;
+}
+
+.darkInput{
+    background-color: #181a1b;
+    color: white;
+    width: 85%;
+    margin-right: -1px;
+    border-color: #394c94;
+    border-style: solid;
+}
+
+.slideContainer{
+    position: absolute;
+    margin-top: -100px;
+    margin-left: 48px;
 }

@@ -17,7 +17,7 @@ th{
     margin-bottom: -0.9em;
 }
 
-.listTable{
+.listTableDiv{
     width: fit-content;
 }
 
@@ -62,4 +62,15 @@ th{
 
 .userStar:hover{
     opacity: 1;
+}
+
+.listTable, .listTable td, .listTable th{
+    margin-left: 40px;
+    margin-top: 22px;
+    border: 2px solid #003aff91;
+}
+
+.listUploader, .listUploadDate{
+    width: 7em;
+    text-align: center;
 }

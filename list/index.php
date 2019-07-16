@@ -35,6 +35,7 @@
         while($randBG=="index.php");
         echo "<img src=\"/bg/$randBG\" style=\"position:fixed; right:0; bottom:0; z-index:-1; max-width: 35%; max-height:90%; opacity: 0.7;\">";
     }
+    #region SQL
     $paramValues = array();
     $paramType = "";
 
@@ -170,18 +171,20 @@
     $result = $sql->get_result();
     $conn->close();
 
-    echo '<div class="listTable">';
+    #endregion SQL
+
+    echo '<div class="listTableDiv">';
     if($q!="")
         $q = "&q=".urlencode($q);
     echo '<div class="navButtons"><a href="'.$domain.'/list?p='.($p-1).$q.'" target="_top"><button>←</button></a><span> '.$p.' </span><a href="'.$domain.'/list?p='.($p+1).$q.'" target="_top"><button>→</button></a></div>';
-    echo '<table border="1" style="margin-left: 40px; margin-top: 22px">
+    echo '<table class="listTable">
         <tr>
             <th>Preview</th>
             <th>Rating</th>
             <th>Filename</th>
             <th>Title</th>
-            <th>Username</th>
-            <th>Upload Date</th>';
+            <th class="listUploader">Uploader</th>
+            <th class="listUploadDate">Upload Date</th>';
     echo "<th>";
     echo "<button class=\"deleteAllButton\">X</button>";
     if($_SESSION["userId"]<2){
@@ -213,12 +216,12 @@
         echo "\">$rows[fileOgName]</div>";//print ogName
         if($userId<2)//print replace input element
             echo "<div class=\"changeNameInput\"><input type=\"text\" value=\"$rows[fileOgName]\"><button class=\"updateName\">Update</button></div></td>";//print input
-        echo "<td>";
+        echo "<td class=\"listUploader\">";
         if($rows["username"]==null)
-        $rows["username"] = "deleted<br>user[$rows[fileUserId]]";
+            $rows["username"] = "deleted<br>user[$rows[fileUserId]]";
         echo "<a href=\"$domain/list?q=u%3A$rows[fileUserId]\" target=\"_top\">$rows[username]</a>";
         echo "</td>";
-        echo "<td class=\"date\">".substr($rows["fCreated"],0,10)."</td>";
+        echo "<td class=\"listUploadDate\">".substr($rows["fCreated"],0,10)."</td>";
         echo "<td>";
         if($_SESSION["userId"]<2 || $_SESSION["userId"]==$rows["fileUserId"])
             echo "<button class=\"deleteButton\">X</button>";
