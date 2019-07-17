@@ -75,7 +75,7 @@ function updateParent() {
 
 function newTag(){
     let tag = prompt("Tag name");
-    if(tag == false)
+    if(tag == null)
         return;
     $.post("editor.php",
     {
