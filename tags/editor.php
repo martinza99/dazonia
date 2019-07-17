@@ -139,7 +139,10 @@
     echo '<th><button class="deleteAllButton">X</button></th></th>';
     while($rows = $result->fetch_assoc()){
             echo "<tr id=\"$rows[tagname]\">";
-            echo "<td><img class=\"thumbScript\" src=\"img/$rows[tagsid].png\"></td>";
+            $img = "img/$rows[tagsid].png";
+            if(!file_exists($img))
+                $img = "img/0.png";
+            echo "<td><img class=\"thumbScript\" src=\"$img\"></td>";
             echo "<td><a href=\"$domain/tags?t=$rows[tagname]\" target=\"_top\">$rows[tagsid]</a></td>";
             echo "<td class=\"nameScript\"><a href=\"$domain/list/?q=tag%3A$rows[tagname]\" target=\"_top\">$rows[tagname]</a></td>";//print tag name
             echo "<td class=\"parentScript\"><a href=\"$domain/tags?t=$rows[parentname]\" target=\"_top\">$rows[parentname]</a></td>";//print parent name
