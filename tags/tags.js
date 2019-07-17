@@ -3,9 +3,9 @@ $(function(){
         if(confirm("Delete "+this.parentElement.parentElement.id))
         deleteTag(this);
     });
-    $(".newTagButton").click(newTag);
+    $(".newTagButton").click(newTagPrompt);
     $(".nameScript").contextmenu(updateName);
-    $(".parentScript").contextmenu(updateParent);
+    $(".parentScript").contextmenu(updateParentPrompt);
     $(".thumbScript").contextmenu(changeImage);
     $(".fileUp").change(function(){
         this.parentElement.submit();
@@ -50,22 +50,32 @@ function updateName() {
     );
 }
 
-function updateParent() {
+function updateParentPrompt() {
     event.preventDefault();
     let element = this;
     let stagName = this.parentElement.id;
     let parent = prompt("New parent name", element.innerText);
-    if(!parent)
+    if(parent==null)
         return;
+    updateParent(parent, stagName, element);
+}
+
+function updateParent(_parent, _stagName, _element) {
     $.post("editor.php",
     {
-        tagName: stagName,
-        newParent: parent,
+        tagName: _stagName,
+        newParent: _parent,
         action: "parent"
     },
         function(_response){
             if(_response=="Parent updated"){
-                element.innerText = parent;
+                _element.innerText = _parent;
+            }
+            else if(_response=="Parent doesn't exist"){
+                if(confirm("Parent doesn't exist, create \"" + _parent +"\"?")){
+                    createNewTag(_parent, false);
+                    updateParent(_parent, _stagName, _element);
+                }
             }
             else
                 alert(_response);
@@ -73,18 +83,22 @@ function updateParent() {
     );
 }
 
-function newTag(){
+function newTagPrompt(){
     let tag = prompt("Tag name");
     if(tag == null)
         return;
+    createNewTag(tag, true);
+}
+
+function createNewTag(_tag, _showResponse) {
     $.post("editor.php",
     {
-        tagName: tag,
+        tagName: _tag,
         action: "new"
     },
     function(_response){
-        alert(_response);
-        location.reload();
+        if(_showResponse)
+            alert(_response);
     });
 }
 
