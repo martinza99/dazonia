@@ -196,6 +196,7 @@
     $result = $sql->get_result();
     #endregion sql
 
+    #region fetch query
     $left;
     $right;
     $username;
@@ -222,6 +223,7 @@
         $right = $fileName;
     }
 
+    #endregion fetch query
     require_once "../header.php";
 
     ?>
@@ -232,8 +234,9 @@
 
 <body onkeydown="keyDown(event);">
     <?php
-    if($q!="")
-        $q = "&q=".urlencode($q);
+    $qq = $q;
+    if($qq!="")
+        $qq = "&q=".urlencode($qq);
 
     if(isset($_SESSION["userId"])&&$_SESSION["userId"]<2){
         echo '<div class="right top replace">';
@@ -253,9 +256,9 @@
     echo "
         <div id=\"picDiv\" class=\"center\">";
         if(isset($left))
-            echo "<a href=\"$domain/view/?id=$left$q\" target=\"_top\"><img id=\"prev\" class=\"floatLink pic\" src=\"../files/$fileName\"></a>";
+            echo "<a href=\"$domain/view/?id=$left$qq\" target=\"_top\"><img id=\"prev\" class=\"floatLink pic\" src=\"../files/$fileName\"></a>";
         if(isset($right)){
-        echo "<a href=\"$domain/view/?id=$right$q";
+        echo "<a href=\"$domain/view/?id=$right$qq";
             if($slide > 0)
                 echo "&slide=$slide";
             if(!empty($random))
@@ -281,9 +284,8 @@
                     <label>Random</label> <input type="checkbox" name="random" checked="'.isset($random).'">
                     <button type="submit">Start</button><br>
                         <label>Delay</label> <input type="number" class="darkInput" name="slide" value="'; if($slide == 0) echo "3"; else echo $slide; echo '" min="0" step="0.5" placeholder="seconds" style="width:80px;">
-                        <input type="hidden" name="id" value="'.$_GET["id"].'">';
-                        if(isset($q))
-                            '<input type="hidden" name="q" value="'.$q.'">';
+                        <input type="hidden" name="id" value="'.$_GET["id"].'">
+                        <input type="hidden" name="q" value="'.$q.'">';
                 echo'</form>
                 </div>
             </div>';
