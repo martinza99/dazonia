@@ -2,30 +2,14 @@
 let slide;
 
 $(function(){
-    //$("#prev").click(updateNext);
-    //$("#next").click(updatePrev);
     $("#fileUp").change(sendReplace);
     $(".star").click(openStars);
     $(".ogButton").click(sendTag);
     $(".tagInput").keydown(isEnter);
-    $(".tagInput").keyup(forceLower);
+    $(".tagInput").keyup(replaceChars);
     $(".deleteTag").click(deleteTag);
 });
 
-window.onpopstate = function(_event){
-    if(_event.state.pic!=undefined)
-        swapPic(_event.state.pic);
-};
-
-function updateNext(){
-    var src = $(".pic").attr("src").slice(9);
-    $.get("sibling.php",{s:"n",id:src},swapPic,"text");   
-}
-
-function updatePrev(){
-    var src = $(".pic").attr("src").slice(9);
-    $.get("sibling.php",{s:"p",id:src},swapPic,"text");
-}
 
 function swapHandle(data, status, _xhr){
     swapPic(_xhr,true);
@@ -157,8 +141,11 @@ function deleteTag() {
     );
 }
 
-function forceLower(){
-    $(this).val($(this).val().toLowerCase());
+function replaceChars(){//tag input keyup callback
+    if(this.value.toLowerCase() != this.value) // if contains upperCase
+        this.value = this.value.toLowerCase();
+    while(this.value.includes(" "))
+        this.value = this.value.replace(" ", "_");
 }
 
 function stopSlide(){
