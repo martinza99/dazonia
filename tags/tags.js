@@ -31,19 +31,24 @@ function deleteTag(_btn) {
 
 function updateName() {
     event.preventDefault();
-    let element = this;
-    let name = prompt("New name",element.innerText);
-    if(!name)
+    let td = this; //table data cell
+    let tr = td.parentElement; //table row
+    let a = td.children[0]; //link
+    let newName = prompt("New name",a.innerText);
+    if(!newName)
         return;
     $.post("editor.php",
     {
-        tagName: element.innerText,
-        newName: name,
+        tagName: a.innerText,
+        newName: newName,
         action: "name"
     },
         function(_response){
-            if(_response=="Tag updated")
-                element.innerText = name;
+            if(_response=="Tag updated"){
+                a.href = a.href.substr(0, a.href.lastIndexOf(td.innerText)) + newName; //replace link href
+                a.innerText = newName; //replace link text
+                tr.id = newName; //replace table row id
+            }
             else
                 alert(_response);
         }
@@ -52,35 +57,43 @@ function updateName() {
 
 function updateParentPrompt() {
     event.preventDefault();
-    let element = this;
-    let stagName = this.parentElement.id;
-    let parent = prompt("New parent name", element.innerText);
-    if(parent==null)
+    let td = this;
+    let currentTagName = this.parentElement.id;
+    let parent = prompt("New parent name", td.innerText);
+    if(parent == null)
         return;
-    updateParent(parent, stagName, element);
+    updateParent(parent, currentTagName, td);
 }
 
-function updateParent(_parent, _stagName, _element) {
+function updateParent(_newParent, _currentTagName, _td) {
     $.post("editor.php",
     {
-        tagName: _stagName,
-        newParent: _parent,
+        tagName: _currentTagName,
+        newParent: _newParent,
         action: "parent"
     },
         function(_response){
-            if(_response=="Parent updated"){
-                _element.innerText = _parent;
-            }
-            else if(_response=="Parent doesn't exist"){
-                if(confirm("Parent doesn't exist, create \"" + _parent +"\"?")){
-                    createNewTag(_parent, false);
-                    updateParent(_parent, _stagName, _element);
-                }
-            }
-            else
-                alert(_response);
+            switch (_response) {
+                case "Parent updated":
+                    _td.innerHTML = "";//clear td content
+                    let prevDomain = _td.previousSibling.children[0].href; //get href from prev element 
+                    let domain = prevDomain.substr(0,prevDomain.lastIndexOf("/list/")); // extract domain
+                    let a = document.createElement("a"); //create a tag
+                    a.href = domain + "/tags?t=" + _newParent; //set href
+                    a.target = "_top"; //set target
+                    a.innerText = _newParent; //set link text
+                    _td.appendChild(a); //append link
+                    break;
+                case "Parent doesn't exist":
+                    if(confirm("Parent doesn't exist, create \"" + _newParent +"\"?")){
+                        createNewTag(_newParent, false);
+                        updateParent(_newParent, _currentTagName, _td);
+                    }
+                    break;
+                default:
+                    alert(_response);
         }
-    );
+    });
 }
 
 function newTagPrompt(){
