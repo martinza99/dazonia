@@ -62,8 +62,10 @@
             case "parent":
                 $parentName = $_POST["newParent"];
                 //get parent id
-                $parentId = 0;
-                if($parentName!=" "){
+                $parentId = -1;//default id
+                if($parentName == "root")
+                    $parentId = 0;
+                else if($parentName!=" "){
                     $sql = $conn->prepare("SELECT id FROM tags WHERE name = ?");
                     $sql->bind_param("s",$parentName);
                     $sql->execute();
@@ -145,7 +147,16 @@
             echo "<td><img class=\"thumbScript\" src=\"$img\"></td>";
             echo "<td><a href=\"$domain/tags?t=$rows[tagname]\" target=\"_top\">$rows[tagsid]</a></td>";
             echo "<td class=\"nameScript\"><a href=\"$domain/list/?q=tag%3A$rows[tagname]\" target=\"_top\">$rows[tagname]</a></td>";//print tag name
-            echo "<td class=\"parentScript\"><a href=\"$domain/tags?t=$rows[parentname]\" target=\"_top\">$rows[parentname]</a></td>";//print parent name
+            switch ($rows["parentId"]){
+                case -1://no parent
+                    echo "<td class=\"parentScript\">(no parent)</td>";//print no parent
+                    break;
+                case 0://root
+                    echo "<td class=\"parentScript\"><a href=\"$domain/tags\" target=\"_top\">(root)</a></td>";//print root
+                    break;
+                default://default
+                    echo "<td class=\"parentScript\"><a href=\"$domain/tags?t=$rows[parentname]\" target=\"_top\">$rows[parentname]</a></td>";//print parent name
+            }
             if($rows["fileid"] == null)
                 $rows["amount"] = 0;
             echo "<td>$rows[amount]</td>";//print count

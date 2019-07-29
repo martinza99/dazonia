@@ -75,6 +75,16 @@ function updateParent(_newParent, _currentTagName, _td) {
         function(_response){
             switch (_response) {
                 case "Parent updated":
+                    switch (_newParent) {
+                        case "root":
+                            _newParent = "(root)";
+                            break;
+                        case " ":
+                            _newParent = "(no parent)";
+                            break;
+                        default:
+                            break;
+                    }
                     _td.innerHTML = "";//clear td content
                     let prevDomain = _td.previousSibling.children[0].href; //get href from prev element 
                     let domain = prevDomain.substr(0,prevDomain.lastIndexOf("/list/")); // extract domain
