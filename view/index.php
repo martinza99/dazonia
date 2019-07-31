@@ -8,7 +8,7 @@
         header("Location: $domain/list");
         die("No id");
     }
-    $random = "";
+    $random = "off";
     $slide = 0;
     if(isset($_GET["slide"]))
         $slide = htmlspecialchars($_GET["slide"]);
@@ -28,10 +28,6 @@
     $fileId = mysqli_fetch_assoc($sql->get_result())["id"];
     if($fileId==NULL)
         die("ID not found");
-
-    if(isset($_GET["random"])){
-        $sql = $conn->prepare("SELECT * FROM `files` ORDER BY rand() LIMIT 1");
-    }
 
     #region sql
     $paramValues = array();
@@ -151,7 +147,7 @@
             LEFT JOIN tagFile ON tagfile.fileId = files.id
             LEFT JOIN tags ON tags.id = tagfile.tagId
             WHERE ";
-            if(!isset($_GET["random"]))
+            if($random == "off")
                 $sql .= "files.id < ? ";//current ID <= files.id - curr + right
             else 
                 $sql .= "files.id <> ? ";
@@ -162,7 +158,7 @@
             if($searchUser!="")
                 $sql.="AND users.id = ? ";//filter upload user
             $sql .= "GROUP BY files.id ORDER BY ";
-            if(!isset($_GET["random"]))
+            if($random == "off")
                 $sql .= "files.id DESC ";
             else
                 $sql .= "RAND() ";
@@ -238,7 +234,7 @@
     if($qq!="")
         $qq = "&q=".urlencode($qq);
 
-    if(isset($_SESSION["userId"])&&$_SESSION["userId"]<2){
+    if(isset($_SESSION["userId"]) && $_SESSION["userId"]<2){
         echo '<div class="right top replace">';
         echo '<a href="javascript:document.querySelector(\'#fileUp\').click();">Replace Image</a>';
         echo '
@@ -261,8 +257,8 @@
         echo "<a href=\"$domain/view/?id=$right$qq";
             if($slide > 0)
                 echo "&slide=$slide";
-            if(!empty($random))
-                echo "&random";
+            if($random == "on")
+                echo "&random=on";
             echo "\" target=\"_top\">";
         }
         echo "<img id=\"next\" class=\"floatLink pic\" src=\"../files/$fileName\"></a>
@@ -281,7 +277,7 @@
             <div class="collapse slideContainer" id="collapseRandom">
                 <div class="card card-body">
                     <form action="/view" method="GET">
-                    <label>Random</label> <input type="checkbox" name="random" checked="'.isset($random).'">
+                    <label>Random</label> <input type="checkbox" name="random" checked="'.$random.'">
                     <button type="submit">Start</button><br>
                         <label>Delay</label> <input type="number" class="darkInput" name="slide" value="'; if($slide == 0) echo "3"; else echo $slide; echo '" min="0" step="0.5" placeholder="seconds" style="width:80px;">
                         <input type="hidden" name="id" value="'.$_GET["id"].'">
