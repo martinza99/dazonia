@@ -24,7 +24,7 @@
 <body>
 <?php
 
-    $sql = $conn->prepare("SELECT files.*, users.name AS username, AVG(userrating.rating) AS avgrating FROM files LEFT JOIN users on users.id = files.userId LEFT JOIN userrating on userrating.fileId = files.ID GROUP BY files.id ORDER BY id DESC LIMIT 100 OFFSET ?");
+    $sql = $conn->prepare("SELECT files.*, users.name AS username, AVG(userrating.rating) AS avgrating FROM files LEFT JOIN users on users.id = files.userId LEFT JOIN userrating on userrating.fileId = files.ID LEFT JOIN tagfile ON tagfile.fileid = files.id WHERE tagfile.tagid = 11 GROUP BY files.id ORDER BY id DESC LIMIT 100 OFFSET ?");
     $sql->bind_param("i",$offset);
     $sql->execute();
     $result = $sql->get_result();
