@@ -45,6 +45,9 @@ function keyDown(_event){
         case 'a':
             document.querySelector("#prev").click();
             break;
+        case 'f':
+            document.querySelector("#centerImage").requestFullscreen();
+            break;
     }
 }
 
