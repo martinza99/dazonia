@@ -27,6 +27,7 @@
 #centerImage{
     max-height: -webkit-fill-available;
     height: auto;
+    max-width: inherit;
 }
 
 #replaceForm{
