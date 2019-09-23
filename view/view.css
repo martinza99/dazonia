@@ -1,6 +1,6 @@
 .floatLink {
     width: 50%;
-    height: 100%;
+    height: calc(100% - 70px);
     position: absolute;
     margin-top: -10px;
     z-index: 1;

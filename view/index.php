@@ -265,7 +265,7 @@
         if(substr(mime_content_type("../files/$fileName"), 0, 5) === "image")
             echo "<img id=\"centerImage\" class=\"pic\" src=\"../files/$fileName\">";
         else
-            echo "<video id=\"centerImage\" class=\"pic\" src=\"../files/$fileName\" autoplay controls loop>";
+            echo "<video id=\"centerImage\" class=\"pic\" src=\"../files/$fileName\" autoplay controls loop onloadstart=\"this.volume=0.2\">";
         echo "</div>
     ";
     echo "

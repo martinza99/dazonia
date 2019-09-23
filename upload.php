@@ -108,7 +108,6 @@ function resize($factor, $targetFile, $originalFile) {
 
             case 'video':
                     require 'vendor/autoload.php';
-                    $sec = 10;
                     $movie = $originalFile;
                     $thumbnail = 'thumbnail.png';
                     
@@ -119,7 +118,7 @@ function resize($factor, $targetFile, $originalFile) {
                         'ffmpeg.threads' => 12, // The number of threads that FFMpeg should use
                     ));
                     $video = $ffmpeg->open($movie);
-                    $frame = $video->frame(FFMpeg\Coordinate\TimeCode::fromSeconds($sec));
+                    $frame = $video->frame(FFMpeg\Coordinate\TimeCode::fromSeconds(1));
                     $frame->save($thumbnail, 180);
 
                     $image_create_func = 'imagecreatefrompng';
