@@ -83,8 +83,9 @@ function generateRandomString($length){//generates random strings
 
 function resize($factor, $targetFile, $originalFile) {
 
-    $info = getimagesize($originalFile);
-    $mime = $info['mime'];
+    $mime = mime_content_type($originalFile);
+    if(substr($mime, 0, 5) === "video")
+        $mime = "video";
 
     switch ($mime) {
             case 'image/jpeg':
@@ -105,8 +106,30 @@ function resize($factor, $targetFile, $originalFile) {
                     $new_image_ext = 'gif';
                     break;
 
+            case 'video':
+                    require 'vendor/autoload.php';
+                    $sec = 10;
+                    $movie = $originalFile;
+                    $thumbnail = 'thumbnail.png';
+                    
+                    $ffmpeg = FFMpeg\FFMpeg::create(array(
+                        'ffmpeg.binaries' => $GLOBALS["ffmpegDir"] . '\bin\ffmpeg.exe',
+                        'ffprobe.binaries' => $GLOBALS["ffmpegDir"] . '\bin\ffprobe.exe',
+                        'timeout' => 3600, // The timeout for the underlying process
+                        'ffmpeg.threads' => 12, // The number of threads that FFMpeg should use
+                    ));
+                    $video = $ffmpeg->open($movie);
+                    $frame = $video->frame(FFMpeg\Coordinate\TimeCode::fromSeconds($sec));
+                    $frame->save($thumbnail, 180);
+
+                    $image_create_func = 'imagecreatefrompng';
+                    $image_save_func = 'imagepng';
+                    $new_image_ext = 'png';
+                    $originalFile = $thumbnail;
+                    break;
+
             default: 
-                    die('Unknown image type.<br><a href="'.$domain.'/" target="_top">back</a>');
+                    die('Unknown mime type: '.$mime.'<br><a href="'.$domain.'/" target="_top">back</a>');
     }
 
     $img = $image_create_func($originalFile);
@@ -133,6 +156,10 @@ function resize($factor, $targetFile, $originalFile) {
         unlink($targetFile);
     }
     $image_save_func($tmp, $targetFile);
+
+    if (file_exists('thumbnail.png')) {
+        unlink('thumbnail.png');
+    }
     return true;
 }
 
@@ -176,6 +203,9 @@ function insertName($newName,$oldname,$userId){
 
     $fileId = $conn->insert_id;
     autoTag("gif",$newName, $fileId);
+    autoTag("mp4",$newName, $fileId);
+    autoTag("webm",$newName, $fileId);
+    autoTag("ogg",$newName, $fileId);
 
     $conn->close();
 }

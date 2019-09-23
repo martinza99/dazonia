@@ -215,8 +215,8 @@
     if($username==null)
         $username = "deleted user[$userId]";
     if(!isset($_SESSION["userId"])){
-        $left = $fileName;
-        $right = $fileName;
+        unset($left);
+        unset($right);
     }
 
     #endregion fetch query
@@ -261,9 +261,12 @@
                 echo "&random=on";
             echo "\" target=\"_top\">";
         }
-        echo "<img id=\"next\" class=\"floatLink pic\" src=\"../files/$fileName\"></a>
-        <img id=\"centerImage\" class=\"pic\" src=\"../files/$fileName\">
-        </div>
+        echo "<img id=\"next\" class=\"floatLink pic\" src=\"../files/$fileName\"></a>";
+        if(substr(mime_content_type("../files/$fileName"), 0, 5) === "image")
+            echo "<img id=\"centerImage\" class=\"pic\" src=\"../files/$fileName\">";
+        else
+            echo "<video id=\"centerImage\" class=\"pic\" src=\"../files/$fileName\" autoplay controls loop>";
+        echo "</div>
     ";
     echo "
     <div class=\"bottom\">
