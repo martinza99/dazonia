@@ -33,7 +33,7 @@
 
     echo "<div class=\"potato\">";
     while($rows = $result->fetch_assoc()){
-        echo "<a  href=\"$domain/view/?id=$rows[name]\" target=\"_top\">";//open link
+        echo "<a  href=\"$domain/view/?id=$rows[name]&q=tag%3Asafe\" target=\"_top\">";//open link
         echo "<div class=\"pics picsBorder\" id=\"$rows[name]\">";//open table cell
         if(substr($rows["name"],-4)==".gif")
             echo '<button class="thumbButton sideView">►</button>';
