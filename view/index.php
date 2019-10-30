@@ -315,12 +315,12 @@
         echo "</div>";
     }
     // if(isset($_SESSION["userId"])&&$_SESSION["userId"]<2){//if user is admin
-    if(isset($_SESSION["userId"]))
+    if(isset($_SESSION["userId"])){
         echo'
-        <input type="text" placeholder="add tag" class="tagInput disableHotkeys darkInput">
-        <button class="ogButton">+</button>
-        ';
-    // }
+        <input list="tagList" placeholder="add tag" class="tagInput disableHotkeys darkInput">
+        <button class="ogButton">+</button>';
+        printDatalistTags();
+    }
 ?>
 </div>
 </body>

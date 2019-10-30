@@ -20,4 +20,16 @@
         print_r($var);
         echo "</pre>";
     }
+
+    function printDatalistTags(){
+        $conn = $GLOBALS["conn"];
+        echo '<datalist id="tagList">';
+        $sql = $conn->prepare("SELECT name FROM tags");
+        $sql->execute();
+        $result = $sql->get_result();
+        while($rows = $result->fetch_assoc()){
+            echo "<option value=\"$rows[name]\">";
+        }
+        echo '</datalist>';
+    }
 ?>
