@@ -23,6 +23,7 @@ if($userId<2){
     echo '<a href="'.$domain.'/tags/editor.php" target="_top">Tag Editor</a><br>';
 }
 echo '
+    <a href="'.$domain.'/login/settings.php" target="_top">Settings</a><br>
     <a href="'.$domain.'/login/api.php" target="_top">API Info</a><br>
     <a href="'.$domain.'/login/resetPassword.php" target="_top">Change Password</a><br>
     <a href="/fixMasking.user.js">Userscript</a><br>

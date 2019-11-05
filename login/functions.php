@@ -1,5 +1,8 @@
 <?php
 
+	if(isset($_COOKIE["noMasking"]) && $_COOKIE["noMasking"] == "true")
+		$domain = "";
+
     exec('git rev-parse --verify HEAD', $output);//requires git
     $hash = substr($output[0],0,6);
     
@@ -22,14 +25,16 @@
     }
 
     function printDatalistTags(){
-        $conn = $GLOBALS["conn"];
-        echo '<datalist id="tagList">';
-        $sql = $conn->prepare("SELECT name FROM tags");
-        $sql->execute();
-        $result = $sql->get_result();
-        while($rows = $result->fetch_assoc()){
-            echo "<option value=\"$rows[name]\">";
-        }
-        echo '</datalist>';
+        if(isset($_COOKIE["showTaglist"]) && $_COOKIE["showTaglist"] == "true"){
+			$conn = $GLOBALS["conn"];
+			echo '<datalist id="tagList">';
+			$sql = $conn->prepare("SELECT name FROM tags");
+			$sql->execute();
+			$result = $sql->get_result();
+			while($rows = $result->fetch_assoc()){
+				echo "<option value=\"$rows[name]\">";
+			}
+			echo '</datalist>';
+		}
     }
 ?>
