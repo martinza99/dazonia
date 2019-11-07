@@ -1,45 +1,45 @@
 <?php
-    session_start();
-    require_once 'sql.php';
-    require_once 'functions.php';
-    if(!isset($_SESSION["userId"])||!checkLogin($_SESSION["userId"])){
-        header('Location: login/');
-        die();
+session_start();
+require_once 'sql.php';
+require_once 'functions.php';
+if (!isset($_SESSION["userId"]) || !checkLogin($_SESSION["userId"])) {
+    header('Location: login/');
+    die();
+}
+
+$userId = $_SESSION["userId"];
+$sql = $conn->prepare("SELECT users.* FROM `users` WHERE `id` = ?");
+$sql->bind_param("i", $userId);
+$sql->execute();
+$result = $sql->get_result();
+$rows = $result->fetch_assoc();
+$username = $rows['name'];
+$apiKey = $rows['apiKey'];
+
+if (isset($_POST["action"])) {
+    switch (htmlspecialchars($_POST["action"])) {
+        case "reset":
+            $apiKey = generateRandomString(64);
+            $sql = $conn->prepare("UPDATE users SET apiKey = ? WHERE id = ?");
+            $sql->bind_param("si", $apiKey, $userId);
+            $sql->execute();
+            header('Location: api.php');
+            die("Key reset");
+            break;
     }
+}
 
-    $userId = $_SESSION["userId"];
-    $sql = $conn->prepare("SELECT users.* FROM `users` WHERE `id` = ?");
-    $sql->bind_param("i",$userId);
-    $sql->execute();
-    $result = $sql->get_result();
-    $rows = $result->fetch_assoc();
-    $username = $rows['name'];
-    $apiKey = $rows['apiKey'];
-
-    if(isset($_POST["action"])){
-        switch (htmlspecialchars($_POST["action"])){
-            case "reset": 
-                $apiKey = generateRandomString(64);
-                $sql = $conn->prepare("UPDATE users SET apiKey = ? WHERE id = ?");
-                $sql->bind_param("si",$apiKey,$userId);
-                $sql->execute();
-                header('Location: api.php');
-                die("Key reset");
-                break;
-        }
-    }
-
-    require_once "../header.php";
-    echo '
+require_once "../header.php";
+echo '
         <title>API-Key</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <script src="../main.js?'.$hash.'"></script>
+        <script src="../main.js?' . $hash . '"></script>
         <script src="login.js<?php echo "?$hash" ?>"></script>
     </head>
     <body>
         <div>
             <span>API-Token:</span>
-            <code class="apiKey">'.$apiKey.'</code>
+            <code class="apiKey">' . $apiKey . '</code>
             <button onclick="copyKey(\'apiKey\');" style="height:22px;"><i class="glyphicon glyphicon-copy"></i></button>
             <br><br>
             <span>ShareX custom uploader config:</span>
@@ -66,12 +66,14 @@
     "Name": "Dazonia",
     "DestinationType": "ImageUploader",
     "RequestMethod": "POST",
-    "RequestURL": "'.$_SERVER["REQUEST_SCHEME"].'://'.$_SERVER["HTTP_HOST"].'/upload.php",
+    "RequestURL": "' . $_SERVER["REQUEST_SCHEME"] . '://' . $_SERVER["HTTP_HOST"] . '/upload.php",
     "Body": "MultipartFormData",
     "Arguments": {
-        "key": "'.$apiKey.'"
+        "key": "' . $apiKey . '"
     },
-    "FileFormName": "file"
+    "FileFormName": "file",
+    "URL": "$json:url$",
+    "ThumbnailURL": "$json:thumbnail$"
 }</code></pre>
             <form action="api.php" method="POST" enctype="multipart/form-data" autocomplete="off">
                 <input type="hidden" value="reset" name="action">
@@ -80,20 +82,22 @@
         </div>
         <br><br><br><br><br>
         <div class="bottom">';
-    require_once "../footer.php";
+require_once "../footer.php";
 ?>
-</body>
-</html>
+    </body>
+
+    </html>
 
 
-<?php
-function generateRandomString($length){//generates random strings
-    $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-_';
-    $charactersLength = strlen($characters);
-    $randomString = '';
-    for ($i = 0; $i < $length; $i++) {
-        $randomString .= $characters[rand(0, $charactersLength - 1)];
+    <?php
+    function generateRandomString($length)
+    { //generates random strings
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-_';
+        $charactersLength = strlen($characters);
+        $randomString = '';
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $characters[rand(0, $charactersLength - 1)];
+        }
+        return $randomString;
     }
-    return $randomString;
-}
-?>
+    ?>
