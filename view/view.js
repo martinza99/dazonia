@@ -46,10 +46,10 @@ function keyDown(_event) {
             document.querySelector("#prev").click();
             break;
         case 'f':
-            if (!document.fullscreenEnabled)
-                document.querySelector("#centerImage").requestFullscreen();
-            else
-                document.exitFullscreen();
+            // if (!document.fullscreenEnabled)
+            document.querySelector("#centerImage").requestFullscreen();
+            // else
+            //     document.exitFullscreen();
             break;
     }
 }
