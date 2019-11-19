@@ -1,7 +1,7 @@
 /*jshint esversion: 6 */
 let slide;
 
-$(function(){
+$(function () {
     $("#fileUp").change(sendReplace);
     $(".star").click(openStars);
     $(".ogButton").click(sendTag);
@@ -11,28 +11,28 @@ $(function(){
 });
 
 
-function swapHandle(data, status, _xhr){
-    swapPic(_xhr,true);
+function swapHandle(data, status, _xhr) {
+    swapPic(_xhr, true);
 }
 
-function swapPic(_xhr,_push){
-    if(_xhr!="none"){
-        $(".pic").attr("src",location.origin + "/files/" +_xhr);
+function swapPic(_xhr, _push) {
+    if (_xhr != "none") {
+        $(".pic").attr("src", location.origin + "/files/" + _xhr);
         let stateObj = {
             pic: _xhr
         };
         document.title = _xhr;
-        if(_push){
+        if (_push) {
             history.pushState(stateObj, _xhr, location.origin + "/view/?id=" + xhr);
-            document.querySelector(".hiddenVal").value = location.origin + "/files/" +_xhr;
+            document.querySelector(".hiddenVal").value = location.origin + "/files/" + _xhr;
         }
     }
 }
 
-function keyDown(_event){
-    if(document.activeElement.classList.contains("disableHotkeys"))
+function keyDown(_event) {
+    if (document.activeElement.classList.contains("disableHotkeys"))
         return;
-    switch(_event.key){
+    switch (_event.key) {
         case 'c':
             let hid = document.querySelector(".hiddenVal");
             hid.select();
@@ -46,30 +46,33 @@ function keyDown(_event){
             document.querySelector("#prev").click();
             break;
         case 'f':
-            document.querySelector("#centerImage").requestFullscreen();
+            if (!document.fullscreenEnabled)
+                document.querySelector("#centerImage").requestFullscreen();
+            else
+                document.exitFullscreen();
             break;
     }
 }
 
-function sendReplace(){
+function sendReplace() {
     this.parentElement.submit();
 }
 
-function makeStar(_starElement,_rating){
+function makeStar(_starElement, _rating) {
     let star = document.createElement("img");
-    star.addEventListener("click",sendRating)
-    star.src = "../list/img/"+_rating+".png";
-    star.classList = "star tempStar "+_rating;
+    star.addEventListener("click", sendRating)
+    star.src = "../list/img/" + _rating + ".png";
+    star.classList = "star tempStar " + _rating;
     _starElement.parentElement.appendChild(star);
-    $(star).animate({left:_rating*32+"px"});
+    $(star).animate({ left: _rating * 32 + "px" });
 }
 
-function openStars(){
+function openStars() {
     for (let index = 0; index <= 10; index++)
-        makeStar(this,index);
+        makeStar(this, index);
 }
 
-function sendRating(){
+function sendRating() {
     let val = this.classList[2];
     this.style.zIndex = 100;
     $(this).siblings(".tempStar").remove();
@@ -78,80 +81,80 @@ function sendRating(){
     let urlParams = new URLSearchParams(window.location.search);
     let picId = urlParams.get("id");
     $.post("../list/rate.php",
-    {
-        id: picId,
-        rating: val
-    },
-        function(_response){
-            $(star).attr("src","../list/img/"+_response+".png");
+        {
+            id: picId,
+            rating: val
+        },
+        function (_response) {
+            $(star).attr("src", "../list/img/" + _response + ".png");
         }
     );
 }
 
-function sendTag(){
+function sendTag() {
     let tagName = $(".tagInput").val();
     $(".tagInput").val("");
     let urlParams = new URLSearchParams(window.location.search);
     let picId = urlParams.get("id");
     let temp = this;
     $.post("../list/tag.php",
-    {
-        id: picId,
-        tag: tagName,
-        action: "c"
-    },
-    function(_response){
-        if(_response=="error")
-            return;
-        let container = document.createElement("div");
-        container.classList = "sugg";
-        
-        let link = document.createElement("a");
-        link.href = location.origin + "/list?q=tag%3A"+tagName;
-        link.target = "_top";
-        link.innerText = tagName.toLowerCase();
-        container.appendChild(link);
+        {
+            id: picId,
+            tag: tagName,
+            action: "c"
+        },
+        function (_response) {
+            if (_response == "error")
+                return;
+            let container = document.createElement("div");
+            container.classList = "sugg";
 
-        let delBut = document.createElement("span");
-        delBut.classList = "deleteTag glyphicon glyphicon-remove";
-        delBut.addEventListener("click",deleteTag);
-        container.appendChild(delBut);
+            let link = document.createElement("a");
+            link.href = location.origin + "/list?q=tag%3A" + tagName;
+            link.target = "_top";
+            link.innerText = tagName.toLowerCase();
+            container.appendChild(link);
 
-        let parent = document.querySelector(".tagContainer");//insert as 2nd last element
-        parent.insertBefore(container,parent.childNodes[parent.childElementCount-2]);
-    }
+            let delBut = document.createElement("span");
+            delBut.classList = "deleteTag glyphicon glyphicon-remove";
+            delBut.addEventListener("click", deleteTag);
+            container.appendChild(delBut);
+
+            let parent = document.querySelector(".tagContainer");//insert as 2nd last element
+            parent.insertBefore(container, parent.childNodes[parent.childElementCount - 2]);
+        }
     );
 }
 
-function isEnter(_event){
-    
-    if(_event.key == "Enter")
+function isEnter(_event) {
+
+    if (_event.key == "Enter")
         sendTag();
 }
 
 function deleteTag() {
-    var tr = $(this).closest(".sugg");    
+    var tr = $(this).closest(".sugg");
     var tagName = $(this).closest(".sugg").children()[0].text;
     let urlParams = new URLSearchParams(window.location.search);
     let picId = urlParams.get("id");
     $.post("../list/tag.php",
-    {
-        tag: tagName,
-        id: picId,
-        action: "d"
-    },
-        function(){tr.remove();}
+        {
+            tag: tagName,
+            id: picId,
+            action: "d"
+        },
+        function () { tr.remove(); }
     );
 }
 
-function replaceChars(){//tag input keyup callback
-    if(this.value.toLowerCase() != this.value) // if contains upperCase
+function replaceChars() {//tag input keyup callback
+    if (this.value.toLowerCase() != this.value) // if contains upperCase
         this.value = this.value.toLowerCase();
-    while(this.value.includes(" "))
+    while (this.value.includes(" "))
         this.value = this.value.replace(" ", "_");
 }
 
-function stopSlide(){
-    if(slide != undefined)
+function stopSlide() {
+    if (slide != undefined)
         clearInterval(slide);
 }
