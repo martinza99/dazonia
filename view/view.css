@@ -104,3 +104,17 @@
     margin-top: -100px;
     margin-left: 48px;
 }
+
+.toggleTagsLink{
+    display: none;
+}
+
+@media screen and (max-width: 768px){
+    .toggleTagsLink{
+        display: block;
+    }
+
+    .tagContainer{
+        display: none;
+    }
+}
