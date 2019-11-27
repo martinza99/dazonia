@@ -28,15 +28,13 @@ function prePrint($var)
 
 function printDatalistTags()
 {
-	// if (isset($_COOKIE["showTaglist"]) && $_COOKIE["showTaglist"] == "true") {
 	$conn = $GLOBALS["conn"];
-	$sql = $conn->prepare("SELECT name FROM tags ORDER BY name");
+	$sql = $conn->prepare("SELECT tags.name, COUNT(*) AS count FROM tags LEFT JOIN tagfile ON tags.id = tagfile.tagId GROUP BY tags.id ORDER BY COUNT DESC");
 	$sql->execute();
 	$result = $sql->get_result();
 	echo '<datalist id="tagList">';
 	while ($rows = $result->fetch_assoc()) {
-		echo "<option value=\"$rows[name]\" disabled>";
+		echo "<option value=\"$rows[name]\" disabled=\"true\">";
 	}
 	echo '</datalist>';
-	// }
 }
