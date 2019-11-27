@@ -10,8 +10,8 @@ echo "
 </head>";
 exec('git rev-parse --verify HEAD', $output);
 echo "<!-- $output[0] -->";
-$filter="";
-if(isset($_GET["q"]))
+$filter = "";
+if (isset($_GET["q"]))
     $filter = $_GET["q"];
 echo "
 <body>
@@ -23,7 +23,7 @@ echo "
             <span class=\"icon-bar\"></span>
             <span class=\"icon-bar\"></span>
         </button>
-        <a class=\"navbar-brand\" href=\"$domain\" target=\"_top\"><img src=\"/logo.png\" style=\"margin-top: -12px;\"></a>
+        <a class=\"navbar-brand\" href=\"$domain/\" target=\"_top\"><img src=\"/logo.png\" style=\"margin-top: -12px;\"></a>
     </div>
     <div class=\" navbar-collapse collapse\">
         <ul class=\"nav navbar-nav\">
@@ -70,4 +70,3 @@ echo "
 </div>
 </nav>
 <div class=\"navbarMargin\"></div>";
-?>
