@@ -19,6 +19,8 @@ require_once "../header.php";
 <body>
 	<label for="noMasking">noMasking</label>
 	<input type="checkbox" id="noMasking" class="cookieSettings"><br>
+	<label for="showTaglist">showTaglist</label>
+	<input type="checkbox" id="showTaglist" class="cookieSettings"><br>
 
 	<button onclick="saveCookies();">Save</button>
 	<script>

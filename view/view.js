@@ -147,27 +147,7 @@ function deleteTag() {
     );
 }
 
-let prevTags = [];
 function replaceChars() {//tag input keyup callback
-    for (let option of prevTags)
-        option.disabled = true;
-    prevTags = [];
-
-    let pattern = this.value;
-    let taglist = document.querySelector("#tagList").childNodes;
-    let count = 0;
-    for (let option of taglist) {
-        if (option.value.match(pattern)) {
-            prevTags.push(option);
-            count++;
-            if (count >= 20)
-                break;
-        }
-    }
-
-    for (let option of prevTags)
-        option.disabled = false;
-
     if (this.value.toLowerCase() != this.value) // if contains upperCase
         this.value = this.value.toLowerCase();
     while (this.value.includes(" "))
