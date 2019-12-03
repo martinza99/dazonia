@@ -30,12 +30,12 @@ function printDatalistTags()
 {
 	if (isset($_COOKIE["showTaglist"]) && $_COOKIE["showTaglist"] == "true") {
 		$conn = $GLOBALS["conn"];
-		$sql = $conn->prepare("SELECT tags.name, COUNT(*) AS count FROM tags LEFT JOIN tagfile ON tags.id = tagfile.tagId GROUP BY tags.id ORDER BY COUNT DESC");
+		$sql = $conn->prepare("SELECT tags.name AS 'tagName', COUNT(*) AS count FROM tags LEFT JOIN tagfile ON tags.id = tagfile.tagId GROUP BY tags.id ORDER BY COUNT DESC");
 		$sql->execute();
 		$result = $sql->get_result();
 		echo '<datalist id="tagList">';
-		while ($rows = $result->fetch_assoc()) {
-			echo "<option value=\"$rows[name]\">";
+		while ($rows = $result->fetch_object()) {
+			echo "<option value=\"$rows->tagName\">";
 		}
 		echo '</datalist>';
 	}

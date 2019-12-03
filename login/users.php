@@ -38,11 +38,11 @@ require_once "../header.php";
 		else
 			echo '<tr><th>#</th><th>Name</th></tr>';
 		while ($rows = $result->fetch_assoc()) {
-			echo "<tr id=\"$rows[id]\">";
-			echo "<td>$rows[id]</td>";
-			echo "<td><a href=\"$domain/list/?q=u%3A$rows[id]\" target=\"_top\">$rows[name]</a>"; //print name
+			echo "<tr id=\"$rows->id\">";
+			echo "<td>$rows->id</td>";
+			echo "<td><a href=\"$domain/list/?q=u%3A$rows->id\" target=\"_top\">$rows->name</a>"; //print name
 			if ($userId < 2) {
-				echo "<td><a href=\"$domain/login/resetPassword.php?resetKey=$rows[apiKey]\" target=\"_top\">Link</a>"; //print password reset link 
+				echo "<td><a href=\"$domain/login/resetPassword.php?resetKey=$rows->apiKey\" target=\"_top\">Link</a>"; //print password reset link 
 				echo "<td><button class=\"deleteButtonUser\">X</button></td>";
 			}
 			echo "</tr>";

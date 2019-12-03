@@ -22,10 +22,12 @@
         $sql->execute();
         $result = $sql->get_result();
         $conn->close();
-
-        $row = mysqli_fetch_assoc($result);
-        if(password_verify($password, $row['password'])){
-            $_SESSION["userId"] = $row['id'];
+        if($result->num_rows == 0)
+            return false;
+        $row = $result->fetch_object();
+        prePrint($result);
+        if(password_verify($password, $row->password)){
+            $_SESSION["userId"] = $row->id;
             return true;
         }
     }

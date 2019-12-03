@@ -40,10 +40,10 @@
     $result = $sql->get_result();
     echo '<table border="1">';
     echo '<th><button onclick="createToken();">#</button></th><th>Token</th><th><button class="deleteAllButtonToken">X</button></th></th>';
-    while($rows = $result->fetch_assoc()){
-            echo "<tr id=\"$rows[id]\">";
-            echo "<td>$rows[id]</td>";
-            echo "<td><a href=\"$domain/login/register.php?token=$rows[token]\" target=\"_top\">$rows[token]</a>";//print token
+    while($rows = $result->fetch_object()){
+            echo "<tr id=\"$rows->id\">";
+            echo "<td>$rows->id</td>";
+            echo "<td><a href=\"$domain/login/register.php?token=$rows->token\" target=\"_top\">$rows->token</a>";//print token
             echo "<td><button class=\"deleteButtonToken\">X</button></td>";
             echo "</tr>";
     }

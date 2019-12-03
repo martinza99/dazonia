@@ -12,9 +12,9 @@ $sql = $conn->prepare("SELECT users.* FROM `users` WHERE `id` = ?");
 $sql->bind_param("i", $userId);
 $sql->execute();
 $result = $sql->get_result();
-$rows = $result->fetch_assoc();
-$username = $rows['name'];
-$apiKey = $rows['apiKey'];
+$rows = $result->fetch_object();
+$username = $rows->name;
+$apiKey = $rows->apiKey;
 
 if (isset($_POST["action"])) {
     switch (htmlspecialchars($_POST["action"])) {

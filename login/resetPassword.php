@@ -45,7 +45,7 @@
             $sql->bind_param("i", $userid);
             $sql->execute();
 
-            $hash = $sql->get_result()->fetch_assoc()["password"];
+            $hash = $sql->get_result()->fetch_object()->password;
             $changePass = password_verify($currentPassword,$hash);
         }
         else if(isset($_POST["resetKey"])){
@@ -54,7 +54,7 @@
             $sql->execute();
             $result = $sql->get_result();
             if($result->num_rows>0){
-                $userid = $result->fetch_assoc()["id"];
+                $userid = $result->fetch_object()->id;
                 $changePass = true;
                 $_SESSION["userId"] = $userid;
 

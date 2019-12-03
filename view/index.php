@@ -25,7 +25,8 @@ if (isset($_GET["q"])) {
 $sql = $conn->prepare("SELECT id FROM files WHERE name = ?");
 $sql->bind_param("s", $fileName);
 $sql->execute();
-$fileId = mysqli_fetch_assoc($sql->get_result())["id"];
+$result = $sql->get_result();
+$fileId = $result->fetch_object()->id;
 if ($fileId == NULL)
     die("ID not found");
 
@@ -198,17 +199,17 @@ $right;
 $username;
 $userId;
 $rating;
-if ($rows = $result->fetch_assoc()) {
-    if ($rows["fileID"] > $fileId) {
-        $left = $rows["fileName"];
-        $rows = $result->fetch_assoc();
+if ($rows = $result->fetch_object()) {
+    if ($rows->fileID > $fileId) {
+        $left = $rows->fileName;
+        $rows = $result->fetch_object();
     }
-    $username = $rows["username"];
-    $rating = $rows["avgrating"];
-    $userId = $rows["fileUserId"];
-    $username = $rows["username"];
-    if ($rows = $result->fetch_assoc())
-        $right = $rows["fileName"];
+    $username = $rows->username;
+    $rating = $rows->avgrating;
+    $userId = $rows->fileUserId;
+    $username = $rows->username;
+    if ($rows = $result->fetch_object())
+        $right = $rows->fileName;
 } else {
     die("No result");
 }
@@ -219,9 +220,14 @@ if (!isset($_SESSION["userId"])) {
     unset($right);
 }
 
+if(isset($left))
+echo "<img src=\"../files/$left\" hidden>";
+if(isset($right))
+echo "<img src=\"../files/$right\" hidden>";
+
+
 #endregion fetch query
 require_once "../header.php";
-
 ?>
 <title><?php echo $fileName ?></title>
 <link rel="stylesheet" type="text/css" media="screen" href="view.css<?php echo "?$hash" ?>" />
@@ -247,8 +253,6 @@ require_once "../header.php";
     }
 
     echo "<input value=\"$domain/files/$fileName\" class=\"hiddenVal\" style=\"opacity:0; height=0px;\" readonly>";
-    if (isset($_GET["new"]))
-        $fileName .= "?new";
     echo "
         <div id=\"picDiv\" class=\"center\">";
     if (isset($left))
@@ -309,8 +313,8 @@ require_once "../header.php";
     if ($sql === false)
         trigger_error('Wrong SQL: ' . $sql . ' Error: ' . $conn->errno . ' ' . $conn->error, E_USER_ERROR);
     $result = $sql->get_result();
-    while ($rows = $result->fetch_assoc()) {
-        echo "<div class=\"sugg\"><a href=\"$domain/list?q=tag%3A$rows[tagName]\" target=\"_top\">$rows[tagName]</a>";
+    while ($rows = $result->fetch_object()) {
+        echo "<div class=\"sugg\"><a href=\"$domain/list?q=tag%3A$rows->tagName\" target=\"_top\">$rows->tagName</a>";
         // if(isset($_SESSION["userId"])&&$_SESSION["userId"]<2)//if user is admin
         if (isset($_SESSION["userId"]))
             echo "<span class=\"deleteTag glyphicon glyphicon-remove\"></span>";

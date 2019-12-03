@@ -37,15 +37,13 @@ if (isset($replace)) {
 }
 
 resize(180, './thumbnails/' . $filename, $temp_name);
-if (!isset($replace))
-    insertName($filename, $name, $userId);
+
+insertName($filename, $name, $userId, $replace);
 if (!move_uploaded_file($temp_name, $location . $filename))
     die('No file uploaded!');
 printLink($filename, $apiKey);
 
 if ($skip) {
-    if (isset($replace))
-        $filename .= "&new";
     header("Location: $domain/view?id=$filename");
 }
 
@@ -190,20 +188,26 @@ function checkHash()
     $sql->execute();
     $result = $sql->get_result();
     if ($result->num_rows != 0) { //return false if name is taken
-        echo "File already exists: ";
-        $row = mysqli_fetch_assoc($result);
-        echo "<a href=\"$GLOBALS[domain]/view/?id=$row[name]\">$row[name]</a>";
+        echo "File already exists: [$hash] ";
+        $name = $result->fetch_object()->name;
+        echo "<a href=\"$GLOBALS[domain]/view/?id=$name\">$name</a>";
         die();
     }
 }
 
-function insertName($newName, $oldname, $userId)
+function insertName($newName, $oldname, $userId, $replace)
 {
     $conn = $GLOBALS['conn']; //db connection
     $temp_name = $GLOBALS["temp_name"];
     $hash = hash_file("md5", $temp_name);
-    $sql = $conn->prepare("INSERT INTO `files`(`name`, `ogName`,`hash`, `userId`) VALUES (?,?,?,?)");
-    $sql->bind_param("sssi", $newName, $oldname, $hash, $userId);
+    if(!isset($replace)){
+        $sql = $conn->prepare("INSERT INTO `files`(`name`, `ogName`,`hash`, `userId`) VALUES (?,?,?,?)");
+        $sql->bind_param("sssi", $newName, $oldname, $hash, $userId);
+    }
+    else{
+        $sql = $conn->prepare("UPDATE files SET ogName = ?, hash = ? WHERE name = ?");
+        $sql->bind_param("sss", $oldname, $hash, $replace);
+    }
     $sql->execute();
 
     $fileId = $conn->insert_id;
@@ -236,9 +240,9 @@ function checkApiKey($apiKey)
     $sql->bind_param("s", $apiKey);
     $sql->execute();
     $result = $sql->get_result();
-    $row = mysqli_fetch_assoc($result);
+    $id = $result->fetch_object()->id;
     if ($result->num_rows > 0) {
-        $GLOBALS['userId'] = $row['id'];
+        $GLOBALS['userId'] = $id;
         return true;
     }
 }
@@ -252,7 +256,8 @@ function autoTag($tagName, $filename, $fileId)
     $sql = $conn->prepare("SELECT * FROM tags WHERE LOWER(name) = LOWER(?)");
     $sql->bind_param('s', $tagName);
     $sql->execute();
-    $tagId = mysqli_fetch_assoc($sql->get_result())["id"];
+    $result = $sql->get_result();
+    $tagId = $result->fetch_object()->id;
 
     if ($tagId == NULL) { //insert new tag if it doesn't exist
         $sql = $conn->prepare("INSERT INTO tags (name) VALUES (?)");
@@ -265,7 +270,8 @@ function autoTag($tagName, $filename, $fileId)
     $sql->bind_param('ii', $tagId, $fileId);
     $sql->execute();
 
-    $linkId = mysqli_fetch_assoc($sql->get_result())["tagId"];
+    $result = $sql->get_result();
+    $linkId = $result->fetch_object()->tagId;
 
     if (!isset($linkId)) {
         $sql = $conn->prepare("INSERT INTO tagfile (tagId,fileId) VALUES (?,?)");

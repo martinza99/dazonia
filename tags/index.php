@@ -22,7 +22,8 @@
         $sql = $conn->prepare("SELECT id FROM tags WHERE name = ?");
         $sql->bind_param("s",$parentName);
         $sql->execute();
-        $parentId = mysqli_fetch_assoc($sql->get_result())["id"];
+        $result = $sql->get_result();
+        $parentId = $result->fetch_object()->id;
         if($sql->affected_rows==0)
             die("Parent doesn't exist");
     }
@@ -55,15 +56,15 @@
     printDatalistTags();
 
     echo "<div class=\"potato\">";
-    while($rows = $result->fetch_assoc()){
-        echo "<div class=\"pics\" id=\"$rows[name]\">";//open table cell
-        echo "<a href=\"$domain/list/?q=tag%3A$rows[name]\" target=\"_top\">";//open list link
-        $img = "img/$rows[id].png";
+    while($rows = $result->fetch_object()){
+        echo "<div class=\"pics\" id=\"$rows->name\">";//open table cell
+        echo "<a href=\"$domain/list/?q=tag%3A$rows->name\" target=\"_top\">";//open list link
+        $img = "img/$rows->id.png";
         if(!file_exists($img))
             $img = "img/0.png";
         echo "<img class=\"thumb\" src=\"$img\"></a>";//print thumbnail
-        echo "<a href=\"$domain/tags/?t=$rows[name]\" target=\"_top\">";//open tag link
-        echo "<br><span class=\"tagName\">$rows[name]</span></a>";//print name
+        echo "<a href=\"$domain/tags/?t=$rows->name\" target=\"_top\">";//open tag link
+        echo "<br><span class=\"tagName\">$rows->name</span></a>";//print name
         echo "</div>";// and table cell
     }
     echo "</div>";

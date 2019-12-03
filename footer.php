@@ -5,15 +5,15 @@
     $sql->bind_param("i",$userId);
     $sql->execute();
     $result = $sql->get_result();
-    $rows = $result->fetch_assoc();
-    $username = $rows['name'];
+    $rows = $result->fetch_object();
+    $username = $rows->name;
 
     //get picCount
     $sql = $conn->prepare("SELECT COUNT(files.id) AS picCount FROM files");
     $sql->execute();
     $result = $sql->get_result();
-    $rows = $result->fetch_assoc();
-    $picCount = $rows["picCount"];
+    $rows = $result->fetch_object();
+    $picCount = $rows->picCount;
 
 echo '<div class="bottom">';
 if($userId<2){
