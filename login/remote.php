@@ -96,7 +96,7 @@
                         echo "<tr>";
                     }
                     echo "</table>";
-                    echo '<pre class="csv" style="z-index:-1000;position:absolute; display:none; opacity:0; top:0;">'.$csv.'</pre>';
+                    echo '<pre class="csv" style=" display:none; ">'.$csv.'</pre>';
                 }
             }
         ?>
