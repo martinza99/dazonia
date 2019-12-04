@@ -37,7 +37,7 @@ require_once "../header.php";
 			echo '<tr><th><a href="' . $domain . '/login/token.php" target="_top" style="color:#2196F3;"><button>#</a></th><th>Name</th><th>ResetPW</th><th><button>X</button></th></tr>';
 		else
 			echo '<tr><th>#</th><th>Name</th></tr>';
-		while ($rows = $result->fetch_assoc()) {
+		while ($rows = $result->fetch_object()) {
 			echo "<tr id=\"$rows->id\">";
 			echo "<td>$rows->id</td>";
 			echo "<td><a href=\"$domain/list/?q=u%3A$rows->id\" target=\"_top\">$rows->name</a>"; //print name
