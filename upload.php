@@ -13,6 +13,8 @@ if (isset($_POST['key'])) {
 } else {
     $userId = $_SESSION["userId"];
 }
+
+$replace = false;
 if (isset($_POST["replace"]) && $_SESSION["userId"] < 2) {
     $replace = $_POST["replace"];
 }
@@ -25,14 +27,14 @@ $name = $_FILES["file"]["name"];
 $name = substr($name, 0, strpos($name, ".", -5));
 $temp_name  = $_FILES['file']['tmp_name'];
 
-if (isset($replace))
+if ($replace)
     $filename = $replace;
 else
     $filename = makeName();
 list($width, $height) = getimagesize($temp_name);
 $location = 'files/';
 
-if (isset($replace)) {
+if ($replace) {
     checkHash();
 }
 
@@ -200,7 +202,7 @@ function insertName($newName, $oldname, $userId, $replace)
     $conn = $GLOBALS['conn']; //db connection
     $temp_name = $GLOBALS["temp_name"];
     $hash = hash_file("md5", $temp_name);
-    if(!isset($replace)){
+    if(!$replace){
         $sql = $conn->prepare("INSERT INTO `files`(`name`, `ogName`,`hash`, `userId`) VALUES (?,?,?,?)");
         $sql->bind_param("sssi", $newName, $oldname, $hash, $userId);
     }
