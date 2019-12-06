@@ -80,13 +80,16 @@ function sendRating() {
     $(this).remove();
     let urlParams = new URLSearchParams(window.location.search);
     let picId = urlParams.get("id");
-    $.post("../list/rate.php",
+    $.post("../list/action.php",
         {
-            id: picId,
+            action: "rateFile",
+            fileName: picId,
             rating: val
         },
-        function (_response) {
-            $(star).attr("src", "../list/img/" + _response + ".png");
+        function (response, status, xhr) {
+            response = JSON.parse(response);
+            if (response.success == true)
+                $(star).attr("src", "../list/img/" + response.avgrating + ".png");
         }
     );
 }
@@ -97,31 +100,40 @@ function sendTag() {
     let urlParams = new URLSearchParams(window.location.search);
     let picId = urlParams.get("id");
     let temp = this;
-    $.post("../list/tag.php",
+    $.post("../list/action.php",
         {
-            id: picId,
-            tag: tagName,
-            action: "c"
+            action: "addTag",
+            fileName: picId,
+            tagName: tagName,
         },
-        function (_response) {
-            if (_response == "error")
-                return;
-            let container = document.createElement("div");
-            container.classList = "sugg";
+        function (response, status, xhr) {
+            try {
+                response = JSON.parse(response);
+                if (response.success == true) {
+                    let container = document.createElement("div");
+                    container.classList = "sugg";
 
-            let link = document.createElement("a");
-            link.href = location.origin + "/list?q=tag%3A" + tagName;
-            link.target = "_top";
-            link.innerText = tagName.toLowerCase();
-            container.appendChild(link);
+                    let link = document.createElement("a");
+                    link.href = location.origin + "/list?q=tag%3A" + tagName;
+                    link.target = "_top";
+                    link.innerText = tagName.toLowerCase();
+                    container.appendChild(link);
 
-            let delBut = document.createElement("span");
-            delBut.classList = "deleteTag glyphicon glyphicon-remove";
-            delBut.addEventListener("click", deleteTag);
-            container.appendChild(delBut);
+                    let delBut = document.createElement("span");
+                    delBut.classList = "deleteTag glyphicon glyphicon-remove";
+                    delBut.addEventListener("click", deleteTag);
+                    container.appendChild(delBut);
 
-            let parent = document.querySelector(".tagContainer");//insert as 2nd last element
-            parent.insertBefore(container, parent.childNodes[parent.childElementCount - 2]);
+                    let parent = document.querySelector(".tagContainer");//insert as 2nd last element
+                    parent.insertBefore(container, parent.childNodes[parent.childElementCount - 2]);
+                }
+                else
+                    throw new Error(response.error);
+            }
+            catch (error) {
+                alert(error);
+                throw error;
+            }
         }
     );
 }
@@ -137,13 +149,26 @@ function deleteTag() {
     var tagName = $(this).closest(".sugg").children()[0].text;
     let urlParams = new URLSearchParams(window.location.search);
     let picId = urlParams.get("id");
-    $.post("../list/tag.php",
+    $.post("../list/action.php",
         {
-            tag: tagName,
-            id: picId,
-            action: "d"
+            action: "deleteTag",
+            fileName: picId,
+            tagName: tagName,
         },
-        function () { tr.remove(); }
+        function (response, status, xhr) {
+            try {
+                response = JSON.parse(response);
+                if (response.success == true) {
+                    tr.remove();
+                }
+                else
+                    throw new Error(response.error);
+            }
+            catch (error) {
+                alert(error);
+                throw error;
+            }
+        }
     );
 }
 

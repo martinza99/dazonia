@@ -74,3 +74,15 @@ th{
     width: 7em;
     text-align: center;
 }
+
+.tagged{
+    outline: 2px lime solid;
+}
+
+.taggedPending{
+    outline: 2px yellowgreen solid;
+}
+
+.taggedFailed{
+    outline: 2px red solid;
+}

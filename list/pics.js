@@ -1,103 +1,188 @@
-$(function(){
-    $(".deleteButton").click(function(){
-        if(confirm("Delete "+this.parentElement.parentElement.id))
-        deleteFile(this);
-    });
-    $(".deleteAllButton").click(function(){        
-        if(confirm($(".deleteButton").length + ' pictures will be deleted')){
-            $(".deleteButton").each(deleteFiles);
-            setInterval(doneDeleting, 500);
-        }
-    });
+$(function () {
+	$(".deleteButton").click(function () {
+		if (confirm("Delete " + this.parentElement.parentElement.id))
+			deleteFile(this);
+	});
+	$(".deleteAllButton").click(function () {
+		if (confirm($(".deleteButton").length + ' pictures will be deleted')) {
+			$(".deleteButton").each(deleteFiles);
+			setInterval(doneDeleting, 500);
+		}
+	});
 
-    $(".changeName").click(swapToInput);
-    $(".updateName").click(updateName);
-    $(".changeNameInput").keydown(isEnter);
-    $(".star").click(openStars);
+	$(".changeName").click(swapToInput);
+	$(".updateName").click(updateName);
+	$(".changeNameInput").keydown(isEnter);
+	$(".star").click(openStars);
 });
 
-function doneDeleting(){
-    if($(".deleteButton").length==0)
-        window.location.href = ".";
+function doneDeleting() {
+	if ($(".deleteButton").length == 0)
+		window.location.href = ".";
 }
 
-function deleteFiles(index,_btn) {
-    deleteFile(_btn);
+function deleteFiles(index, _btn) {
+	deleteFile(_btn);
 }
 
 function deleteFile(_btn) {
-    var tr = _btn.parentElement.parentElement;
-    $.post("delete.php",
-    {
-        id: tr.id
-    },
-        function(){tr.remove();}
-    );
+	var tr = _btn.parentElement.parentElement;
+	$.post("action.php",
+		{
+			action: "deleteFile",
+			fileName: tr.id
+		},
+		function (response, status, xhr) {
+			try {
+				response = JSON.parse(response);
+				if (response.success == true) {
+					tr.remove();
+				}
+				else
+					throw new Error(response.error);
+			}
+			catch (error) {
+				alert(error);
+				throw error;
+			}
+		}
+	);
 }
 
 function swapToInput() {
-    $(this).hide();
-    $(this).next().show();
+	$(this).hide();
+	$(this).next().show();
 }
 
 function updateName() {
-    var tr = $(this).closest("tr")[0];
-    var val = $(this).prev().val();
-    if(val == ""){
-        alert("Empty filename");
-        return;
-    }
-    $.post("update.php",
-    {
-        id: tr.id,
-        newName: val
-    },
-        function(_response){
-            $(tr).find(".changeName").show();
-            $(tr).find(".changeName").text(val);
-            $(tr).find(".changeNameInput").hide();
-        }
-    );
+	var tr = $(this).closest("tr")[0];
+	var val = $(this).prev().val();
+	if (val == "") {
+		alert("Empty filename");
+		return;
+	}
+	$.post("action.php",
+		{
+			action: "updateFile",
+			fileName: tr.id,
+			newName: val
+		},
+		function (response, status, xhr) {
+			try {
+				response = JSON.parse(response);
+				if (response.success == true) {
+					$(tr).find(".changeName").show();
+					$(tr).find(".changeName").text(val);
+					$(tr).find(".changeNameInput").hide();
+					$(tr).find(".changeNameInput input").css("color", "");
+				}
+				else
+					throw new Error(response.error);
+			}
+			catch (error) {
+				$(tr).find(".changeNameInput input").css("color", "red");
+				throw error;
+			}
+		}
+	);
 }
 
-function isEnter(_event){
-    if(_event.key == "Enter")
-        this.children[1].click();
+function isEnter(_event) {
+	if (_event.key == "Enter")
+		this.children[1].click();
 }
 
-function makeStar(_starElement,_rating){
-    let star = document.createElement("img");
-    star.addEventListener("click",sendRating)
-    star.src = "img/"+_rating+".png";
-    star.classList = "star tempStar "+_rating;
-    _starElement.parentElement.appendChild(star);
-    $(star).animate({left:_rating*32+"px"});
+function makeStar(_starElement, _rating) {
+	let star = document.createElement("img");
+	star.addEventListener("click", sendRating)
+	star.src = "img/" + _rating + ".png";
+	star.classList = "star tempStar " + _rating;
+	_starElement.parentElement.appendChild(star);
+	$(star).animate({ left: _rating * 32 + "px" });
 }
 
-function openStars(){
-    for (let index = 0; index <= 10; index++)
-        makeStar(this,index);
+function openStars() {
+	for (let index = 0; index <= 10; index++)
+		makeStar(this, index);
 }
 
-function sendRating(){
-    let val = this.classList[2];
-    this.style.zIndex = 100;
-    $(this).siblings(".tempStar").remove();
-    
-        
-    let star = $(this).siblings(".star");
-    let tr = $(this).closest("tr")[0];
-    let temp = this;
-    $(this).remove();
-    $.post("rate.php",
-    {
-        id: tr.id,
-        rating: val
-    },
-        function(_response){
-            $(star).attr("src","img/"+_response+".png");
-            if(USERID!=undefined)
-                $(star).siblings("."+USERID+"star").attr("src","img/"+val+".png");
-        }
-    );
+function sendRating() {
+	let val = parseInt(this.classList[2]);
+	this.style.zIndex = 100;
+	$(this).siblings(".tempStar").remove();
+
+
+	let star = $(this).siblings(".star");
+	let tr = $(this).closest("tr")[0];
+	let temp = this;
+	$(this).remove();
+	$.post("action.php",
+		{
+			action: "rateFile",
+			fileName: tr.id,
+			rating: val
+		},
+		function (response, status, xhr) {
+			try {
+				response = JSON.parse(response);
+				if (response.success == true) {
+					$(star).attr("src", "img/" + response.avgrating + ".png");
+					if (USERID != undefined)
+						$(star).siblings("." + USERID + "star").attr("src", "img/" + val + ".png");
+				}
+				else
+					throw new Error(response.error);
+			}
+			catch (error) {
+				alert(error);
+				throw error;
+			}
+		}
+	);
+}
+
+let tagName = null;
+
+function tagSelect(button) {
+	button.style.borderColor = "lime";
+	tagName = prompt("Tag name").toLowerCase().trim().replace(/\s+/g, " ").replace(/ /g, "_");
+	if (tagName == null) {
+		button.style.borderColor = "";
+		return;
+	}
+
+	document.querySelectorAll(".picsList").forEach(div => {
+		div.addEventListener("click", (event) => {
+			event.preventDefault();
+			let action = "addTag";
+			if (div.classList.contains("tagged"))
+				action = "deleteTag"
+			let tr = $(div).closest("tr")[0];
+			$(div).removeClass("tagged");
+			$(div).removeClass("taggedFailed");
+			$(div).addClass("taggedPending");
+			$.post("action.php",
+				{
+					action: action,
+					fileName: tr.id,
+					tagName: tagName
+				},
+				function (response, status, xhr) {
+					try {
+						response = JSON.parse(response);
+						$(div).removeClass("taggedPending");
+						if (response.success == true) {
+							if (response.action == "addTag")
+								$(div).addClass("tagged");
+						}
+						else throw new Error(response.error);
+					}
+					catch (error) {
+						$(div).addClass("taggedFailed");
+						throw error;
+					}
+				},
+			);
+		});
+	});
 }

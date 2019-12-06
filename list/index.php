@@ -178,7 +178,7 @@ require_once "../header.php";
     echo '<div class="listTableDiv">';
     if ($q != "")
         $q = "&q=" . urlencode($q);
-    echo '<div class="navButtons"><a href="' . $domain . '/list?p=' . ($p - 1) . $q . '" target="_top"><button>←</button></a><span> ' . $p . ' </span><a href="' . $domain . '/list?p=' . ($p + 1) . $q . '" target="_top"><button>→</button></a></div>';
+    echo '<div class="navButtons"><a href="' . $domain . '/list?p=' . ($p - 1) . $q . '" target="_top"><button>←</button></a><span> ' . $p . ' </span><a href="' . $domain . '/list?p=' . ($p + 1) . $q . '" target="_top"><button>→</button></a><button onClick="tagSelect(this)";>add tags</button></div>';
     echo '<table class="listTable">
         <tr>
             <th>Preview</th>
