@@ -5,17 +5,16 @@ require_once 'login/functions.php';
 if (isset($_POST['key'])) {
     $apiKey = $_POST['key'];
 
-    if (!checkApiKey($apiKey))
-        die('Wrong API-Key');
-} else if (!isset($_SESSION["userId"]) || !checkLogin($_SESSION["userId"])) {
-    header("Location: $domain/login/");
-    die();
-} else {
-    $userId = $_SESSION["userId"];
+    if (!checkApiKey($apiKey)){
+        http_response_code(401);
+        die("401 Unauthorized<br>Wrong API-Key");
+    }
 }
+else
+    checkLogin();
 
 $replace = false;
-if (isset($_POST["replace"]) && $_SESSION["userId"] < 2) {
+if (isset($_POST["replace"]) && $user->isAdmin) {
     $replace = $_POST["replace"];
 }
 
@@ -40,7 +39,7 @@ if ($replace) {
 
 resize(180, './thumbnails/' . $filename, $temp_name);
 
-insertName($filename, $name, $userId, $replace);
+insertName($filename, $name, $user->id, $replace);
 if (!move_uploaded_file($temp_name, $location . $filename))
     die('No file uploaded!');
 printLink($filename, $apiKey);
@@ -132,6 +131,7 @@ function resize($factor, $targetFile, $originalFile)
             break;
 
         default:
+            http_response_code(415);
             die('Unknown mime type: ' . $mime . '<br><a href="' . $domain . '/" target="_top">back</a>');
     }
 
@@ -168,7 +168,6 @@ function resize($factor, $targetFile, $originalFile)
 function checkName($newName, $oldname)
 { //checks db if name is taken
     $conn = $GLOBALS['conn']; //db connection
-    $userId = $GLOBALS['userId'];
     checkHash();
     $sql = $conn->prepare("SELECT * FROM files WHERE LOWER(name) = LOWER(?)");
     $sql->bind_param("s", $newName);
@@ -182,7 +181,6 @@ function checkName($newName, $oldname)
 function checkHash()
 {
     $conn = $GLOBALS['conn']; //db connection
-    $userId = $GLOBALS['userId'];
     $temp_name = $GLOBALS["temp_name"];
     $hash = hash_file("md5", $temp_name);
     $sql = $conn->prepare("SELECT * FROM files WHERE hash = ?");
@@ -197,14 +195,14 @@ function checkHash()
     }
 }
 
-function insertName($newName, $oldname, $userId, $replace)
+function insertName($newName, $oldname, $user, $replace)
 {
     $conn = $GLOBALS['conn']; //db connection
     $temp_name = $GLOBALS["temp_name"];
     $hash = hash_file("md5", $temp_name);
     if(!$replace){
         $sql = $conn->prepare("INSERT INTO `files`(`name`, `ogName`,`hash`, `userId`) VALUES (?,?,?,?)");
-        $sql->bind_param("sssi", $newName, $oldname, $hash, $userId);
+        $sql->bind_param("sssi", $newName, $oldname, $hash, $user->id);
     }
     else{
         $sql = $conn->prepare("UPDATE files SET ogName = ?, hash = ? WHERE name = ?");
@@ -221,20 +219,6 @@ function insertName($newName, $oldname, $userId, $replace)
     $conn->close();
 }
 
-function checkUser($userId, $password)
-{
-    $conn = $GLOBALS['conn'];
-    $sql =  $sql = $conn->prepare("SELECT * FROM `users` WHERE `name` = ?");
-    $sql->bind_param("s", $userId);
-    $sql->execute();
-    $result = $sql->get_result();
-    $row = mysqli_fetch_assoc($result);
-    if (password_verify($password, $row['password'])) {
-        $GLOBALS['userId'] = $row['id'];
-        return true;
-    }
-}
-
 function checkApiKey($apiKey)
 {
     $conn = $GLOBALS['conn'];
@@ -242,9 +226,9 @@ function checkApiKey($apiKey)
     $sql->bind_param("s", $apiKey);
     $sql->execute();
     $result = $sql->get_result();
-    $id = $result->fetch_object()->id;
+    $user = $result->fetch_object();
     if ($result->num_rows > 0) {
-        $GLOBALS['userId'] = $id;
+        $GLOBALS['user'] = $user;
         return true;
     }
 }

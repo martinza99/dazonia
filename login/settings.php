@@ -2,11 +2,8 @@
 session_start();
 require_once "sql.php";
 require_once 'functions.php';
-if (!isset($_SESSION["userId"]) || !checkLogin($_SESSION["userId"])) {
-	header('Location: ../login/');
-	die();
-}
-$userId = $_SESSION["userId"];
+
+checkLogin();
 
 require_once "../header.php";
 ?>

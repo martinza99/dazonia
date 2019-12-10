@@ -2,11 +2,8 @@
     session_start();
     require_once "../login/sql.php";
     require_once '../login/functions.php';
-    if(!isset($_SESSION["userId"])||!checkLogin($_SESSION["userId"])){
-        header("Location: $domain/login");
-        die();
-    }
-    $userId = $_SESSION["userId"];
+   
+    checkLogin();
 
     require_once "../header.php";
 ?>
@@ -15,15 +12,16 @@
 </head>
 <body>
 <?php
-    $parentId = 0;
+    $parent = new stdClass();
+    $parent->id = 0;
     if(isset($_GET["t"])){
         $parentName = $_GET["t"];
 
-        $sql = $conn->prepare("SELECT id FROM tags WHERE name = ?");
+        $sql = $conn->prepare("SELECT * FROM tags WHERE name = ?");
         $sql->bind_param("s",$parentName);
         $sql->execute();
         $result = $sql->get_result();
-        $parentId = $result->fetch_object()->id;
+        $parent = $result->fetch_object();
         if($sql->affected_rows==0)
             die("Parent doesn't exist");
     }
@@ -32,7 +30,7 @@
         $sql->bind_param("s",$_GET["q"]);
     }else{
         $sql = $conn->prepare("SELECT * FROM tags WHERE parentId = ? ORDER BY name");
-        $sql->bind_param("i",$parentId);
+        $sql->bind_param("i",$parent->id);
     }
     $sql->execute();
     $result = $sql->get_result();

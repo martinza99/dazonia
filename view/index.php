@@ -215,7 +215,7 @@ if ($rows = $result->fetch_object()) {
 }
 if ($username == null)
     $username = "deleted user[$userId]";
-if (!isset($_SESSION["userId"])) {
+if (!isset($user)) {
     unset($left);
     unset($right);
 }
@@ -278,7 +278,7 @@ require_once "../header.php";
             " . rating($rating) . "
         </div>
         <a href=\"$domain\" target=\"_top\"><button>← Back</button></a>";
-    if (isset($userId)) {
+    if (isset($user)) {
         echo '
             <button type="button" data-toggle="collapse" data-target="#collapseRandom" aria-expanded="false" aria-controls="collapseRandom" onclick="stopSlide();">&nbsp;<span class="glyphicon glyphicon-picture"></span></button>
             <div class="collapse slideContainer" id="collapseRandom">
@@ -315,13 +315,13 @@ require_once "../header.php";
     $result = $sql->get_result();
     while ($rows = $result->fetch_object()) {
         echo "<div class=\"sugg\"><a href=\"$domain/list?q=tag%3A$rows->tagName\" target=\"_top\">$rows->tagName</a>";
-        // if(isset($_SESSION["userId"])&&$_SESSION["userId"]<2)//if user is admin
-        if (isset($_SESSION["userId"]))
+        if (isset($user))
+        // if($user->isAdmin)//if user is admin
             echo "<span class=\"deleteTag glyphicon glyphicon-remove\"></span>";
         echo "</div>";
     }
-    // if(isset($_SESSION["userId"])&&$_SESSION["userId"]<2){//if user is admin
-    if (isset($_SESSION["userId"])) {
+    // if(isset($user)&&$user->isAdmin){//if user is admin
+    if (isset($user)) {
         echo '
         <input list="tagList" placeholder="add tag" class="tagInput disableHotkeys darkInput">
         <button class="ogButton">+</button>';

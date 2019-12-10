@@ -6,14 +6,14 @@
 
     require_once '../login/sql.php';
     require_once '../login/functions.php';
-    if(!isset($_SESSION["userId"])||!checkLogin($_SESSION["userId"])){
-        http_response_code(401);
-        die('Not logged in!');
+    checkLogin();
+    
+    if(!isset($_POST->fileName) && !isset($_GET["test"])){
+        http_response_code(400);
+        die("400 Bad Request<br>fileName not set");
     }
 
-    $userId = $_SESSION["userId"];
 
-    
     $sql = $conn->prepare("SELECT * FROM files WHERE name = ?");
     $sql->bind_param("s", $_POST->fileName);
     $sql->execute();
@@ -27,7 +27,7 @@
     switch ($_POST->action) {
         case 'deleteFile':
             //if file belongs to user or admin
-            if($userId < 2 || $file->userId == $userId){
+            if($user->isAdmin || $file->userId == $user->id){
                 //delete from database
                 $sql = $conn->prepare("DELETE files, userrating, tagfile FROM files LEFT JOIN userrating ON files.id = userrating.fileId LEFT JOIN tagfile ON files.id = tagfile.fileId WHERE files.id = ?");
                 $sql->bind_param('i', $file->id);
@@ -43,18 +43,18 @@
             break;
 
         case 'rateFile':
-            if($userId < 2){
+            if($user->isAdmin){
                 $_POST->rating = intval($_POST->rating);
                 //delete if existed
                 $sql = $conn->prepare("DELETE FROM userrating WHERE userID = ? AND fileId = ?");
-                $sql->bind_param('ii', $userId, $file->id);
+                $sql->bind_param('ii', $user->id, $file->id);
                 $sql->execute();
                 
                 //insert new value
                 if($_POST->rating>=0 && $_POST->rating <= 10){
                     if($_POST->rating > 0){
                         $sql = $conn->prepare("INSERT INTO userrating (userID,fileId,rating) VALUES(?,?,?)");
-                        $sql->bind_param('iii', $userId, $file->id, $_POST->rating);
+                        $sql->bind_param('iii', $user->id, $file->id, $_POST->rating);
                         $sql->execute();
                     }
                     $sql = $conn->prepare("SELECT AVG(rating) AS avgrating FROM userrating WHERE fileId = ?");
@@ -77,7 +77,7 @@
             break;
 
         case 'updateFile':
-            if($userId < 2 || $file->userId == $userId){
+            if($user->isAdmin || $file->userId == $user->id){
                 $sql = $conn->prepare("UPDATE files SET ogName = ? WHERE id = ?");
                 $sql->bind_param("si", $_POST->newName, $file->id);
                 $sql->execute();
@@ -103,6 +103,8 @@
                         $sql = $conn->prepare("INSERT INTO tags (name) VALUES (?)");
                         $sql->bind_param('s', $_POST->tagName);
                         $sql->execute();
+                        if(!isset($tag))
+                            $tag = new stdClass();
                         $tag->id = $conn->insert_id;//get new id
                         $tag->name = $_POST->tagName;
                     }

@@ -1,13 +1,4 @@
 <?php
-    //get username
-    $userId = $_SESSION["userId"];
-    $sql = $conn->prepare("SELECT `name` FROM `users` WHERE `id` = ?");
-    $sql->bind_param("i",$userId);
-    $sql->execute();
-    $result = $sql->get_result();
-    $rows = $result->fetch_object();
-    $username = $rows->name;
-
     //get picCount
     $sql = $conn->prepare("SELECT COUNT(files.id) AS picCount FROM files");
     $sql->execute();
@@ -27,7 +18,7 @@ echo '
     <a href="'.$domain.'/login/api.php" target="_top">API Info</a><br>
     <a href="'.$domain.'/login/resetPassword.php" target="_top">Change Password</a><br>
     <a href="/fixMasking.user.js">Userscript</a><br>
-    <a href="'.$domain.'/login/logout.php" target="_top"><button>Logout</button></a> <span><a href="'.$domain.'/list?q=u%3A'.$userId.'" target="_top">'.$username.'</a></span>
+    <a href="'.$domain.'/login/logout.php" target="_top"><button>Logout</button></a> <span><a href="'.$domain.'/list?q=u%3A'.$user->id.'" target="_top">'.$user->name.'</a></span>
 </div>';
 
 unset($output);

@@ -152,37 +152,41 @@ function tagSelect(button) {
 	}
 
 	document.querySelectorAll(".picsList").forEach(div => {
-		div.addEventListener("click", (event) => {
-			event.preventDefault();
-			let action = "addTag";
-			if (div.classList.contains("tagged"))
-				action = "deleteTag"
-			let tr = $(div).closest("tr")[0];
-			$(div).removeClass("tagged");
-			$(div).removeClass("taggedFailed");
-			$(div).addClass("taggedPending");
-			$.post("action.php",
-				{
-					action: action,
-					fileName: tr.id,
-					tagName: tagName
-				},
-				function (response, status, xhr) {
-					try {
-						response = JSON.parse(response);
-						$(div).removeClass("taggedPending");
-						if (response.success == true) {
-							if (response.action == "addTag")
-								$(div).addClass("tagged");
-						}
-						else throw new Error(response.error);
-					}
-					catch (error) {
-						$(div).addClass("taggedFailed");
-						throw error;
-					}
-				},
-			);
-		});
+		div.removeEventListener("click", tagCallback);
+		div.addEventListener("click", tagCallback);
 	});
+}
+
+function tagCallback(event) {
+	const div = event.path[1];
+	event.preventDefault();
+	let action = "addTag";
+	if (div.classList.contains("tagged"))
+		action = "deleteTag"
+	let tr = $(div).closest("tr")[0];
+	$(div).removeClass("tagged");
+	$(div).removeClass("taggedFailed");
+	$(div).addClass("taggedPending");
+	$.post("action.php",
+		{
+			action: action,
+			fileName: tr.id,
+			tagName: tagName
+		},
+		function (response, status, xhr) {
+			try {
+				response = JSON.parse(response);
+				$(div).removeClass("taggedPending");
+				if (response.success == true) {
+					if (response.action == "addTag")
+						$(div).addClass("tagged");
+				}
+				else throw new Error(response.error);
+			}
+			catch (error) {
+				$(div).addClass("taggedFailed");
+				throw error;
+			}
+		},
+	);
 }

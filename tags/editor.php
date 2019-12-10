@@ -2,19 +2,16 @@
     session_start();
     require_once "../login/sql.php";
     require_once '../login/functions.php';
-    if($_SESSION["userId"]>1||!checkLogin($_SESSION["userId"])){
-        header("Location: ../login/");
-        die();
-    }
-    $userId = $_SESSION["userId"];
+
+    checkAdmin();
 
     if(isset($_POST["action"])){
         $tagName = $_POST["tagName"];
-        $sql = $conn->prepare("SELECT id FROM tags WHERE name = ?");
+        $sql = $conn->prepare("SELECT * FROM tags WHERE name = ?");
         $sql->bind_param("s",$tagName);
         $sql->execute();
         $result = $sql->get_result();
-        $tagId = $result->fetch_object()->id;
+        $tag = $result->fetch_object();
         if($sql->affected_rows==0){
             if($_POST["action"]!="new")
                 die("Tag doesn't exist");
@@ -39,24 +36,24 @@
                 if($sql->get_result()->num_rows!=0)
                     die("Tag already exists");
                 $sql = $conn->prepare("UPDATE tags SET name = ? WHERE id = ?");
-                $sql->bind_param('si', $newName,$tagId);
+                $sql->bind_param('si', $newName,$tag->id);
                 $sql->execute();
                 die("Tag updated");
                 break;
             case "img":
                 $temp_name = $_FILES['file']['tmp_name'];
-                resize(180,'img/'.$tagId.".png", $temp_name);
+                resize(180,'img/'.$tag->id.".png", $temp_name);
                 header("Location: editor.php");
                 break;
             case "delete":
                 //delete tag
                 $sql = $conn->prepare("DELETE tags, tagfile FROM tags LEFT JOIN tagFile ON tagFile.tagid = tags.id WHERE tags.id = ?");
-                $sql->bind_param('i', $tagId);
+                $sql->bind_param('i', $tag->id);
                 $sql->execute();
-                unlink("img/$tagId.png");
+                unlink("img/$tag->id.png");
                 //remove all parent references
                 $sql = $conn->prepare("UPDATE tags SET parentId = 0 WHERE id = ?");
-                $sql->bind_param('i', $tagId);
+                $sql->bind_param('i', $tag->id);
                 $sql->execute();
                 die("Tag deleted");
                 break;
@@ -77,7 +74,7 @@
                 }
                 //update parent id on selected tag
                 $sql = $conn->prepare("UPDATE tags SET parentId = ? WHERE id = ?");
-                $sql->bind_param('ii', $parentId,$tagId);
+                $sql->bind_param('ii', $parentId,$tag->id);
                 $sql->execute();
                 die("Parent updated");
                 break;

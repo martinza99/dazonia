@@ -4,9 +4,9 @@
     require_once 'functions.php';
     require_once "../header.php";
 
-    if(!isset($_GET["resetKey"])&&!isset($_POST["resetKey"])&&(!isset($_SESSION["userId"])||!checkLogin($_SESSION["userId"]))){
-        header("Location: $domain/login");
-        die();
+    if(!isset($_GET["resetKey"])&&!isset($_POST["resetKey"])){
+        http_response_code(401);
+        die('401 Bad Request<br>No reset key!');
     }
 ?>
 
@@ -37,16 +37,9 @@
 <?php
     if(isset($_POST["newPassword"])){
         $changePass = false;
-        if(isset($_SESSION["userId"])){
-            $userid = $_SESSION["userId"];
+        if(isset($user)){
             $currentPassword = $_POST["currentPassword"];
-
-            $sql = $conn->prepare("SELECT password FROM users WHERE id = ?");
-            $sql->bind_param("i", $userid);
-            $sql->execute();
-
-            $hash = $sql->get_result()->fetch_object()->password;
-            $changePass = password_verify($currentPassword,$hash);
+            $changePass = password_verify($currentPassword,$user->passeord);
         }
         else if(isset($_POST["resetKey"])){
             $sql = $conn->prepare("SELECT id FROM users WHERE apiKey = ?");
@@ -54,14 +47,14 @@
             $sql->execute();
             $result = $sql->get_result();
             if($result->num_rows>0){
-                $userid = $result->fetch_object()->id;
+                $user = $result->fetch_object();
                 $changePass = true;
-                $_SESSION["userId"] = $userid;
+                $_SESSION["userId"] = $user->id;
 
                 //reset API key
                 $apiKey = generateRandomString(64);
                 $sql = $conn->prepare("UPDATE users SET apiKey = ? WHERE id = ?");
-                $sql->bind_param("si",$apiKey,$userid);
+                $sql->bind_param("si",$apiKey,$user->id);
                 $sql->execute();
             }
         }
@@ -69,9 +62,10 @@
         if($changePass){
             $newPasswordHash = password_hash(htmlspecialchars($_POST["newPassword"]),PASSWORD_DEFAULT);
             $sql = $conn->prepare("UPDATE users SET password = ? WHERE id = ?");
-            $sql->bind_param("si",$newPasswordHash, $userid);
+            $sql->bind_param("si",$newPasswordHash, $user->id);
             if(!$sql->execute()){
-                die("SQL error! - Please contact an admin.");
+                http_response_code(500);
+                die("500 Internal Server Error<br>SQL error! - Please contact an admin.");
             }
 
             echo "successfully changed password";
@@ -80,7 +74,7 @@
             echo "Wrong password!";
         }
     }
-    if(isset($_SESSION["userId"]))
+    if(isset($user))
         require "../footer.php";
 ?>
 

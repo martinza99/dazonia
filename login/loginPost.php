@@ -3,16 +3,18 @@
     require_once 'sql.php';
     require_once 'functions.php';
         if(!isset($_POST['username'])){
-            header("Location: $domain/login/");
-            die();
+            http_response_code(400);
+            die('400 Bad Request<br>No username given<br><a href="/login" target="_top">Back to Login!</a>');
         }
 
         $username = htmlspecialchars($_POST['username']);
         $password = htmlspecialchars($_POST['password']);
 
             
-        if(!checkUser($username,$password,$conn))
-            die('Wrong Username or Password <br><a href="'.$domain.'/login/" target=\"_top\">go to Login</a>');
+        if(!checkUser($username,$password,$conn)){
+            http_response_code(400);
+            die('400 Bad Request<br>Wrong Username or Password <br><a href="'.$domain.'/login/" target=\"_top\">go to Login</a>');
+        }
             
         header("Location: $domain");
 

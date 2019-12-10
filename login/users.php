@@ -2,10 +2,7 @@
 session_start();
 require_once "sql.php";
 require_once 'functions.php';
-if (!isset($_SESSION["userId"]) || !checkLogin($_SESSION["userId"])) {
-	header("Location: .");
-	die();
-}
+checkLogin();
 $userId = $_SESSION["userId"];
 
 if (isset($_POST["action"])) {
@@ -33,7 +30,7 @@ require_once "../header.php";
 		$sql->execute();
 		$result = $sql->get_result();
 		echo '<table border="1">';
-		if ($userId < 2)
+		if ($user->isAdmin)
 			echo '<tr><th><a href="' . $domain . '/login/token.php" target="_top" style="color:#2196F3;"><button>#</a></th><th>Name</th><th>LastLogin</th><th>ResetPW</th><th><button>X</button></th></tr>';
 		else
 			echo '<tr><th>#</th><th>Name</th></tr>';
@@ -41,7 +38,7 @@ require_once "../header.php";
 			echo "<tr id=\"$rows->id\">";
 			echo "<td>$rows->id</td>";
 			echo "<td><a href=\"$domain/list/?q=u%3A$rows->id\" target=\"_top\">$rows->name</a>"; //print name
-			if ($userId < 2) {
+			if ($user->isAdmin) {
 				$timeStamp = timeElapsed($rows->lastLogin);
 				echo "<td title=\"$rows->lastLogin\">$timeStamp</td>"; //print last login
 				echo "<td><a href=\"$domain/login/resetPassword.php?resetKey=$rows->apiKey\" target=\"_top\">Link</a>"; //print password reset link 

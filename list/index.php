@@ -1,25 +1,22 @@
 <?php
-session_start();
-require_once "../login/sql.php";
-require_once '../login/functions.php';
-if (!isset($_SESSION["userId"]) || !checkLogin($_SESSION["userId"])) {
-    header("Location: $domain/login");
-    die();
-}
-$userId = $_SESSION["userId"];
-$filter = "";
-$q = "";
-if (isset($_GET["q"])) {
-    $filter = $_GET["q"];
-    $q = $_GET["q"];
-}
-$p = 1;
-if (isset($_GET["p"]))
-    $p = intval(htmlspecialchars($_GET["p"]));
-if ($p < 1)
+    session_start();
+    require_once "../login/sql.php";
+    require_once '../login/functions.php';
+    checkLogin();
+
+    $filter = "";
+    $q = "";
+    if (isset($_GET["q"])) {
+        $filter = $_GET["q"];
+        $q = $_GET["q"];
+    }
     $p = 1;
-$offset = 100 * ($p - 1);
-require_once "../header.php";
+    if (isset($_GET["p"]))
+        $p = intval(htmlspecialchars($_GET["p"]));
+    if ($p < 1)
+        $p = 1;
+    $offset = 100 * ($p - 1);
+    require_once "../header.php";
 ?>
 <title>File List</title>
 <link rel="stylesheet" type="text/css" media="screen" href="list.css<?php echo "?$hash" ?>" />
@@ -189,8 +186,8 @@ require_once "../header.php";
             <th class="listUploadDate">Upload Date</th>';
     echo "<th>";
     echo "<button class=\"deleteAllButton\">X</button>";
-    if ($_SESSION["userId"] < 2) {
-        if ($_SESSION["userId"] == 0)
+    if ($user->isAdmin) {
+        if ($user->id == 0)
             $temp = "l";
         else
             $temp = "m";
@@ -205,7 +202,7 @@ require_once "../header.php";
         echo "<img class=\"thumb\" src=\"../thumbnails/$rows->fileName\" alt=\"$rows->fileName\">"; //print thumbnail
         echo "</div></a></td><td>";
         echo "<div class=\"starContainer\">";
-        if ($_SESSION["userId"] < 2) {
+        if ($user->isAdmin) {
             echo rating($rows->lRating, "l");
             echo rating($rows->mRating, "m");
         }
@@ -213,10 +210,10 @@ require_once "../header.php";
         echo "</div></td>";
         echo "<td><a href=\"$domain/files/$rows->fileName\" target=\"_top\">$rows->fileName</a></td>"; //print filename
         echo "<td class=\"og\"><div class=\"fileName"; //print ogName
-        if ($userId < 2) //add click listener if admin
+        if ($user->isAdmin) //add click listener if admin
             echo " changeName";
         echo "\">$rows->fileOgName</div>"; //print ogName
-        if ($userId < 2) //print replace input element
+        if ($user->isAdmin) //print replace input element
             echo "<div class=\"changeNameInput\"><input type=\"text\" value=\"$rows->fileOgName\"><button class=\"updateName\">Update</button></div></td>"; //print input
         echo "<td class=\"listUploader\">";
         if ($rows->username == null)
@@ -225,7 +222,7 @@ require_once "../header.php";
         echo "</td>";
         echo "<td class=\"listUploadDate\">" . substr($rows->fCreated, 0, 10) . "</td>";
         echo "<td>";
-        if ($_SESSION["userId"] < 2 || $_SESSION["userId"] == $rows->fileUserId)
+        if ($user->isAdmin || $_SESSION["userId"] == $rows->fileUserId)
             echo "<button class=\"deleteButton\">X</button>";
         echo "</td></tr>";
     }

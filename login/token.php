@@ -2,12 +2,9 @@
     session_start();
     require_once "sql.php";
     require_once 'functions.php';
-    if($_SESSION["userId"]>1||!checkLogin($_SESSION["userId"])){
-        header("Location: .");
-        die();
-    }
-    $userId = $_SESSION["userId"];
-
+   
+    checkAdmin();
+    
     if(isset($_POST["action"])){
         switch ($_POST["action"]){
             case "c": 
