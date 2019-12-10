@@ -42,7 +42,8 @@ require_once "../header.php";
 			echo "<td>$rows->id</td>";
 			echo "<td><a href=\"$domain/list/?q=u%3A$rows->id\" target=\"_top\">$rows->name</a>"; //print name
 			if ($userId < 2) {
-				echo "<td>$rows->lastLogin</td>"; //print last login
+				$timeStamp = timeElapsed($rows->lastLogin);
+				echo "<td>$timeStamp</td>"; //print last login
 				echo "<td><a href=\"$domain/login/resetPassword.php?resetKey=$rows->apiKey\" target=\"_top\">Link</a>"; //print password reset link 
 				echo "<td><button class=\"deleteButtonUser\">X</button></td>";
 			}
@@ -55,15 +56,45 @@ require_once "../header.php";
 
 	</html>
 
-	<?php
-	function generateRandomString($length)
-	{ //generates random strings
-		$characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-_';
-		$charactersLength = strlen($characters);
-		$randomString = '';
-		for ($i = 0; $i < $length; $i++) {
-			$randomString .= $characters[rand(0, $charactersLength - 1)];
-		}
-		return $randomString;
+<?php
+function generateRandomString($length){ //generates random strings
+	$characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-_';
+	$charactersLength = strlen($characters);
+	$randomString = '';
+	for ($i = 0; $i < $length; $i++) {
+		$randomString .= $characters[rand(0, $charactersLength - 1)];
 	}
-	?>
+	return $randomString;
+}
+
+function timeElapsed($dateTime) {
+	$now = new DateTime;
+	$ago = new DateTime($dateTime);
+	if($ago->getTimeStamp() == 0)
+		return "-";
+	$diff = $now->diff($ago);
+
+	$diff->w = floor($diff->d / 7);
+	$diff->d -= $diff->w * 7;
+
+	$string = array(
+		'y' => 'year',
+		'm' => 'month',
+		'w' => 'week',
+		'd' => 'day',
+		'h' => 'hour',
+		'i' => 'minute',
+		's' => 'second',
+	);
+	foreach ($string as $k => &$v) {
+		if ($diff->$k) {
+			$v = $diff->$k . ' ' . $v . ($diff->$k > 1 ? 's' : '');
+		} else {
+			unset($string[$k]);
+		}
+	}
+
+	$string = array_slice($string, 0, 1);
+	return $string ? implode(', ', $string) . ' ago' : 'just now';
+}
+?>
