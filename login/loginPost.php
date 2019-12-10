@@ -22,12 +22,14 @@
         $sql->execute();
         $result = $sql->get_result();
         $conn->close();
+        $user = $result->fetch_object();
         if($result->num_rows == 0)
             return false;
-        $row = $result->fetch_object();
-        prePrint($result);
-        if(password_verify($password, $row->password)){
-            $_SESSION["userId"] = $row->id;
+        if(password_verify($password, $user->password)){
+            $_SESSION["userId"] = $user->id;
+            $sql = $conn->prepare("UPDATE users SET lastLogin = NOW() WHERE `id` = ?");
+            $sql->bind_param("i", $user->id);
+            $sql->execute();
             return true;
         }
     }

@@ -34,7 +34,7 @@ require_once "../header.php";
 		$result = $sql->get_result();
 		echo '<table border="1">';
 		if ($userId < 2)
-			echo '<tr><th><a href="' . $domain . '/login/token.php" target="_top" style="color:#2196F3;"><button>#</a></th><th>Name</th><th>ResetPW</th><th><button>X</button></th></tr>';
+			echo '<tr><th><a href="' . $domain . '/login/token.php" target="_top" style="color:#2196F3;"><button>#</a></th><th>Name</th><th>LastLogin</th><th>ResetPW</th><th><button>X</button></th></tr>';
 		else
 			echo '<tr><th>#</th><th>Name</th></tr>';
 		while ($rows = $result->fetch_object()) {
@@ -42,6 +42,7 @@ require_once "../header.php";
 			echo "<td>$rows->id</td>";
 			echo "<td><a href=\"$domain/list/?q=u%3A$rows->id\" target=\"_top\">$rows->name</a>"; //print name
 			if ($userId < 2) {
+				echo "<td>$rows->lastLogin</td>"; //print last login
 				echo "<td><a href=\"$domain/login/resetPassword.php?resetKey=$rows->apiKey\" target=\"_top\">Link</a>"; //print password reset link 
 				echo "<td><button class=\"deleteButtonUser\">X</button></td>";
 			}
