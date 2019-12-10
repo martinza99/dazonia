@@ -17,6 +17,8 @@
         }
             
         header("Location: $domain");
+        echo "<a href=\"$domain/\">Click here if you don't get forwarded</a>";
+        die();
 
 function checkUser($username,$password,$conn){
     $sql = $conn->prepare("SELECT * FROM `users` WHERE `name` = ?");

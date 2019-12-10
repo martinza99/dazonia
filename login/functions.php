@@ -52,7 +52,7 @@ function checkLogin()
 function checkAdmin()
 {
 	checkLogin();
-	if(!$user->isAdmin){
+	if(!$GLOBALS["user"]->isAdmin){
         http_response_code(403);
         die('403 Forbidden<br>Admin only page!<br><a href="/login" target="_top">Go to Login</a>');
     }

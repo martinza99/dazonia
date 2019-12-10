@@ -7,7 +7,7 @@
     $picCount = $rows->picCount;
 
 echo '<div class="bottom">';
-if($userId<2){
+if($user->isAdmin){
     echo '<a href="'.$domain.'/login/token.php" target="_top">create register token</a><br>';
     echo '<a href="'.$domain.'/login/remote.php" target="_top">remote SQL query</a><br>';
     echo '<a href="'.$domain.'/login/users.php" target="_top">User List</a><br>';
@@ -30,7 +30,7 @@ echo "
 $temp = "";
 if($_SERVER["SCRIPT_NAME"]=="/upload/index.php")
     $temp = "../login/";
-    if($userId<2)//update server button
+    if($user->isAdmin)//update server button
         echo "
             <form action=\"".$temp."remote.php\" method=\"POST\" autocomplete=\"off\">
                 <input type=\"hidden\" name=\"action\" value=\"u\">
