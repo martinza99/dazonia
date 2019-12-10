@@ -43,7 +43,7 @@ require_once "../header.php";
 			echo "<td><a href=\"$domain/list/?q=u%3A$rows->id\" target=\"_top\">$rows->name</a>"; //print name
 			if ($userId < 2) {
 				$timeStamp = timeElapsed($rows->lastLogin);
-				echo "<td>$timeStamp</td>"; //print last login
+				echo "<td title=\"$rows->lastLogin\">$timeStamp</td>"; //print last login
 				echo "<td><a href=\"$domain/login/resetPassword.php?resetKey=$rows->apiKey\" target=\"_top\">Link</a>"; //print password reset link 
 				echo "<td><button class=\"deleteButtonUser\">X</button></td>";
 			}
@@ -70,10 +70,10 @@ function generateRandomString($length){ //generates random strings
 function timeElapsed($dateTime) {
 	$now = new DateTime;
 	$ago = new DateTime($dateTime);
-	if($ago->getTimeStamp() == 0)
-		return "-";
 	$diff = $now->diff($ago);
 
+	if($diff->y > 2000)
+		return "-";
 	$diff->w = floor($diff->d / 7);
 	$diff->d -= $diff->w * 7;
 
