@@ -16,21 +16,20 @@
             
         header("Location: $domain");
 
-    function checkUser($username,$password,$conn){
-        $sql = $conn->prepare("SELECT * FROM `users` WHERE `name` = ?");
-        $sql->bind_param("s", $username);
+function checkUser($username,$password,$conn){
+    $sql = $conn->prepare("SELECT * FROM `users` WHERE `name` = ?");
+    $sql->bind_param("s", $username);
+    $sql->execute();
+    $result = $sql->get_result();
+    $user = $result->fetch_object();
+    if($result->num_rows == 0)
+        return false;
+    if(password_verify($password, $user->password)){
+        $_SESSION["userId"] = $user->id;
+        $sql = $conn->prepare("UPDATE users SET lastLogin = NOW() WHERE `id` = ?");
+        $sql->bind_param("i", $user->id);
         $sql->execute();
-        $result = $sql->get_result();
-        $conn->close();
-        $user = $result->fetch_object();
-        if($result->num_rows == 0)
-            return false;
-        if(password_verify($password, $user->password)){
-            $_SESSION["userId"] = $user->id;
-            $sql = $conn->prepare("UPDATE users SET lastLogin = NOW() WHERE `id` = ?");
-            $sql->bind_param("i", $user->id);
-            $sql->execute();
-            return true;
-        }
+        return true;
     }
+}
 ?>
