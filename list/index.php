@@ -174,7 +174,7 @@
 
     echo '<div class="listTableDiv">';
     if ($q != "")
-        $q = "&q=" . urlencode($q);
+        $q = "?q=" . urlencode($q);
     echo '<div class="navButtons"><a href="' . $domain . '/list?p=' . ($p - 1) . $q . '" target="_top"><button>←</button></a><span> ' . $p . ' </span><a href="' . $domain . '/list?p=' . ($p + 1) . $q . '" target="_top"><button>→</button></a><button onClick="tagSelect(this)";>add tags</button></div>';
     echo '<table class="listTable">
         <tr>
@@ -196,7 +196,7 @@
     echo "</th></tr>";
     while ($rows = $result->fetch_object()) {
         echo "<tr id=\"$rows->fileName\">";
-        echo "<td><a href=\"$domain/view/?id=$rows->fileName$q\" target=\"_top\"><div class=\"picsList\">";
+        echo "<td><a href=\"$domain/view/$rows->fileName$q\" target=\"_top\"><div class=\"picsList\">";
         if (substr($rows->fileName, -4) == ".gif")
             echo '<button class="thumbButton listView">►</button>';
         echo "<img class=\"thumb\" src=\"../thumbnails/$rows->fileName\" alt=\"$rows->fileName\">"; //print thumbnail

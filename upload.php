@@ -39,22 +39,22 @@ if ($replace) {
 
 resize(180, './thumbnails/' . $filename, $temp_name);
 
-insertName($filename, $name, $user->id, $replace);
+insertName($filename, $name, $user, $replace);
 if (!move_uploaded_file($temp_name, $location . $filename))
     die('No file uploaded!');
 printLink($filename, $apiKey);
 
 if ($skip) {
-    header("Location: $domain/view?id=$filename");
+    header("Location: $domain/view/$filename");
 }
 
 function printLink($filename, $apiKey)
 {
-    $actual_link = $GLOBALS["domain"] . "/files/" . $filename; //creates full URI
+    $actual_link = $GLOBALS["domain"] . "/files/$filename"; //creates full URI
     if (isset($apiKey)) { //print as <a> Link
         $file = new stdClass();
-        $file->url = $GLOBALS["domain"] . "/view/?id=" . $filename;
-        $file->thumbnail = $_SERVER["REQUEST_SCHEME"] . '://' . $_SERVER["HTTP_HOST"] . "/thumbnails/" . $filename;
+        $file->url = $GLOBALS["domain"] . "/view/$filename";
+        $file->thumbnail = $_SERVER["REQUEST_SCHEME"] . '://' . $_SERVER["HTTP_HOST"] . "/thumbnails/$filename";
         echo json_encode($file);
     } else
         echo "<a href=\"$actual_link\" target=\"_top\">$actual_link</a>";
@@ -190,7 +190,7 @@ function checkHash()
     if ($result->num_rows != 0) { //return false if name is taken
         echo "File already exists: [$hash] ";
         $name = $result->fetch_object()->name;
-        echo "<a href=\"$GLOBALS[domain]/view/?id=$name\">$name</a>";
+        echo "<a href=\"$GLOBALS[domain]/view/$name\">$name</a>";
         die();
     }
 }

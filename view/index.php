@@ -2,12 +2,12 @@
 session_start();
 require_once '../login/sql.php';
 require_once '../login/functions.php';
-if (isset($_GET["id"]))
-    $fileName = htmlspecialchars($_GET["id"]);
-else {
-    header("Location: $domain/list");
-    die("No id");
-}
+preg_match("/\/view\/(.*)/", $_SERVER["REDIRECT_URL"], $match);
+$filename = $match[1];
+
+if(empty($filename) && isset($_GET["id"]))
+    $filename = htmlspecialchars($_GET["id"]);
+
 $random = "off";
 $slide = 0;
 if (isset($_GET["slide"]))
@@ -22,19 +22,23 @@ if (isset($_GET["q"])) {
     $q = $_GET["q"];
 }
 
-$sql = $conn->prepare("SELECT id FROM files WHERE name = ?");
-$sql->bind_param("s", $fileName);
+$sql = $conn->prepare("SELECT * FROM files WHERE name = ?");
+$sql->bind_param("s", $filename);
 $sql->execute();
 $result = $sql->get_result();
-$fileId = $result->fetch_object()->id;
-if ($fileId == NULL)
-    die("ID not found");
+$file = $result->fetch_object();
+if (!isset($file)){
+    http_response_code(404);
+    if(empty($filename))
+        $filename = "(empty)";
+    die("404 Not Found<br>no upload with ID = $filename");
+}
 
 #region sql
 $paramValues = array();
 $paramType = "";
 
-array_push($paramValues, $fileId);
+array_push($paramValues, $file->id);
 $paramType .= "i";
 
 $searchTag = filterSearch("tag:");
@@ -67,7 +71,7 @@ if ($filter != "") {
     $paramType .= "s";
 }
 
-array_push($paramValues, $fileId);
+array_push($paramValues, $file->id);
 $paramType .= "i";
 
 if ($searchTag != "") {
@@ -96,7 +100,7 @@ $sql = "
             SELECT * FROM(
                 SELECT
                     files.id AS fileID,
-                    files.name AS fileName,
+                    files.name AS filename,
                     files.ogName AS fileOgName,
                     files.userId AS fileUserId,
                     users.name AS username,
@@ -136,7 +140,7 @@ $sql .= "
         SELECT * FROM(
             SELECT
                 files.id AS fileID,
-                files.name AS fileName,
+                files.name AS filename,
                 files.ogName AS fileOgName,
                 files.userId AS fileUserId,
                 users.name AS username,
@@ -200,8 +204,8 @@ $username;
 $userId;
 $rating;
 if ($rows = $result->fetch_object()) {
-    if ($rows->fileID > $fileId) {
-        $left = $rows->fileName;
+    if ($rows->fileID > $file->id) {
+        $left = $rows->filename;
         $rows = $result->fetch_object();
     }
     $username = $rows->username;
@@ -209,7 +213,7 @@ if ($rows = $result->fetch_object()) {
     $userId = $rows->fileUserId;
     $username = $rows->username;
     if ($rows = $result->fetch_object())
-        $right = $rows->fileName;
+        $right = $rows->filename;
 } else {
     die("No result");
 }
@@ -229,7 +233,7 @@ echo "<img src=\"../files/$right\" hidden>";
 #endregion fetch query
 require_once "../header.php";
 ?>
-<title><?php echo $fileName ?></title>
+<title><?php echo $file->name ?></title>
 <link rel="stylesheet" type="text/css" media="screen" href="view.css<?php echo "?$hash" ?>" />
 <script src="view.js<?php echo "?$hash" ?>"></script>
 </head>
@@ -238,7 +242,7 @@ require_once "../header.php";
     <?php
     $qq = $q;
     if ($qq != "")
-        $qq = "&q=" . urlencode($qq);
+        $qq = "?q=" . urlencode($qq);
 
     if (isset($_SESSION["userId"]) && $_SESSION["userId"] < 2) {
         echo '<div class="right top replace">';
@@ -247,29 +251,29 @@ require_once "../header.php";
         <form action="../upload.php" method="POST" enctype="multipart/form-data" autocomplete="off" id="replaceForm">
             <input id="fileUp" name="file" type="file"><br>
             <input type="hidden" value="true" name="skip">
-            <input type="text" value="' . $fileName . '" name="replace">
+            <input type="text" value="' . $file->name . '" name="replace">
         </form>';
         echo "</div>";
     }
 
-    echo "<input value=\"$domain/files/$fileName\" class=\"hiddenVal\" style=\"opacity:0; height=0px;\" readonly>";
+    echo "<input value=\"$domain/files/$file->name\" class=\"hiddenVal\" style=\"opacity:0; height=0px;\" readonly>";
     echo "
         <div id=\"picDiv\" class=\"center\">";
     if (isset($left))
-        echo "<a href=\"$domain/view/?id=$left$qq\" target=\"_top\"><img id=\"prev\" class=\"floatLink pic\" src=\"../files/$fileName\"></a>";
+        echo "<a href=\"$domain/view/$left$qq\" target=\"_top\"><img id=\"prev\" class=\"floatLink pic\" src=\"../files/$file->name\"></a>";
     if (isset($right)) {
-        echo "<a href=\"$domain/view/?id=$right$qq";
+        echo "<a href=\"$domain/view/$right$qq";
         if ($slide > 0)
             echo "&slide=$slide";
         if ($random == "on")
             echo "&random=on";
         echo "\" target=\"_top\">";
     }
-    echo "<img id=\"next\" class=\"floatLink pic\" src=\"../files/$fileName\"></a>";
-    if (substr(mime_content_type("../files/$fileName"), 0, 5) === "image")
-        echo "<img id=\"centerImage\" class=\"pic\" src=\"../files/$fileName\">";
+    echo "<img id=\"next\" class=\"floatLink pic\" src=\"../files/$file->name\"></a>";
+    if (substr(mime_content_type("../files/$file->name"), 0, 5) === "image")
+        echo "<img id=\"centerImage\" class=\"pic\" src=\"../files/$file->name\">";
     else
-        echo "<video id=\"centerImage\" class=\"pic\" src=\"../files/$fileName\" autoplay controls loop onloadstart=\"this.volume=0.2\">";
+        echo "<video id=\"centerImage\" class=\"pic\" src=\"../files/$file->name\" autoplay controls loop onloadstart=\"this.volume=0.2\">";
     echo "</div>
     ";
     echo "
@@ -283,14 +287,13 @@ require_once "../header.php";
             <button type="button" data-toggle="collapse" data-target="#collapseRandom" aria-expanded="false" aria-controls="collapseRandom" onclick="stopSlide();">&nbsp;<span class="glyphicon glyphicon-picture"></span></button>
             <div class="collapse slideContainer" id="collapseRandom">
                 <div class="card card-body">
-                    <form action="/view" method="GET">
+                    <form action="/view/'.$file->name.'" method="GET">
                     <label>Random</label> <input type="checkbox" name="random" checked="' . $random . '">
                     <button type="submit">Start</button><br>
                         <label>Delay</label> <input type="number" class="darkInput" name="slide" value="';
         if ($slide == 0) echo "3";
         else echo $slide;
         echo '" min="0" step="0.5" placeholder="seconds" style="width:80px;">
-                        <input type="hidden" name="id" value="' . $_GET["id"] . '">
                         <input type="hidden" name="q" value="' . $q . '">';
         echo '</form>
                 </div>
@@ -308,7 +311,7 @@ require_once "../header.php";
     echo '
     <div class="bottom right"><div class="tagContainer">';
     $sql = $conn->prepare("SELECT tags.id AS tagID, tags.name AS tagName FROM tagfile INNER JOIN tags ON tags.id = tagfile.tagId WHERE tagFile.fileId = ? ORDER by tags.name");
-    $sql->bind_param("i", $fileId);
+    $sql->bind_param("i", $file->id);
     $sql->execute();
     if ($sql === false)
         trigger_error('Wrong SQL: ' . $sql . ' Error: ' . $conn->errno . ' ' . $conn->error, E_USER_ERROR);

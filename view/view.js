@@ -23,7 +23,7 @@ function swapPic(_xhr, _push) {
         };
         document.title = _xhr;
         if (_push) {
-            history.pushState(stateObj, _xhr, location.origin + "/view/?id=" + xhr);
+            history.pushState(stateObj, _xhr, location.origin + "/view/" + _xhr);
             document.querySelector(".hiddenVal").value = location.origin + "/files/" + _xhr;
         }
     }
