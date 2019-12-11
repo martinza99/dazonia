@@ -50,11 +50,12 @@ if ($skip) {
 
 function printLink($filename, $apiKey)
 {
-    $actual_link = $GLOBALS["domain"] . "/files/$filename"; //creates full URI
+    $domain= $GLOBALS["domain"];
+    $actual_link = "$domain/files/$filename"; //creates full URI
     if (isset($apiKey)) { //print as <a> Link
         $file = new stdClass();
-        $file->url = $GLOBALS["domain"] . "/view/$filename";
-        $file->thumbnail = $_SERVER["REQUEST_SCHEME"] . '://' . $_SERVER["HTTP_HOST"] . "/thumbnails/$filename";
+        $file->url = "$domain/view/$filename";
+        $file->thumbnail = "$domain/thumbnails/$filename";
         echo json_encode($file);
     } else
         echo "<a href=\"$actual_link\" target=\"_top\">$actual_link</a>";
