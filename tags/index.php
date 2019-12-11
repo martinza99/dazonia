@@ -4,7 +4,11 @@
     require_once '../login/functions.php';
    
     checkLogin();
-
+    $parent = new stdClass();
+    if(preg_match("/\/tags\/(.+)/", $_SERVER["REDIRECT_URL"], $match)){
+        $parentname = $match[1];
+    }
+    
     require_once "../header.php";
 ?>
     <title>Tag List</title>
@@ -12,18 +16,17 @@
 </head>
 <body>
 <?php
-    $parent = new stdClass();
     $parent->id = 0;
-    if(isset($_GET["t"])){
-        $parentName = $_GET["t"];
-
+    if(!empty($parentname)){
         $sql = $conn->prepare("SELECT * FROM tags WHERE name = ?");
-        $sql->bind_param("s",$parentName);
+        $sql->bind_param("s", $parentname);
         $sql->execute();
         $result = $sql->get_result();
         $parent = $result->fetch_object();
-        if($sql->affected_rows==0)
-            die("Parent doesn't exist");
+        if(!isset($parent)){
+            http_response_code(404);
+            die("404 Not Found<br>Parent $parentname doesn't exist");
+        }
     }
     if(isset($_GET["q"])){
         $sql = $conn->prepare("SELECT * FROM tags WHERE name LIKE concat('%',?,'%') ORDER BY name");
@@ -61,7 +64,7 @@
         if(!file_exists($img))
             $img = "img/0.png";
         echo "<img class=\"thumb\" src=\"$img\"></a>";//print thumbnail
-        echo "<a href=\"$domain/tags/?t=$rows->name\" target=\"_top\">";//open tag link
+        echo "<a href=\"$domain/tags/$rows->name\" target=\"_top\">";//open tag link
         echo "<br><span class=\"tagName\">$rows->name</span></a>";//print name
         echo "</div>";// and table cell
     }

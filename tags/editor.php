@@ -144,7 +144,7 @@
             if(!file_exists($img))
                 $img = "img/0.png";
             echo "<td><img class=\"thumbScript\" src=\"$img\"></td>";
-            echo "<td><a href=\"$domain/tags?t=$rows->tagname\" target=\"_top\">$rows->tagsid</a></td>";
+            echo "<td><a href=\"$domain/tags/$rows->tagname\" target=\"_top\">$rows->tagsid</a></td>";
             echo "<td class=\"nameScript\"><a href=\"$domain/list/?q=tag%3A$rows->tagname\" target=\"_top\">$rows->tagname</a></td>";//print tag name
             switch ($rows->parentId){
                 case -1://no parent
@@ -154,7 +154,7 @@
                     echo "<td class=\"parentScript\"><a href=\"$domain/tags\" target=\"_top\">(root)</a></td>";//print root
                     break;
                 default://default
-                    echo "<td class=\"parentScript\"><a href=\"$domain/tags?t=$rows->parentname\" target=\"_top\">$rows->parentname</a></td>";//print parent name
+                    echo "<td class=\"parentScript\"><a href=\"$domain/tags/$rows->parentname\" target=\"_top\">$rows->parentname</a></td>";//print parent name
             }
             if($rows->fileid == null)
                 $rows->amount = 0;
