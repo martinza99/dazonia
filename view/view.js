@@ -97,13 +97,12 @@ function sendRating() {
 function sendTag() {
     let tagName = $(".tagInput").val();
     $(".tagInput").val("");
-    let urlParams = new URLSearchParams(window.location.search);
-    let picId = urlParams.get("id");
+    let fileName = location.pathname.match(/\/view\/(.*)/)[1];
     let temp = this;
     $.post("../list/action.php",
         {
             action: "addTag",
-            fileName: picId,
+            fileName: fileName,
             tagName: tagName,
         },
         function (response, status, xhr) {
@@ -147,12 +146,11 @@ function isEnter(_event) {
 function deleteTag() {
     var tr = $(this).closest(".sugg");
     var tagName = $(this).closest(".sugg").children()[0].text;
-    let urlParams = new URLSearchParams(window.location.search);
-    let picId = urlParams.get("id");
+    let fileName = location.pathname.match(/\/view\/(.*)/)[1];
     $.post("../list/action.php",
         {
             action: "deleteTag",
-            fileName: picId,
+            fileName: fileName,
             tagName: tagName,
         },
         function (response, status, xhr) {
