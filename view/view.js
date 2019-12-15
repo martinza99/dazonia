@@ -78,18 +78,25 @@ function sendRating() {
     $(this).siblings(".tempStar").remove();
     let star = $(".star")[0];
     $(this).remove();
-    let urlParams = new URLSearchParams(window.location.search);
-    let picId = urlParams.get("id");
+    let fileName = location.pathname.match(/\/view\/(.*)/)[1];
     $.post("../list/action.php",
         {
             action: "rateFile",
-            fileName: picId,
+            fileName: fileName,
             rating: val
         },
         function (response, status, xhr) {
-            response = JSON.parse(response);
-            if (response.success == true)
-                $(star).attr("src", "../list/img/" + response.avgrating + ".png");
+            try {
+                response = JSON.parse(response);
+                if (response.success == true)
+                    $(star).attr("src", "../list/img/" + response.avgrating + ".png");
+                else
+                    throw new Error(response.error);
+            }
+            catch (error) {
+                alert(error);
+                throw error;
+            }
         }
     );
 }
