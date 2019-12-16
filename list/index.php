@@ -34,6 +34,7 @@
         echo "<img src=\"/bg/$randBG\" style=\"position:fixed; right:0; bottom:0; z-index:-1; max-width: 35%; max-height:90%; opacity: 0.7;\">";
     }
     #region SQL
+    /*
     $paramValues = array();
     $paramType = "";
 
@@ -79,7 +80,7 @@
         var_dump($paramValues);
     }
 
-    array_push($paramValues, $offset);
+    // array_push($paramValues, $offset);
     $paramType .= "i"; {
         $sql = "
         SELECT
@@ -150,8 +151,7 @@
             $sql .= "AND avgrating IS NULL ";
         if ($filter != "")
             $sql .= "AND fileOgName LIKE concat('%',?,'%') ";
-        $sql .= "ORDER BY subtable.fileID DESC
-        LIMIT 100 OFFSET ?";
+        LIMIT 200 OFFSET ?";
     }
     $sql = $conn->prepare($sql);
     if ($sql === false)
@@ -165,12 +165,15 @@
         array($sql, 'bind_param'),
         array_merge(array($paramType), $paramValues)
     );
-
+    #endregion SQL
+    */
+    
+    $sql->prepare("SELECT files.id as fileId, files.name AS fileName, files.ogName, DATE_FORMAT(files.created, '%d-%m-%Y') AS created, userrating.rating, users.name AS uploaderName, users.id AS uploaderID, rating.name AS rateName FROM files LEFT JOIN userrating ON files.id = userrating.fileId LEFT JOIN (SELECT name, id FROM users) AS rating ON rating.id = userrating.userID LEFT JOIN users ON users.id = files.userId ORDER BY files.id DESC, userrating.userID LIMIT 100 OFFSET ?");
+    $sql->bind_param("i", $offset);
     $sql->execute();
     $result = $sql->get_result();
     $conn->close();
 
-    #endregion SQL
 
     echo '<div class="listTableDiv">';
     if ($q != "")
@@ -186,15 +189,34 @@
             <th class="listUploadDate">Upload Date</th>';
     echo "<th>";
     echo "<button class=\"deleteAllButton\">X</button>";
-    if ($user->isAdmin) {
-        if ($user->id == 0)
-            $temp = "l";
-        else
-            $temp = "m";
-        echo "<script>var USERID = '$temp';</script>";
-    }
     echo "</th></tr>";
-    while ($rows = $result->fetch_object()) {
+
+    $prev = new stdClass();
+    $prev->fileName = "";
+    $files = [];
+    while($rows = $result->fetch_object()) {
+        if($prev->fileName != $rows->fileName){
+            if(!empty($prev->fileName)){
+                $avg = new stdClass();
+                $avg->rateName = "Average";
+                $avg->score = array_reduce($prev->ratings, "sumRatings", 0) / sizeof($prev->ratings);
+                array_unshift($prev->ratings, $avg);
+                $files[] = $prev;
+            }
+            $prev = new stdClass();
+            $prev->fileName = $rows->fileName;
+            $prev->uploaderID = $rows->uploaderID;
+            $prev->uploaderName = $rows->uploaderName;
+            $prev->fileOgName = $rows->ogName;
+            $prev->created = $rows->created;
+        }
+        $rating = new stdClass();
+        $rating->rateName = $rows->rateName;
+        $rating->score = $rows->rating;
+        $prev->ratings[] = $rating;
+    }
+    echo "<script>const USERNAME = '$user->name';</script>";
+    while($rows = array_shift($files)){
         echo "<tr id=\"$rows->fileName\">";
         echo "<td><a href=\"$domain/view/$rows->fileName$q\" target=\"_top\"><div class=\"picsList\">";
         if (substr($rows->fileName, -4) == ".gif")
@@ -203,10 +225,9 @@
         echo "</div></a></td><td>";
         echo "<div class=\"starContainer\">";
         if ($user->isAdmin) {
-            echo rating($rows->lRating, "l");
-            echo rating($rows->mRating, "m");
+            foreach($rows->ratings as $rating)
+                echo ratingStars($rating);
         }
-        echo rating($rows->avgrating, "");
         echo "</div></td>";
         echo "<td><a href=\"$domain/files/$rows->fileName\" target=\"_top\">$rows->fileName</a></td>"; //print filename
         echo "<td class=\"og\"><div class=\"fileName"; //print ogName
@@ -216,13 +237,13 @@
         if ($user->isAdmin) //print replace input element
             echo "<div class=\"changeNameInput\"><input type=\"text\" value=\"$rows->fileOgName\"><button class=\"updateName\">Update</button></div></td>"; //print input
         echo "<td class=\"listUploader\">";
-        if ($rows->username == null)
-            $rows->username = "deleted<br>user[$rows->fileUserId]";
-        echo "<a href=\"$domain/list?q=u%3A$rows->fileUserId\" target=\"_top\">$rows->username</a>";
+        if ($rows->uploaderName == null)
+            $rows->uploaderName = "deleted<br>user[$rows->uploaderID]";
+        echo "<a href=\"$domain/list?q=u%3A$rows->uploaderID\" target=\"_top\">$rows->uploaderName</a>";
         echo "</td>";
-        echo "<td class=\"listUploadDate\">" . substr($rows->fCreated, 0, 10) . "</td>";
+        echo "<td class=\"listUploadDate\">" . substr($rows->created, 0, 10) . "</td>";
         echo "<td>";
-        if ($user->isAdmin || $_SESSION["userId"] == $rows->fileUserId)
+        if ($user->isAdmin || $user->id == $rows->uploaderID)
             echo "<button class=\"deleteButton\">X</button>";
         echo "</td></tr>";
     }
@@ -234,19 +255,17 @@
     echo '<div class="navButtons"><a href="' . $domain . '/list?p=' . ($p - 1) . $q . '" target="_top"><button>←</button></a><span> ' . $p . ' </span><a href="' . $domain . '/list?p=' . ($p + 1) . $q . '" target="_top"><button>→</button></a></div>';
     echo '</div>';
 
-    function rating($rating, $u)
+    function ratingStars($rating)
     {
-        if ($rating == "")
-            $rating = 0;
-        if ($u != "") {
-            $u = $u . "star userStar";
-        } else {
-            $u = "star";
-        }
-        if ($rating - floor($rating) == 0.5)
-            $rating = floor($rating);
-        $rating = (int) $rating; // 5.000 -> 5
-        return '<img class="' . $u . '" src="img/' . $rating . '.png">';
+        if(empty($rating->rateName))
+            return "";
+        $rateName = $rating->rateName;
+        $score = $rating->score;
+
+        if ($score - floor($score) == 0.5)
+            $score = floor($score);
+        $score = (int) $score; // 5.000 -> 5
+        return '<img class="star userStar" title= "'.$rateName.'" src="img/' . $score . '.png">';
     }
 
     function filterSearch($find)
@@ -269,6 +288,10 @@
         return $filtered;
     }
 
+    function sumRatings($carry, $item){
+        $carry += $item->score;
+        return $carry;
+    }
     ?>
 </body>
 

@@ -96,26 +96,28 @@ function makeStar(_starElement, _rating) {
 	let star = document.createElement("img");
 	star.addEventListener("click", sendRating)
 	star.src = "img/" + _rating + ".png";
-	star.classList = "star tempStar " + _rating;
-	_starElement.parentElement.appendChild(star);
+	star.classList = "star " + _rating;
+	_starElement.appendChild(star);
 	$(star).animate({ left: _rating * 32 + "px" });
 }
 
 function openStars() {
+	const starWrapper = document.createElement("div");
+	starWrapper.className = "tempStar";
 	for (let index = 0; index <= 10; index++)
-		makeStar(this, index);
+		makeStar(starWrapper, index);
+	this.parentElement.appendChild(starWrapper);
 }
 
 function sendRating() {
-	let val = parseInt(this.classList[2]);
+	let val = parseInt(this.classList[1]);
 	this.style.zIndex = 100;
-	$(this).siblings(".tempStar").remove();
 
 
 	let star = $(this).siblings(".star");
 	let tr = $(this).closest("tr")[0];
 	let temp = this;
-	$(this).remove();
+	$(".tempStar").remove();
 	$.post("action.php",
 		{
 			action: "rateFile",
@@ -126,9 +128,19 @@ function sendRating() {
 			try {
 				response = JSON.parse(response);
 				if (response.success == true) {
-					$(star).attr("src", "img/" + response.avgrating + ".png");
-					if (USERID != undefined)
-						$(star).siblings("." + USERID + "star").attr("src", "img/" + val + ".png");
+					tr.querySelector("[title=Average]").src = "img/" + response.avgrating + ".png";
+					if (USERNAME != undefined) {
+						let target = tr.querySelector("[title=" + USERNAME + "]");
+						if (target == null) {
+							target = document.createElement("img");
+							target.title = USERNAME;
+							target.classList = "star userStar";
+							tr.querySelector(".starContainer").appendChild(target);
+						}
+						if (val == 0)
+							$(target).remove();
+						target.src = "img/" + val + ".png";
+					}
 				}
 				else
 					throw new Error(response.error);

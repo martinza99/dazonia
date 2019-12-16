@@ -23,41 +23,26 @@ th{
 
 .starContainer{
     position: relative;
-    background: darkgreen;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .star{
-    position: absolute;
     width: 32px;
-    align-self: center;
-    margin-left: 7px;
-    margin-top: -20px;
 }
 
 .tempStar{
     background-color: #141617d9;
+    position: absolute;
+    display: flex;
+    align-self: end;
+    margin-left: 15%;
 }
 
 .fileName{
     width: 600px;
     overflow-wrap: break-word;
-}
-
-.lStar{
-    top:-32px;
-}
-
-.mStar{
-    top:32px;
-}
-
-.userStar{
-    position: absolute;
-    width: 32px;
-    align-self: center;
-    margin-left: 7px;
-    margin-top: -20px;
-    opacity: 0.3;
 }
 
 .userStar:hover{
