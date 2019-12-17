@@ -24,7 +24,7 @@
 </head>
 
 <body>
-    <?php
+<?php
     $dir = scandir("../bg/");
     if (count($dir) > 3) {
         $randBG;
@@ -33,9 +33,12 @@
         while ($randBG == "index.php");
         echo "<img src=\"/bg/$randBG\" style=\"position:fixed; right:0; bottom:0; z-index:-1; max-width: 35%; max-height:90%; opacity: 0.7;\">";
     }
+    if ($sql === false)
+        trigger_error('Wrong SQL: ' . $sql . ' Error: ' . $conn->errno . ' ' . $conn->error, E_USER_ERROR);
+
     #region SQL
-    /*
     $paramValues = array();
+    $a_params = array();
     $paramType = "";
 
     $searchTag = filterSearch("tag:");
@@ -76,104 +79,33 @@
         array_push($paramValues, $filter);
         $paramType .= "s";
     }
-    if (isset($_GET["debug"])) {
-        var_dump($paramValues);
-    }
+    $paramType .= "i";
+    array_push($paramValues, $offset);
 
-    // array_push($paramValues, $offset);
-    $paramType .= "i"; {
-        $sql = "
-        SELECT
-            subtable.*,
-            lTable.lRating,
-            mTable.mRating
-        FROM
-            (
-            SELECT
-                files.id AS fileID,
-                files.name AS fileName,
-                files.ogName AS fileOgName,
-                files.userId AS fileUserId,
-                DATE_FORMAT(files.created, '%d-%m-%Y') AS fCreated,
-                users.name AS username,
-                AVG(userrating.rating) AS avgrating,
-                tags.name AS tagname
-            FROM
-                files
-            LEFT JOIN users ON users.id = files.userId
-            LEFT JOIN userrating ON userrating.fileId = files.id
-            LEFT JOIN tagFile ON tagfile.fileId = files.id
-            LEFT JOIN tags ON tags.id = tagfile.tagId
-            WHERE
-                files.name = files.name ";
-        if ($searchTag != "")
-            $sql .= "AND tags.name = ? ";
-        if ($searchParent != "")
-            $sql .= "AND tags.parentId = ? ";
-        if ($searchFile != "")
-            $sql .= "AND files.name LIKE concat('%',?,'%') ";
-        if ($searchUser != "")
-            $sql .= "AND users.id = ? ";
-        $sql .= "GROUP BY
-                files.id
-        ) AS subtable
-        LEFT JOIN(
-            SELECT
-                files.id AS lfileID,
-                userrating.rating AS lRating
-            FROM
-                files
-            LEFT JOIN users ON users.id = files.userId
-            LEFT JOIN userrating ON userrating.fileId = files.id
-            WHERE
-                userrating.userID = 0
-        ) AS lTable
-        ON
-            lTable.lfileID = subtable.fileID
-        LEFT JOIN(
-            SELECT
-                files.id AS mfileID,
-                userrating.rating AS mRating
-            FROM
-                files
-            LEFT JOIN users ON users.id = files.userId
-            LEFT JOIN userrating ON userrating.fileId = files.id
-            WHERE
-                userrating.userID = 1
-        ) AS mTable
-        ON
-            mTable.mfileID = subtable.fileID
-        WHERE
-            fileName = fileName ";
-        if ($searchRating > 0)
-            $sql .= "AND avgrating >= ? ";
-        if ($searchRating === "0")
-            $sql .= "AND avgrating IS NULL ";
-        if ($filter != "")
-            $sql .= "AND fileOgName LIKE concat('%',?,'%') ";
-        LIMIT 200 OFFSET ?";
-    }
-    $sql = $conn->prepare($sql);
-    if ($sql === false)
-        trigger_error('Wrong SQL: ' . $sql . ' Error: ' . $conn->errno . ' ' . $conn->error, E_USER_ERROR);
 
-    $a_params = array();
+    $sql ="SELECT files.id as fileId, files.name AS fileName, files.ogName, DATE_FORMAT(files.created, '%d-%m-%Y') AS created, userrating.rating, users.name AS uploaderName, users.id AS uploaderID, rating.name AS rateName
+    FROM files LEFT JOIN tagFile ON tagFile.fileId = files.id LEFT JOIN tags ON tags.id = tagFile.tagId LEFT JOIN userrating ON files.id = userrating.fileId LEFT JOIN (SELECT name, id FROM users) AS rating ON rating.id = userrating.userID LEFT JOIN users ON users.id = files.userId WHERE files.name = files.name ";
+    if ($searchTag != "")
+    $sql .= "AND tags.name = ? ";
+    if ($searchParent != "")
+    $sql .= "AND tags.parentId = ? ";
+    if ($searchFile != "")
+    $sql .= "AND files.name LIKE concat('%',?,'%') ";
+    if ($searchUser != "")
+    $sql .= "AND users.id = ? ";
+    $sql .= "ORDER BY files.id DESC, userrating.userID LIMIT 100 OFFSET ?";
     foreach ($paramValues as $key => $value) {
         $a_params[$key] = &$paramValues[$key];
     }
+    $sql = $conn->prepare($sql);
     call_user_func_array(
         array($sql, 'bind_param'),
         array_merge(array($paramType), $paramValues)
     );
-    #endregion SQL
-    */
-    
-    $sql->prepare("SELECT files.id as fileId, files.name AS fileName, files.ogName, DATE_FORMAT(files.created, '%d-%m-%Y') AS created, userrating.rating, users.name AS uploaderName, users.id AS uploaderID, rating.name AS rateName FROM files LEFT JOIN userrating ON files.id = userrating.fileId LEFT JOIN (SELECT name, id FROM users) AS rating ON rating.id = userrating.userID LEFT JOIN users ON users.id = files.userId ORDER BY files.id DESC, userrating.userID LIMIT 100 OFFSET ?");
-    $sql->bind_param("i", $offset);
     $sql->execute();
     $result = $sql->get_result();
     $conn->close();
-
+    #endregion
 
     echo '<div class="listTableDiv">';
     if ($q != "")
