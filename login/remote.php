@@ -9,6 +9,12 @@
     else
         $action = "";
     $result;
+
+    $cwd = "temp/";
+        if(isset($_POST["cwd"]) && is_dir($_POST["cwd"])){
+            $cwd = realpath($_POST["cwd"])."\\";
+        }
+
     if(isset($_POST["action"])){
         $sql = $_POST["sql"];
         switch ($_POST["action"]){
@@ -24,10 +30,22 @@
                 header("Location: remote.php");
                 break;
             case "cmd":
-                $outputExec = shell_exec($sql);
+                $outputExec = shell_exec("cd $cwd && $sql");
                 break;
             case "r":
                 exec("");
+        }
+    }
+    if(isset($_GET["showfile"])){
+        $file = $_GET["showfile"];
+        if(file_exists($file)){
+            header("content-type:" . mime_content_type($file));
+            echo file_get_contents($file);
+            die();
+        }
+        else{
+            http_response_code(404);
+            die("404 File not found<br>$file");
         }
     }
     require_once "../header.php";
@@ -39,9 +57,11 @@
     <script src="login.js<?php echo "?$hash" ?>"></script>
 </head>
 <body>
+    <div style="display: flex; flex-direction:row;">
     <form action="remote.php" method="POST" autocomplete="off" class="queryForm">
         <input type="hidden" name="action" class="formAction">
-        <textarea name="sql" cols="50" rows="5" placeholder="query"><?php if(!empty($action))echo $sql ?></textarea><br>
+        <textarea id="sql" name="sql" cols="50" rows="5" placeholder="query"><?php if(!empty($action))echo $sql ?></textarea><br>
+        <input type="text" id= "cwd" name="cwd" placeholder="Directory" style="width:100%" value="<?php if($cwd != "temp/") echo $cwd?>"><br>
         <input type="button" value="Submit SQL" onclick="setForm('sql');">
         <input type="button" value="Run CMD" onclick="setForm('cmd');">
         <?php if($action=="sql"){
@@ -50,6 +70,21 @@
         }
         ?>
     </form>
+    <div>
+        <?php
+        echo "Files in $cwd:<br>";
+            $dir = scandir($cwd);
+            usort($dir, "fileComparator");
+            foreach ($dir as $key => $child) {
+                if(is_dir("$cwd$child"))
+                    echo "<a href=\"#\" class=\"postLink\"><mark>$child</mark></a><br>";
+                else
+                    echo "<a href=\"?showfile=$cwd$child\" target=\"_blank\">$child</a><br>";
+            }
+        ?>
+        </div>
+    </div>
+    
     <div class="result" style="color:black;">
         <?php
             if($action=="cmd"){
@@ -99,6 +134,20 @@
     </div>
 <?php
     require_once "../footer.php"; 
+
+    function fileComparator($a, $b)
+    {
+        $a = $GLOBALS["cwd"].$a;
+        $b = $GLOBALS["cwd"].$b;
+        if(is_dir($a) && !is_dir($b)){
+            return -1;
+        }
+        else if(!is_dir($a) && is_dir($b)){
+            return 1;
+        }
+        return strnatcmp($a, $b);
+    }
+
 ?>
 
 </body>

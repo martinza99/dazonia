@@ -14,6 +14,7 @@ $(function () {
         if (confirm("Delete " + $(this).closest("tr")[0].id))
             deleteUser(this);
     });
+    $(".postLink").click(linkToPost);
 });
 
 function equals(_source, _target) {
@@ -75,4 +76,10 @@ function deleteUser(_btn) {
         },
         function () { tr.remove(); }
     );
+}
+
+function linkToPost(event) {
+    document.querySelector("#cwd").value += this.innerText;
+    document.querySelector("#sql").value = "cd";
+    document.querySelector(".queryForm").submit();
 }
