@@ -39,6 +39,7 @@
     if(isset($_GET["showfile"])){
         $file = $_GET["showfile"];
         if(file_exists($file)){
+            ini_set('memory_limit', '-1');
             header("content-type:" . mime_content_type($file));
             echo file_get_contents($file);
             die();
