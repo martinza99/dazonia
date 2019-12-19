@@ -173,9 +173,16 @@
     #endregion SQL
 
     echo '<div class="listTableDiv">';
-    if ($q != "")
-        $q = "&q=" . urlencode($q);
-    echo '<div class="navButtons"><a href="' . $domain . '/list?p=' . ($p - 1) . $q . '" target="_top"><button>←</button></a><span> ' . $p . ' </span><a href="' . $domain . '/list?p=' . ($p + 1) . $q . '" target="_top"><button>→</button></a><button onClick="tagSelect(this)";>add tags</button></div>';
+    $q = urlencode($q);
+    $navButtons = '<div class="navButtons"><a href="' . $domain . '/list?p=' . ($p - 1);
+    if(!empty($q))
+        $navButtons .= "&q=$q";
+    $navButtons .= '" target="_top"><button>←</button></a><span> ' . $p . ' </span><a href="' . $domain . '/list?p=' . ($p + 1);
+    if(!empty($q))
+        $navButtons .= "&q=$q";
+    $navButtons .= '" target="_top"><button>→</button></a>';
+    echo $navButtons;
+    echo '<button onClick="tagSelect(this)";>add tags</button></div>';
     echo '<table class="listTable">
         <tr>
             <th>Preview</th>
@@ -196,7 +203,10 @@
     echo "</th></tr>";
     while ($rows = $result->fetch_object()) {
         echo "<tr id=\"$rows->fileName\">";
-        echo "<td><a href=\"$domain/view/$rows->fileName$q\" target=\"_top\"><div class=\"picsList\">";
+        echo "<td><a href=\"$domain/view/$rows->fileName";
+        if(!empty($q))
+            echo "?q=$q";
+        echo "\" target=\"_top\"><div class=\"picsList\">";
         if (substr($rows->fileName, -4) == ".gif")
             echo '<button class="thumbButton listView">►</button>';
         echo "<img class=\"thumb\" src=\"../thumbnails/$rows->fileName\" alt=\"$rows->fileName\">"; //print thumbnail
@@ -229,7 +239,7 @@
     if ($result->num_rows == 0)
         echo "<tr><th colspan=\"7\">No Results</th></tr>";
     echo "</table>";
-    echo '<div class="navButtons"><a href="' . $domain . '/list?p=' . ($p - 1) . $q . '" target="_top"><button>←</button></a><span> ' . $p . ' </span><a href="' . $domain . '/list?p=' . ($p + 1) . $q . '" target="_top"><button>→</button></a></div>';
+    echo $navButtons;
     echo '</div>';
 
     function rating($rating, $u)
