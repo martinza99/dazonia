@@ -32,6 +32,10 @@ th{
     width: 32px;
 }
 
+.userStar{
+    opacity: 0.3;
+}
+
 .tempStar{
     background-color: #141617d9;
     position: absolute;
