@@ -85,7 +85,9 @@
         SELECT
             subtable.*,
             lTable.lRating,
-            mTable.mRating
+            mTable.mRating,
+            cTable.cRating,
+            rTable.rRating
         FROM
             (
             SELECT
@@ -142,6 +144,32 @@
         ) AS mTable
         ON
             mTable.mfileID = subtable.fileID
+        LEFT JOIN(
+            SELECT
+                files.id AS cfileID,
+                userrating.rating AS cRating
+            FROM
+                files
+            LEFT JOIN users ON users.id = files.userId
+            LEFT JOIN userrating ON userrating.fileId = files.id
+            WHERE
+                userrating.userID = 6
+        ) AS cTable
+        ON
+        cTable.cfileID = subtable.fileID
+        LEFT JOIN(
+            SELECT
+                files.id AS rfileID,
+                userrating.rating AS rRating
+            FROM
+                files
+            LEFT JOIN users ON users.id = files.userId
+            LEFT JOIN userrating ON userrating.fileId = files.id
+            WHERE
+                userrating.userID = 8
+        ) AS rTable
+        ON
+            rTable.rfileID = subtable.fileID
         WHERE
             fileName = fileName ";
         if ($searchRating > 0)
@@ -194,10 +222,20 @@
     echo "<th>";
     echo "<button class=\"deleteAllButton\">X</button>";
     if ($user->isAdmin) {
-        if ($user->id == 0)
-            $temp = "l";
-        else
-            $temp = "m";
+        switch ($user->id) {
+            case 0:
+                $temp = "l";
+                break;
+            case 1:
+                $temp = "m";
+                break;
+            case 6:
+                $temp = "c";
+                break;
+            case 8:
+                $temp = "r";
+                break;
+        }
         echo "<script>var USERNAME = '$temp';</script>";
     }
     echo "</th></tr>";
@@ -214,8 +252,10 @@
         echo "<div class=\"starContainer\">";
         if ($user->isAdmin) {
             echo rating($rows->lRating, "l");
-            echo rating($rows->avgrating, "");
             echo rating($rows->mRating, "m");
+            echo rating($rows->avgrating, "");
+            echo rating($rows->cRating, "c");
+            echo rating($rows->rRating, "r");
         }
         else
             echo rating($rows->avgrating, "");
