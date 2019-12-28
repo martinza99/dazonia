@@ -198,7 +198,7 @@
             $temp = "l";
         else
             $temp = "m";
-        echo "<script>var USERID = '$temp';</script>";
+        echo "<script>var USERNAME = '$temp';</script>";
     }
     echo "</th></tr>";
     while ($rows = $result->fetch_object()) {
@@ -214,9 +214,11 @@
         echo "<div class=\"starContainer\">";
         if ($user->isAdmin) {
             echo rating($rows->lRating, "l");
+            echo rating($rows->avgrating, "");
             echo rating($rows->mRating, "m");
         }
-        echo rating($rows->avgrating, "");
+        else
+            echo rating($rows->avgrating, "");
         echo "</div></td>";
         echo "<td><a href=\"$domain/files/$rows->fileName\" target=\"_top\">$rows->fileName</a></td>"; //print filename
         echo "<td class=\"og\"><div class=\"fileName"; //print ogName

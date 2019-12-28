@@ -128,17 +128,17 @@ function sendRating() {
 			try {
 				response = JSON.parse(response);
 				if (response.success == true) {
-					tr.querySelector("[title=Average]").src = "img/" + response.avgrating + ".png";
+					tr.querySelector(".star").src = "img/" + response.avgrating + ".png";
 					if (USERNAME != undefined) {
-						let target = tr.querySelector("[title=" + USERNAME + "]");
-						if (target == null) {
-							target = document.createElement("img");
-							target.title = USERNAME;
-							target.classList = "star userStar";
-							tr.querySelector(".starContainer").appendChild(target);
-						}
-						if (val == 0)
-							$(target).remove();
+						let target = tr.querySelector("." + USERNAME + "star");
+						// if (target == null) {
+						// 	target = document.createElement("img");
+						// 	target.title = USERNAME;
+						// 	target.classList = "star userStar";
+						// 	tr.querySelector(".starContainer").appendChild(target);
+						// }
+						// if (val == 0)
+						// 	$(target).remove();
 						target.src = "img/" + val + ".png";
 					}
 				}
