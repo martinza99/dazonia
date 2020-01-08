@@ -2,6 +2,7 @@
 session_start();
 require_once 'login/sql.php';
 require_once 'login/functions.php';
+$apiKey = "";
 if (isset($_POST['key'])) {
     $apiKey = $_POST['key'];
 

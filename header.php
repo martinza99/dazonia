@@ -5,7 +5,7 @@ echo '
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
 <link rel="shortcut icon" href="/favicon.png" type="image/x-icon">
-<script src="/main.js?'.$hash.'"></script>
+
 <link rel="stylesheet" type="text/css" media="screen" href="/main.css?'.$hash.'" />
 </head>';
 exec('git rev-parse --verify HEAD', $output);
@@ -13,8 +13,9 @@ echo "<!-- $output[0] -->";
 $filter = "";
 if (isset($_GET["q"]))
     $filter = $_GET["q"];
+echo '<body>
+<script src="/main.js?'.$hash.'"></script>';
 echo "
-<body>
 <nav class=\"navbar navbar-inverse\">
 <div class=\"container-fluid\">
     <div class=\"navbar-header\">
@@ -68,5 +69,6 @@ echo "
         </ul>
     </div>
 </div>
+<div id=\"uploadProgress\"></div>
 </nav>
 <div class=\"navbarMargin\"></div>";

@@ -144,6 +144,11 @@ html input:disabled, .disabled{
     cursor: not-allowed;
 }
 
+.uploadProgress{
+    width: 100%;
+    background-color: lime;
+}
+
 /* mobile css */
 @media screen and (max-width: 768px){
 .potato{
