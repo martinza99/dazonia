@@ -27,8 +27,6 @@ require_once "header.php";
     $sql->execute();
     $result = $sql->get_result();
     $conn->close();
-
-
     echo "<div class=\"potato\">";
     while ($rows = $result->fetch_object()) {
         echo "<a  href=\"$domain/view/$rows->name?q=tag%3Asafe\" target=\"_top\">"; //open link
@@ -36,7 +34,10 @@ require_once "header.php";
         if (substr($rows->name, -4) == ".gif")
             echo '<button class="thumbButton sideView">►</button>';
         echo rating($rows->avgrating);
-        echo "<img class=\"thumb\" src=\"thumbnails/$rows->name\" alt=\"$rows->name\" loading=\"lazy\">"; //print thumbnail
+        
+        list($width, $height) = getimagesize("thumbnails/$rows->name");
+
+        echo "<img class=\"thumb\" src=\"thumbnails/$rows->name\" alt=\"$rows->name\" loading=\"lazy\" width=\"$width\" height=\"$height\">"; //print thumbnail
         echo "</div></a>"; //close link and table cell
     }
     echo "</div>";
