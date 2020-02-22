@@ -45,7 +45,7 @@ function checkLogin()
 {
 	if(!isset($GLOBALS["user"])){
         http_response_code(401);
-        die('401 Unauthorized<br>Not logged in!<br><a href="/login" target="_top">Go to Login</a>');
+        die('401 Unauthorized<br>Not logged in!<br><a href="/login?fw='.$_SERVER["REQUEST_URI"].'" target="_top">Go to Login</a>');
     }
 }
 
@@ -54,6 +54,6 @@ function checkAdmin()
 	checkLogin();
 	if(!$GLOBALS["user"]->isAdmin){
         http_response_code(403);
-        die('403 Forbidden<br>Admin only page!<br><a href="/login" target="_top">Go to Login</a>');
+        die('403 Forbidden<br>Admin only page!<br><a href="/login?fw='.$_SERVER["REQUEST_URI"].'" target="_top">Go to Login</a>');
     }
 }

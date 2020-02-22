@@ -2,23 +2,22 @@
     session_start();
     require_once 'sql.php';
     require_once 'functions.php';
-        if(!isset($_POST['username'])){
-            http_response_code(400);
-            die('400 Bad Request<br>No username given<br><a href="/login" target="_top">Back to Login!</a>');
-        }
+    if(!isset($_POST['username'])){
+        http_response_code(400);
+        die('400 Bad Request<br>No username given<br><a href="/login" target="_top">Back to Login!</a>');
+    }
 
-        $username = htmlspecialchars($_POST['username']);
-        $password = htmlspecialchars($_POST['password']);
+    $username = htmlspecialchars($_POST['username']);
+    $password = htmlspecialchars($_POST['password']);
 
-            
-        if(!checkUser($username,$password,$conn)){
-            http_response_code(400);
-            die('400 Bad Request<br>Wrong Username or Password <br><a href="'.$domain.'/login/" target=\"_top\">go to Login</a>');
-        }
-            
-        header("Location: $domain");
-        echo "<a href=\"$domain/\">Click here if you don't get forwarded</a>";
-        die();
+        
+    if(!checkUser($username,$password,$conn)){
+        http_response_code(400);
+        die('400 Bad Request<br>Wrong Username or Password <br><a href="'.$domain.'/login/" target=\"_top\">go to Login</a>');
+    }
+    header("Location: ".$domain.$_POST["forward"]);
+    echo '<a href="'.$domain.$_POST["forward"].'">Click here if you don\'t get forwarded</a>';
+    die();
 
 function checkUser($username,$password,$conn){
     $sql = $conn->prepare("SELECT * FROM `users` WHERE `name` = ?");

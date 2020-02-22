@@ -15,7 +15,7 @@
     <form action="loginPost.php" method="POST" class="center">
         <input type="text" placeholder="Username" name="username" autocomplete="username" required><br>
         <input type="password" placeholder="Password" name="password" autocomplete="current-password" required><br>
-        <input type="text" value="true" name="forward" hidden>
+        <input type="text" value="<?php if(isset($_GET["fw"])) echo $_GET["fw"]?>" name="forward" hidden>
         <input type="submit">
     </form>
 </body>

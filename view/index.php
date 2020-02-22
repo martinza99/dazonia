@@ -299,8 +299,10 @@ require_once "../header.php";
                 </div>
             </div>';
     }
-    echo "<span>Uploaded by: <a href=\"$domain/list?q=u%3A$userId\" target=\"_top\">$username</a></span>
-    </div>";
+    if (!isset($user))
+        echo '<a href="/login?fw='.$_SERVER["REQUEST_URI"].'" target="_top"><button>Login</button></a>';
+    echo "<span>Uploaded by: <a href=\"$domain/list?q=u%3A$userId\" target=\"_top\">$username</a></span>";
+    echo "</div>";
     if ($slide > 0) {
         $slide *= 1000;
         echo '
