@@ -67,22 +67,21 @@ function makeName()
     $temp = new SplFileInfo($_FILES['file']['name']);
     $oldname = $_FILES['file']['name'];
     $filetype = $temp->getExtension();
+    $fullName = getName($GLOBALS["temp_name"]);
+    $shortName = "";
     do {
-        $filename = generateRandomString(5) . '.' . $filetype;
-    } while (checkName($filename, $oldname) == false);
-    return $filename;
+        $shortName = $shortName.substr($fullName, 0, 1);
+		$fullName = substr($fullName, 1);
+    } while (checkName("$shortName.$filetype", $oldname) == false);
+    return "$shortName.$filetype";
 }
 
-function generateRandomString($length)
-{ //generates random strings
-    $length = rand(1, $length);
-    $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-';
-    $charactersLength = strlen($characters);
-    $randomString = '';
-    for ($i = 0; $i < $length; $i++) {
-        $randomString .= $characters[rand(0, $charactersLength - 1)];
-    }
-    return $randomString;
+function getName($file){
+    $md5 = md5_file($file, true);
+    $b64 = base64_encode($md5);
+    $b64 = str_replace(array("+", "/"), array("-", "_"), $b64);
+    $u8 = utf8_decode($b64);
+    return $u8;
 }
 
 function resize($factor, $targetFile, $originalFile)
