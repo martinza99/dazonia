@@ -168,6 +168,9 @@ function resize($factor, $targetFile, $originalFile)
 
 function checkName($newName, $oldname)
 { //checks db if name is taken
+    //reserved windows names
+    if(preg_match("/^(CON|PRN|AUX|NUL|COM\d|LPT\d)\..*$/i", $newName))
+        return false;
     $conn = $GLOBALS['conn']; //db connection
     checkHash();
     $sql = $conn->prepare("SELECT * FROM files WHERE LOWER(name) = LOWER(?)");
