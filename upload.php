@@ -50,7 +50,7 @@ if ($skip) {
 }
 
 $ch = curl_init();
-curl_setopt($ch, CURLOPT_URL,"https://discordapp.com/api/webhooks/714107072639139890/pDWHNfzfTIMd713iZOhekNtB6rliiTma_c0hhvxTlmDjuktHDnQ5kJDbcOl5B8LJe2qm");
+curl_setopt($ch, CURLOPT_URL, $webhookURL);
 curl_setopt($ch, CURLOPT_POST, 1);
 curl_setopt($ch, CURLOPT_POSTFIELDS, "content=http://dazonia.xyz/view/".$filename);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
