@@ -236,6 +236,11 @@ require_once "../header.php";
 <title><?php echo $file->name ?></title>
 <link rel="stylesheet" type="text/css" media="screen" href="view.css<?php echo "?$hash" ?>" />
 <script src="view.js<?php echo "?$hash" ?>"></script>
+<meta name="og:image" content="http://dazonia.xyz/files/<?php echo $file->name ?>">
+<meta name="canonical" content="http://dazonia.xyz/view/<?php echo $file->name ?>">
+<meta name="twitter:image" content="http://dazonia.xyz/files/<?php echo $file->name ?>">
+<meta name="og:type" content="website">
+<meta name="og:site" content="Dazonia">
 </head>
 
 <body onkeydown="keyDown(event);">
