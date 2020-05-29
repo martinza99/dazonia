@@ -52,6 +52,13 @@ function keyDown(_event) {
                 document.exitFullscreen();
             break;
     }
+    if(!isNaN(_event.key)){
+        let fileName = location.pathname.match(/\/view\/(.*)/)[1];
+        let value = _event.key;
+        if(value==0)
+            value = 10;
+        sendRatingValue(fileName, value);
+    }
 }
 
 function sendReplace() {
@@ -84,6 +91,30 @@ function sendRating() {
             action: "rateFile",
             fileName: fileName,
             rating: val
+        },
+        function (response, status, xhr) {
+            try {
+                response = JSON.parse(response);
+                if (response.success == true)
+                    $(star).attr("src", "../list/img/" + response.avgrating + ".png");
+                else
+                    throw new Error(response.error);
+            }
+            catch (error) {
+                alert(error);
+                throw error;
+            }
+        }
+    );
+}
+
+function sendRatingValue(id, value) {
+    const star = $(".star")[0];
+    $.post("../list/action.php",
+        {
+            action: "rateFile",
+            fileName: id,
+            rating: value
         },
         function (response, status, xhr) {
             try {
