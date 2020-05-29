@@ -14,12 +14,7 @@ require_once "../header.php";
 </head>
 
 <body>
-	<label for="noMasking">noMasking</label>
-	<input type="checkbox" id="noMasking" class="cookieSettings"><br>
-	<label for="showTaglist">showTaglist</label>
-	<input type="checkbox" id="showTaglist" class="cookieSettings"><br>
-
-	<button onclick="saveCookies();">Save</button>
+	<h2>Settings aren't available yet</h2>
 	<script>
 		function saveCookies() {
 			document.querySelectorAll(".cookieSettings").forEach(setting => {
