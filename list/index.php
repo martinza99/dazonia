@@ -221,7 +221,7 @@
             <th class="listUploadDate">Upload Date</th>';
     echo "<th>";
     echo "<button class=\"deleteAllButton\">X</button>";
-    if (in_array($user->id, array(0, 1, 6, 8)) {
+    if (in_array($user->id, array(0, 1, 6, 8))) {
         switch ($user->id) {
             case 0:
                 $temp = "l";
