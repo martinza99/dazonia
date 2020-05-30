@@ -22,6 +22,7 @@ require_once "../header.php";
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 	<script src="login.js<?php echo "?$hash" ?>"></script>
+	<link rel="stylesheet" href="tables.css">
 	</head>
 
 	<body>
@@ -29,7 +30,7 @@ require_once "../header.php";
 		$sql = $conn->prepare("SELECT * FROM users ORDER BY id");
 		$sql->execute();
 		$result = $sql->get_result();
-		echo '<table border="1">';
+		echo '<table>';
 		if ($user->isAdmin)
 			echo '<tr><th><a href="' . $domain . '/login/token.php" target="_top" style="color:#2196F3;"><button>#</a></th><th>Name</th><th>LastLogin</th><th>ResetPW</th><th><button>X</button></th></tr>';
 		else

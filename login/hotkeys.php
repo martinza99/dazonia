@@ -11,6 +11,7 @@ require_once "../header.php";
 	<title>Hotkey List</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<link rel="stylesheet" href="tables.css">
 	</head>
 
 	<body>
