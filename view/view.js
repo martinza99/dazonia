@@ -32,32 +32,59 @@ function swapPic(_xhr, _push) {
 function keyDown(_event) {
     if (document.activeElement.classList.contains("disableHotkeys"))
         return;
-    switch (_event.key) {
-        case 'c':
-            let hid = document.querySelector(".hiddenVal");
-            hid.select();
-            break;
-        case 'ArrowRight':
-        case 'd':
-            document.querySelector("#next").click();
-            break;
-        case 'ArrowLeft':
-        case 'a':
-            document.querySelector("#prev").click();
-            break;
-        case 'f':
-            if (!document.fullscreen)
-                document.querySelector("#centerImage").requestFullscreen();
-            else
-                document.exitFullscreen();
-            break;
+    let prevent = true;
+    if(!_event.altKey){
+        switch (_event.key) {
+            case 'c':
+                let hid = document.querySelector(".hiddenVal");
+                hid.select();
+                break;
+            case 'ArrowRight':
+            case 'd':
+                document.querySelector("#next").click();
+                break;
+            case 'ArrowLeft':
+            case 'a':
+                document.querySelector("#prev").click();
+                break;
+            case 'f':
+                if (!document.fullscreen)
+                    document.querySelector("#centerImage").requestFullscreen();
+                else
+                    document.exitFullscreen();
+                break;
+            default:
+                prevent = false;
+        }
+        if(!isNaN(_event.key)){
+            let fileName = location.pathname.match(/\/view\/(.*)/)[1];
+            let value = _event.key;
+            if(value==0)
+                value = 10;
+            sendRatingValue(fileName, value);
+        }
     }
-    if(!isNaN(_event.key)){
-        let fileName = location.pathname.match(/\/view\/(.*)/)[1];
-        let value = _event.key;
-        if(value==0)
-            value = 10;
-        sendRatingValue(fileName, value);
+    else{
+        const map = new Map();
+        map.set("a", "anime");
+        map.set("b", "art");
+        map.set("c", "tagme");
+        map.set("e", "ecchi");
+        map.set("g", "game");
+        map.set("h", "hentai");
+        map.set("n", "nsfw");
+        map.set("r", "real");
+        map.set("s", "safe");
+        map.set("t", "text");
+
+        const tag = map.get(_event.key);
+        if(tag != undefined)
+            sendTagValue(tag);
+        else
+            prevent = false;
+    }
+    if(prevent){
+        _event.preventDefault();
     }
 }
 
@@ -154,6 +181,46 @@ function sendTag() {
                     link.href = location.origin + "/list?q=tag%3A" + tagName;
                     link.target = "_top";
                     link.innerText = tagName.toLowerCase();
+                    container.appendChild(link);
+
+                    let delBut = document.createElement("span");
+                    delBut.classList = "deleteTag glyphicon glyphicon-remove";
+                    delBut.addEventListener("click", deleteTag);
+                    container.appendChild(delBut);
+
+                    let parent = document.querySelector(".tagContainer");//insert as 2nd last element
+                    parent.insertBefore(container, parent.childNodes[parent.childElementCount - 2]);
+                }
+                else
+                    throw new Error(response.error);
+            }
+            catch (error) {
+                alert(error);
+                throw error;
+            }
+        }
+    );
+}
+
+function sendTagValue(tag) {
+    let fileName = location.pathname.match(/\/view\/(.*)/)[1];
+    $.post("../list/action.php",
+        {
+            action: "addTag",
+            fileName: fileName,
+            tagName: tag,
+        },
+        function (response, status, xhr) {
+            try {
+                response = JSON.parse(response);
+                if (response.success == true) {
+                    let container = document.createElement("div");
+                    container.classList = "sugg";
+
+                    let link = document.createElement("a");
+                    link.href = location.origin + "/list?q=tag%3A" + tag;
+                    link.target = "_top";
+                    link.innerText = tag.toLowerCase();
                     container.appendChild(link);
 
                     let delBut = document.createElement("span");
