@@ -72,6 +72,7 @@ function keyDown(_event) {
         map.set("e", "ecchi");
         map.set("g", "game");
         map.set("h", "hentai");
+        map.set("m", "meme");
         map.set("n", "nsfw");
         map.set("r", "real");
         map.set("s", "safe");
