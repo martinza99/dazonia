@@ -367,14 +367,7 @@ if(!isset($user)){
             echo '
             <input list="tagList" placeholder="add tag" class="tagInput disableHotkeys darkInput">
             <button class="ogButton">+</button>';
-            $sql = $conn->prepare("SELECT tags.name AS 'tagName', COUNT(*) AS count FROM tags LEFT JOIN tagfile ON tags.id = tagfile.tagId GROUP BY tags.id ORDER BY COUNT DESC");
-            $sql->execute();
-            $result = $sql->get_result();
-            echo '<datalist id="tagList">';
-            while ($rows = $result->fetch_object()) {
-                echo "<option value=\"$rows->tagName\">";
-            }
-            echo '</datalist>';
+            printDatalistTags();
         }
         ?>
         </div>
