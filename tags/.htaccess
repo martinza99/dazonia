@@ -1,3 +1,0 @@
-RewriteEngine on
-RewriteRule editor.php|(img\/.*)|tags.js - [L,NC] 
-RewriteRule .* index.php [PT]

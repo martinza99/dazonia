@@ -1,0 +1,11 @@
+Options -Indexes
+
+RewriteEngine on
+
+#rewrite from /view/xxx to /view/index.php, except for js / css file 
+RewriteRule view\/view\.(js|css) - [L]
+RewriteRule view\/.* view\/index.php
+
+#rewrite from /tags/xxx to /tags/index.php, except for js, img dir and tag editor
+RewriteRule tags\/editor\.php|tags\/img\/.*|tags\/tags\.js - [L] 
+RewriteRule tags\/.* tags\/index.php

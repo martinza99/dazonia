@@ -2,8 +2,10 @@
 session_start();
 require_once '../login/sql.php';
 require_once '../login/functions.php';
+
 preg_match("/\/view\/(.*)/", $_SERVER["REDIRECT_URL"], $match);
 $filename = $match[1];
+
 if(!isset($user)){
     $sql = $conn->prepare("SELECT users.name FROM users JOIN files ON users.id = files.userId WHERE files.name = ?");
     $sql->bind_param("s", $filename);
