@@ -266,7 +266,7 @@
             echo " changeName";
         echo "\">$rows->fileOgName</div>"; //print ogName
         if ($user->isAdmin) //print replace input element
-            echo "<div class=\"changeNameInput\"><input type=\"text\" value=\"$rows->fileOgName\"><button class=\"updateName\">Update</button></div></td>"; //print input
+            echo "<div class=\"changeNameInput\"><input type=\"text\" value=\"$rows->fileOgName\"  maxlength=\"200\"><button class=\"updateName\">Update</button></div></td>"; //print input
         echo "<td class=\"listUploader\">";
         if ($rows->username == null)
             $rows->username = "deleted<br>user[$rows->fileUserId]";
