@@ -9,7 +9,7 @@
 echo '<div class="bottom">';
 if($user->isAdmin){
     echo '<a href="'.$domain.'/login/token.php" target="_top">create register token</a><br>';
-    echo '<a href="'.$domain.'/login/remote.php" target="_top">remote SQL query</a><br>';
+    echo '<a href="'.$domain.'/login/update.php" target="_top">Update Dazonia</a><br>';
     echo '<a href="'.$domain.'/login/users.php" target="_top">User List</a><br>';
     echo '<a href="'.$domain.'/tags/editor.php" target="_top">Tag Editor</a><br>';
 }
@@ -28,16 +28,6 @@ echo "<div class=\"right bottom\">";
 
 echo "
 <div class=\"right bottom\">";
-$temp = "";
-if($_SERVER["SCRIPT_NAME"]=="/upload/index.php")
-    $temp = "../login/";
-    if($user->isAdmin)//update server button
-        echo "
-            <form action=\"".$temp."remote.php\" method=\"POST\" autocomplete=\"off\">
-                <input type=\"hidden\" name=\"action\" value=\"u\">
-                <input type=\"submit\" value=\"Update\">
-            </form>";
-
 echo "
     <span><b>$picCount</b> pictures</span><br>
     <span data-toggle=\"tooltip\" data-placement=\"top\" title=\"$output[1]\"><b>".substr($output[0],0,6)."</b>".substr($output[0],6)."</span>
