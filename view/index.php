@@ -310,7 +310,7 @@ if(!isset($user)){
         }
         echo "<img id=\"next\" class=\"floatLink pic\" src=\"../files/$file->name\"></a>";
         if (substr(mime_content_type("../files/$file->name"), 0, 5) === "image")
-            echo "<img id=\"centerImage\" class=\"pic\" src=\"../files/$file->name\">";
+            echo "<div class=\"zoomContainer\"><input type=\"checkbox\" id=\"zoomCheck\"><label for=\"zoomCheck\"><img id=\"centerImage\" class=\"pic\" src=\"../files/$file->name\"></label></div>";
         else
             echo "<video id=\"centerImage\" class=\"pic\" src=\"../files/$file->name\" autoplay controls loop onloadstart=\"this.volume=0.2\">";
         echo "</div>
