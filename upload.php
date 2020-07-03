@@ -6,12 +6,11 @@ $apiKey = "";
 if (isset($_POST['key'])) {
     $apiKey = $_POST['key'];
 
-    if (!checkApiKey($apiKey)){
+    if (!checkApiKey($apiKey)) {
         http_response_code(401);
         die("401 Unauthorized<br>Wrong API-Key");
     }
-}
-else
+} else
     checkLogin();
 
 $replace = false;
@@ -48,19 +47,19 @@ printLink($filename, $apiKey);
 if ($skip) {
     header("Location: $domain/view/$filename");
 }
-if(!$replace){
+if (!$replace) {
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $webhookURL);
     curl_setopt($ch, CURLOPT_POST, 1);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, "content=http://dazonia.xyz/view/".$filename);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, "content=http://dazonia.xyz/view/" . $filename);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     $server_output = curl_exec($ch);
-    curl_close ($ch);
+    curl_close($ch);
 }
 
 function printLink($filename, $apiKey)
 {
-    $domain= $GLOBALS["domain"];
+    $domain = $GLOBALS["domain"];
     $actual_link = "$domain/files/$filename"; //creates full URI
     if (isset($apiKey)) { //print as <a> Link
         $file = new stdClass();
@@ -79,13 +78,14 @@ function makeName()
     $fullName = getName($GLOBALS["temp_name"]);
     $shortName = "";
     do {
-        $shortName = $shortName.substr($fullName, 0, 1);
-		$fullName = substr($fullName, 1);
+        $shortName = $shortName . substr($fullName, 0, 1);
+        $fullName = substr($fullName, 1);
     } while (checkName("$shortName.$filetype", $oldname) == false);
     return "$shortName.$filetype";
 }
 
-function getName($file){
+function getName($file)
+{
     $md5 = md5_file($file, true);
     $b64 = base64_encode($md5);
     $b64 = str_replace(array("+", "/"), array("-", "_"), $b64);
@@ -93,92 +93,25 @@ function getName($file){
     return $u8;
 }
 
-function resize($factor, $targetFile, $originalFile)
+function resize($resolution, $thumbname, $tempfile)
 {
+    exec("ffprobe -v error -select_streams v:0 -show_entries stream=height,width -of json $tempfile", $execOut);
+    $size = json_decode(implode($execOut))->streams[0];
+    $ratio = $size->width / $size->height;
+    $sizeString =
+        $ratio > 1
+        ? $resolution . "x" . round($resolution / $ratio)
+        : round($resolution * $ratio) . "x" . $resolution;
 
-    $mime = mime_content_type($originalFile);
-    if (substr($mime, 0, 5) === "video")
-        $mime = "video";
-
-    switch ($mime) {
-        case 'image/jpeg':
-            $image_create_func = 'imagecreatefromjpeg';
-            $image_save_func = 'imagejpeg';
-            $new_image_ext = 'jpg';
-            break;
-
-        case 'image/png':
-            $image_create_func = 'imagecreatefrompng';
-            $image_save_func = 'imagepng';
-            $new_image_ext = 'png';
-            break;
-
-        case 'image/gif':
-            $image_create_func = 'imagecreatefromgif';
-            $image_save_func = 'imagegif';
-            $new_image_ext = 'gif';
-            break;
-
-        case 'video':
-            require 'vendor/autoload.php';
-            $movie = $originalFile;
-            $thumbnail = 'thumbnail.png';
-
-            $ffmpeg = FFMpeg\FFMpeg::create(array(
-                'ffmpeg.binaries' => $GLOBALS["ffmpegDir"] . '\bin\ffmpeg.exe',
-                'ffprobe.binaries' => $GLOBALS["ffmpegDir"] . '\bin\ffprobe.exe',
-                'timeout' => 3600, // The timeout for the underlying process
-                'ffmpeg.threads' => 12, // The number of threads that FFMpeg should use
-            ));
-            $video = $ffmpeg->open($movie);
-            $frame = $video->frame(FFMpeg\Coordinate\TimeCode::fromSeconds(1));
-            $frame->save($thumbnail, 180);
-
-            $image_create_func = 'imagecreatefrompng';
-            $image_save_func = 'imagepng';
-            $new_image_ext = 'png';
-            $originalFile = $thumbnail;
-            break;
-
-        default:
-            http_response_code(415);
-            die('Unknown mime type: ' . $mime . '<br><a href="' . $domain . '/" target="_top">back</a>');
-    }
-
-    $img = $image_create_func($originalFile);
-    list($width, $height) = getimagesize($originalFile);
-    $ratio = $height / $width;
-
-    if ($ratio > 1) {
-        $newHeight = $factor;
-        $newWidth = $factor * ($width / $height);
-    } else {
-        $newWidth = $factor;
-        $newHeight = $factor * ($ratio);
-    }
-
-    $tmp = imagecreatetruecolor($newWidth, $newHeight);
-    imagealphablending($tmp, false);
-    imagesavealpha($tmp, true);
-    $transparent = imagecolorallocatealpha($tmp, 255, 255, 255, 127);
-    imagefilledrectangle($tmp, 0, 0, $newWidth, $newHeight, $transparent);
-    imagecopyresampled($tmp, $img, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
-
-    if (file_exists($targetFile)) {
-        unlink($targetFile);
-    }
-    $image_save_func($tmp, $targetFile);
-
-    if (file_exists('thumbnail.png')) {
-        unlink('thumbnail.png');
-    }
+    exec("ffmpeg -v error -i $tempfile -vframes 1 -an -s $sizeString $thumbname.png");
+    rename("$thumbname.png", $thumbname);
     return true;
 }
 
 function checkName($newName, $oldname)
 { //checks db if name is taken
     //reserved windows names
-    if(preg_match("/^(CON|PRN|AUX|NUL|COM\d|LPT\d)\..*$/i", $newName))
+    if (preg_match("/^(CON|PRN|AUX|NUL|COM\d|LPT\d)\..*$/i", $newName))
         return false;
     $conn = $GLOBALS['conn']; //db connection
     checkHash();
@@ -213,11 +146,10 @@ function insertName($newName, $oldname, $user, $replace)
     $conn = $GLOBALS['conn']; //db connection
     $temp_name = $GLOBALS["temp_name"];
     $hash = hash_file("md5", $temp_name);
-    if(!$replace){
+    if (!$replace) {
         $sql = $conn->prepare("INSERT INTO `files`(`name`, `ogName`,`hash`, `userId`) VALUES (?,?,?,?)");
         $sql->bind_param("sssi", $newName, $oldname, $hash, $user->id);
-    }
-    else{
+    } else {
         $sql = $conn->prepare("UPDATE files SET ogName = ?, hash = ? WHERE name = ?");
         $sql->bind_param("sss", $oldname, $hash, $replace);
     }
