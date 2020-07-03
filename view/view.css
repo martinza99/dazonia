@@ -109,25 +109,6 @@
 	display: none;
 }
 
-input[type="checkbox"] {
-	display: none;
-}
-
-.zoomContainer {
-	text-align: center;
-	overflow: auto;
-}
-
-.zoomContainer img {
-	transition: transform 0.25s ease;
-	cursor: zoom-in;
-}
-
-.zoomContainer input[type="checkbox"]:checked ~ label > img {
-	transform: scale(2);
-	cursor: zoom-out;
-}
-
 @media screen and (max-width: 768px) {
 	.toggleTagsLink {
 		display: block;

@@ -52,9 +52,7 @@ function keyDown(_event) {
 				break;
 			case "f":
 				if (!document.fullscreen)
-					document
-						.querySelector(".zoomContainer")
-						.requestFullscreen();
+					document.querySelector("#centerImage").requestFullscreen();
 				else document.exitFullscreen();
 				break;
 			default:
