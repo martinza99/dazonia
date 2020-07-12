@@ -26,8 +26,8 @@ if (!isset($user)) {
         <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">
         <title>$filename</title>
         <meta name=\"og:title\" content=\"Uploaded by $u->name - Dazonia\">
-        <meta name=\"og:image\" content=\"http://dazonia.xyz/files/$filename\">
-        <meta name=\"canonical\" content=\"http://dazonia.xyz/view/$filename\">
+        <meta name=\"og:image\" content=\"https://dazonia.xyz/files/$filename\">
+        <meta name=\"canonical\" content=\"https://dazonia.xyz/view/$filename\">
         <meta name=\"twitter:card\" content=\"summary_large_image\">
         <meta name=\"og:type\" content=\"website\">
         <meta name=\"og:site\" content=\"Dazonia\">
@@ -269,8 +269,8 @@ require_once "../header.php";
 <link rel="stylesheet" type="text/css" media="screen" href="view.css<?php echo "?$hash" ?>" />
 <script src="view.js<?php echo "?$hash" ?>"></script>
 <meta name="og:title" content="Uploaded by <?php echo $username ?> - Dazonia">
-<meta name="og:image" content="http://dazonia.xyz/files/<?php echo $filename ?>">
-<meta name="canonical" content="http://dazonia.xyz/view/<?php echo $filename ?>">
+<meta name="og:image" content="https://dazonia.xyz/files/<?php echo $filename ?>">
+<meta name="canonical" content="https://dazonia.xyz/view/<?php echo $filename ?>">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="og:type" content="website">
 <meta name="og:site" content="Dazonia">
