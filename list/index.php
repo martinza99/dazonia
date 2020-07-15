@@ -1,26 +1,26 @@
 <?php
-    session_start();
-    require_once "../login/sql.php";
-    require_once '../login/functions.php';
-    checkLogin();
+session_start();
+require_once "../login/sql.php";
+require_once '../login/functions.php';
+checkLogin();
 
-    $filter = "";
-    $q = "";
-    if (isset($_GET["q"])) {
-        $filter = $_GET["q"];
-        $q = $_GET["q"];
-    }
+$filter = "";
+$q = "";
+if (isset($_GET["q"])) {
+    $filter = $_GET["q"];
+    $q = $_GET["q"];
+}
+$p = 1;
+if (isset($_GET["p"]))
+    $p = intval(htmlspecialchars($_GET["p"]));
+if ($p < 1)
     $p = 1;
-    if (isset($_GET["p"]))
-        $p = intval(htmlspecialchars($_GET["p"]));
-    if ($p < 1)
-        $p = 1;
-    $offset = 100 * ($p - 1);
-    require_once "../header.php";
+$offset = 100 * ($p - 1);
+require_once "../header.php";
 ?>
 <title>File List</title>
-<link rel="stylesheet" type="text/css" media="screen" href="list.css<?php echo "?$hash" ?>" />
-<script src="pics.js<?php echo "?$hash" ?>"></script>
+<link rel="stylesheet" type="text/css" media="screen" href="list.css<?php echo "?$version" ?>" />
+<script src="pics.js<?php echo "?$version" ?>"></script>
 </head>
 
 <body>
@@ -202,13 +202,13 @@
 
     echo '<div class="listTableDiv">';
     $q = urlencode($q);
-    $navButtons = '<div class="navButtons"><a href="' . $domain . '/list?p=' . ($p - 1);
-    if(!empty($q))
+    $navButtons = '<div class="navButtons"><a href="/list?p=' . ($p - 1);
+    if (!empty($q))
         $navButtons .= "&q=$q";
-    $navButtons .= '" target="_top"><button>←</button></a><span> ' . $p . ' </span><a href="' . $domain . '/list?p=' . ($p + 1);
-    if(!empty($q))
+    $navButtons .= '"><button>←</button></a><span> ' . $p . ' </span><a href="/list?p=' . ($p + 1);
+    if (!empty($q))
         $navButtons .= "&q=$q";
-    $navButtons .= '" target="_top"><button>→</button></a>';
+    $navButtons .= '"><button>→</button></a>';
     echo $navButtons;
     echo '<button onClick="tagSelect(this)";>add tags</button></div>';
     echo '<table class="listTable">
@@ -241,8 +241,8 @@
     echo "</th></tr>";
     while ($rows = $result->fetch_object()) {
         echo "<tr id=\"$rows->fileName\">";
-        echo "<td><a href=\"$domain/view/$rows->fileName";
-        if(!empty($q))
+        echo "<td><a href=\"/view/$rows->fileName";
+        if (!empty($q))
             echo "?q=$q";
         echo "\" target=\"_top\"><div class=\"picsList\">";
         if (substr($rows->fileName, -4) == ".gif")
@@ -256,11 +256,10 @@
             echo rating($rows->avgrating, "");
             echo rating($rows->cRating, "c");
             echo rating($rows->rRating, "r");
-        }
-        else
+        } else
             echo rating($rows->avgrating, "");
         echo "</div></td>";
-        echo "<td><a href=\"$domain/files/$rows->fileName\" target=\"_top\">$rows->fileName</a></td>"; //print filename
+        echo "<td><a href=\"/files/$rows->fileName\" target=\"_top\">$rows->fileName</a></td>"; //print filename
         echo "<td class=\"og\"><div class=\"fileName"; //print ogName
         if ($user->isAdmin) //add click listener if admin
             echo " changeName";
@@ -270,7 +269,7 @@
         echo "<td class=\"listUploader\">";
         if ($rows->username == null)
             $rows->username = "deleted<br>user[$rows->fileUserId]";
-        echo "<a href=\"$domain/list?q=u%3A$rows->fileUserId\" target=\"_top\">$rows->username</a>";
+        echo "<a href=\"/list?q=u%3A$rows->fileUserId\" target=\"_top\">$rows->username</a>";
         echo "</td>";
         echo "<td class=\"listUploadDate\">" . substr($rows->fCreated, 0, 10) . "</td>";
         echo "<td>";

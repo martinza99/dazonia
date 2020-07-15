@@ -5,7 +5,7 @@ require_once '../login/functions.php';
 
 preg_match("/\/view\/(.*)/", $_SERVER["REDIRECT_URL"], $match);
 $filename = $match[1];
-
+$url = $_SERVER["REQUEST_SCHEME"] . "://" . $_SERVER["SERVER_NAME"];
 if (!isset($user)) {
     $sql = $conn->prepare("SELECT users.name FROM users JOIN files ON users.id = files.userId WHERE files.name = ?");
     $sql->bind_param("s", $filename);
@@ -26,8 +26,8 @@ if (!isset($user)) {
         <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">
         <title>$filename</title>
         <meta name=\"og:title\" content=\"Uploaded by $u->name - Dazonia\">
-        <meta name=\"og:image\" content=\"https://dazonia.xyz/files/$filename\">
-        <meta name=\"canonical\" content=\"https://dazonia.xyz/view/$filename\">
+        <meta name=\"og:image\" content=\"$url/files/$filename\">
+        <meta name=\"canonical\" content=\"$url/view/$filename\">
         <meta name=\"twitter:card\" content=\"summary_large_image\">
         <meta name=\"og:type\" content=\"website\">
         <meta name=\"og:site\" content=\"Dazonia\">
@@ -266,11 +266,11 @@ if (isset($right))
 require_once "../header.php";
 ?>
 <title><?php echo $file->name ?></title>
-<link rel="stylesheet" type="text/css" media="screen" href="view.css<?php echo "?$hash" ?>" />
-<script src="view.js<?php echo "?$hash" ?>"></script>
+<link rel="stylesheet" type="text/css" media="screen" href="view.css<?php echo "?$version" ?>" />
+<script src="view.js<?php echo "?$version" ?>"></script>
 <meta name="og:title" content="Uploaded by <?php echo $username ?> - Dazonia">
-<meta name="og:image" content="https://dazonia.xyz/files/<?php echo $filename ?>">
-<meta name="canonical" content="https://dazonia.xyz/view/<?php echo $filename ?>">
+<meta name="og:image" content="<?php echo $url ?>/files/<?php echo $filename ?>">
+<meta name="canonical" content="<?php echo $url ?>/view/<?php echo $filename ?>">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="og:type" content="website">
 <meta name="og:site" content="Dazonia">
@@ -295,13 +295,13 @@ require_once "../header.php";
         echo "</div>";
     }
 
-    echo "<input value=\"$domain/files/$file->name\" class=\"hiddenVal\" style=\"opacity:0; height=0px;\" readonly>";
+    echo "<input value=\"/files/$file->name\" class=\"hiddenVal\" style=\"opacity:0; height=0px;\" readonly>";
     echo "
             <div id=\"picDiv\" class=\"center\">";
     if (isset($left))
-        echo "<a href=\"$domain/view/$left$qq\" target=\"_top\"><img id=\"prev\" class=\"floatLink pic\" src=\"../files/$file->name\"></a>";
+        echo "<a href=\"/view/$left$qq\" target=\"_top\"><img id=\"prev\" class=\"floatLink pic\" src=\"../files/$file->name\"></a>";
     if (isset($right)) {
-        echo "<a href=\"$domain/view/$right$qq";
+        echo "<a href=\"/view/$right$qq";
         if ($slide > 0)
             echo "&slide=$slide";
         if ($random == "on")
@@ -320,7 +320,7 @@ require_once "../header.php";
             <div class=\"starContainer\">
                 " . rating($rating) . "
             </div>
-            <a href=\"$domain\" target=\"_top\"><button>← Back</button></a>";
+            <a href=\"\" target=\"_top\"><button>← Back</button></a>";
     if (isset($user)) {
         echo '
                 <button type="button" data-toggle="collapse" data-target="#collapseRandom" aria-expanded="false" aria-controls="collapseRandom" onclick="stopSlide();">&nbsp;<span class="glyphicon glyphicon-picture"></span></button>
@@ -339,8 +339,8 @@ require_once "../header.php";
                 </div>';
     }
     if (!isset($user))
-        echo '<a href="/login?fw=' . $_SERVER["REQUEST_URI"] . '" target="_top"><button>Login</button></a>';
-    echo "<span>Uploaded by: <a href=\"$domain/list?q=u%3A$userId\" target=\"_top\">$username</a></span>";
+        echo '<a href="/login?fw=' . $_SERVER["REQUEST_URI"] . '"><button>Login</button></a>';
+    echo "<span>Uploaded by: <a href=\"/list?q=u%3A$userId\" target=\"_top\">$username</a></span>";
     echo "</div>";
     if ($slide > 0) {
         $slide *= 1000;
@@ -358,7 +358,7 @@ require_once "../header.php";
         trigger_error('Wrong SQL: ' . $sql . ' Error: ' . $conn->errno . ' ' . $conn->error, E_USER_ERROR);
     $result = $sql->get_result();
     while ($rows = $result->fetch_object()) {
-        echo "<div class=\"sugg\"><a href=\"$domain/list?q=tag%3A$rows->tagName\" target=\"_top\">$rows->tagName</a>";
+        echo "<div class=\"sugg\"><a href=\"/list?q=tag%3A$rows->tagName\" target=\"_top\">$rows->tagName</a>";
         if (isset($user))
             // if($user->isAdmin)//if user is admin
             echo "<span class=\"deleteTag glyphicon glyphicon-remove\"></span>";

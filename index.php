@@ -29,12 +29,12 @@ require_once "header.php";
     $conn->close();
     echo "<div class=\"potato\">";
     while ($rows = $result->fetch_object()) {
-        echo "<a  href=\"$domain/view/$rows->name?q=tag%3Asafe\" target=\"_top\">"; //open link
+        echo "<a  href=\"/view/$rows->name?q=tag%3Asafe\" target=\"_top\">"; //open link
         echo "<div class=\"pics picsBorder\" id=\"$rows->name\">"; //open table cell
         if (substr($rows->name, -4) == ".gif")
             echo '<button class="thumbButton sideView">►</button>';
         echo rating($rows->avgrating);
-        
+
         list($width, $height) = getimagesize("thumbnails/$rows->name");
 
         echo "<img class=\"thumb\" src=\"thumbnails/$rows->name\" alt=\"$rows->name\" loading=\"lazy\" width=\"$width\" height=\"$height\">"; //print thumbnail
@@ -42,9 +42,9 @@ require_once "header.php";
     }
     echo "</div>";
     echo '<div class="pageButtons">
-        <a href="' . $domain . '/?p=' . ($p - 1) . '" target="_top"><button>←</button></a>
+        <a href="/?p=' . ($p - 1) . '"><button>←</button></a>
         <span> ' . $p . ' </span>
-        <a href="' . $domain . '/?p=' . ($p + 1) . '" target="_top"><button>→</button></a>
+        <a href="/?p=' . ($p + 1) . '"><button>→</button></a>
     </div>';
 
     function rating($rating)

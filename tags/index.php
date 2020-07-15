@@ -1,46 +1,47 @@
 <?php
-    session_start();
-    require_once "../login/sql.php";
-    require_once '../login/functions.php';
-   
-    checkLogin();
-    $parent = new stdClass();
-    if(preg_match("/\/tags\/(.+)/", $_SERVER["REDIRECT_URL"], $match)){
-        $parentname = $match[1];
-    }
-    
-    require_once "../header.php";
+session_start();
+require_once "../login/sql.php";
+require_once '../login/functions.php';
+
+checkLogin();
+$parent = new stdClass();
+if (preg_match("/\/tags\/(.+)/", $_SERVER["REDIRECT_URL"], $match)) {
+    $parentname = $match[1];
+}
+
+require_once "../header.php";
 ?>
-    <title>Tag List</title>
-    <script src="tags.js"></script>
+<title>Tag List</title>
+<script src="tags.js"></script>
 </head>
+
 <body>
-<?php
+    <?php
     $parent->id = 0;
-    if(!empty($parentname)){
+    if (!empty($parentname)) {
         $sql = $conn->prepare("SELECT * FROM tags WHERE name = ?");
         $sql->bind_param("s", $parentname);
         $sql->execute();
         $result = $sql->get_result();
         $parent = $result->fetch_object();
-        if(!isset($parent)){
+        if (!isset($parent)) {
             http_response_code(404);
             die("404 Not Found<br>Parent $parentname doesn't exist");
         }
     }
-    if(isset($_GET["q"])){
+    if (isset($_GET["q"])) {
         $sql = $conn->prepare("SELECT * FROM tags WHERE name LIKE concat('%',?,'%') ORDER BY name");
-        $sql->bind_param("s",$_GET["q"]);
-    }else{
+        $sql->bind_param("s", $_GET["q"]);
+    } else {
         $sql = $conn->prepare("SELECT * FROM tags WHERE parentId = ? ORDER BY name");
-        $sql->bind_param("i",$parent->id);
+        $sql->bind_param("i", $parent->id);
     }
     $sql->execute();
     $result = $sql->get_result();
 
     echo "
     <div class=\"right\" style=\"position:absolute; margin-right: 13px; margin-top:6px\">
-        <a href=\"$domain/tags/?q=\" class=\"searchLinkTags\" target=\"_top\" hidden></a>
+        <a href=\"/tags/?q=\" class=\"searchLinkTags\" target=\"_top\" hidden></a>
         <form class=\"navbar-form navbar-left\" action=\".\" autocomplete=\"off\" onsubmit=\"tagSearchFormSubmit();\">
             <div class=\"input-group\">
                 <input list=\"tagList\" class=\"form-control disableHotkeys searchInputTags\" placeholder=\"Tag search\" name=\"q\" style=\"background-color: rgba(65, 65, 75, 1); border-color: #868686; display:none;\" value=\"$filter\">
@@ -57,18 +58,19 @@
     printDatalistTags();
 
     echo "<div class=\"potato\">";
-    while($rows = $result->fetch_object()){
-        echo "<div class=\"pics\" id=\"$rows->name\">";//open table cell
-        echo "<a href=\"$domain/list/?q=tag%3A$rows->name\" target=\"_top\">";//open list link
+    while ($rows = $result->fetch_object()) {
+        echo "<div class=\"pics\" id=\"$rows->name\">"; //open table cell
+        echo "<a href=\"/list/?q=tag%3A$rows->name\" target=\"_top\">"; //open list link
         $img = "img/$rows->id.png";
-        if(!file_exists($img))
+        if (!file_exists($img))
             $img = "img/0.png";
-        echo "<img class=\"thumb\" src=\"$img\"></a>";//print thumbnail
-        echo "<a href=\"$domain/tags/$rows->name\" target=\"_top\">";//open tag link
-        echo "<br><span class=\"tagName\">$rows->name</span></a>";//print name
-        echo "</div>";// and table cell
+        echo "<img class=\"thumb\" src=\"$img\"></a>"; //print thumbnail
+        echo "<a href=\"/tags/$rows->name\" target=\"_top\">"; //open tag link
+        echo "<br><span class=\"tagName\">$rows->name</span></a>"; //print name
+        echo "</div>"; // and table cell
     }
     echo "</div>";
-?>
+    ?>
 </body>
+
 </html>

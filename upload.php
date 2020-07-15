@@ -45,13 +45,14 @@ if (!move_uploaded_file($temp_name, $location . $filename))
 printLink($filename, $apiKey);
 
 if ($skip) {
-    header("Location: $domain/view/$filename");
+    header("Location: /view/$filename");
 }
-if (!$replace) {
+if (!$replace && isset($webhookURL)) {
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $webhookURL);
     curl_setopt($ch, CURLOPT_POST, 1);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, "content=https://dazonia.xyz/view/" . $filename);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, "content="
+        . $_SERVER["REQUEST_SCHEME"] . "://" . $_SERVER["SERVER_NAME"] . "/view/" . $filename);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     $server_output = curl_exec($ch);
     curl_close($ch);
@@ -59,12 +60,12 @@ if (!$replace) {
 
 function printLink($filename, $apiKey)
 {
-    $domain = $GLOBALS["domain"];
-    $actual_link = "$domain/files/$filename"; //creates full URI
+    $url = $_SERVER["REQUEST_SCHEME"] . "://" . $_SERVER["SERVER_NAME"];
+    $actual_link = "$url/files/$filename"; //creates full URI
     if (isset($apiKey)) { //print as <a> Link
         $file = new stdClass();
-        $file->url = "$domain/view/$filename";
-        $file->thumbnail = "$domain/thumbnails/$filename";
+        $file->url = "$url/view/$filename";
+        $file->thumbnail = "$url/thumbnails/$filename";
         echo json_encode($file);
     } else
         echo "<a href=\"$actual_link\" target=\"_top\">$actual_link</a>";
@@ -128,15 +129,15 @@ function checkHash()
 {
     $conn = $GLOBALS['conn']; //db connection
     $temp_name = $GLOBALS["temp_name"];
-    $hash = hash_file("md5", $temp_name);
+    $version = hash_file("md5", $temp_name);
     $sql = $conn->prepare("SELECT * FROM files WHERE hash = ?");
-    $sql->bind_param("s", $hash);
+    $sql->bind_param("s", $version);
     $sql->execute();
     $result = $sql->get_result();
     if ($result->num_rows != 0) { //return false if name is taken
-        echo "File already exists: [$hash] ";
+        echo "File already exists: [$version] ";
         $name = $result->fetch_object()->name;
-        echo "<a href=\"$GLOBALS[domain]/view/$name\">$name</a>";
+        echo "<a href=\"$GLOBALS[url]/view/$name\">$name</a>";
         die();
     }
 }
@@ -145,13 +146,13 @@ function insertName($newName, $oldname, $user, $replace)
 {
     $conn = $GLOBALS['conn']; //db connection
     $temp_name = $GLOBALS["temp_name"];
-    $hash = hash_file("md5", $temp_name);
+    $version = hash_file("md5", $temp_name);
     if (!$replace) {
         $sql = $conn->prepare("INSERT INTO `files`(`name`, `ogName`,`hash`, `userId`) VALUES (?,?,?,?)");
-        $sql->bind_param("sssi", $newName, $oldname, $hash, $user->id);
+        $sql->bind_param("sssi", $newName, $oldname, $version, $user->id);
     } else {
         $sql = $conn->prepare("UPDATE files SET ogName = ?, hash = ? WHERE name = ?");
-        $sql->bind_param("sss", $oldname, $hash, $replace);
+        $sql->bind_param("sss", $oldname, $version, $replace);
     }
     $sql->execute();
 

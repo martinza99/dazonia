@@ -40,7 +40,7 @@
             die("500 Internal Server Error<br>SQL error! - Please contact an admin.");
         }
         $_SESSION["userId"] = $conn->insert_id;
-        header("Location: $domain");
+        header("Location: /");
         $sql = $conn->prepare("DELETE FROM register WHERE token = ?");
         $sql->bind_param("s",$token);
         $sql->execute();
@@ -56,4 +56,3 @@ function generateRandomString($length){//generates random strings
     }
     return $randomString;
 }
-?>

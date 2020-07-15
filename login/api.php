@@ -21,8 +21,8 @@
     echo '
             <title>API-Key</title>
             <meta name="viewport" content="width=device-width, initial-scale=1">
-            <script src="../main.js?'. $hash .'"></script>
-            <script src="login.js?'.$hash.'"></script>
+            <script src="../main.js?'. $version .'"></script>
+            <script src="login.js?'.$version.'"></script>
         </head>
         <body>
             <div>
@@ -82,4 +82,3 @@
         }
         return $randomString;
     }
-?>
