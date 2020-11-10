@@ -1,18 +1,16 @@
 <?php
-session_start();
-require_once '../login/sql.php';
-require_once '../login/functions.php';
-require_once("../classes/file.php");
+require_once(__DIR__ . "/../include/functions.php");
+require_once(__DIR__ . "/../classes/file.php");
 
 if (isset($_POST["key"])) {
 	$apiKey = $_POST["key"];
 
-	if (!checkApiKey($apiKey)) {
+	if (!checkApiKey($conn, $apiKey)) {
 		http_response_code(401);
 		die("401 Unauthorized\nInvalid API-Key");
 	}
 } else {
-	checkLogin($user);
+	checkLogin();
 }
 
 //re-arrange file objects
@@ -58,9 +56,9 @@ foreach ($files as $file) {
 	#endregion make name for database
 
 	#region create thumbnails and move files
-	move_uploaded_file($file->tmp_name, "../files/$finalname");
-	exec("ffmpeg -i ../files/$finalname -vf scale=w=180:h=180:force_original_aspect_ratio=decrease -frames:v 1 thumbnail.png");
-	rename("thumbnail.png", "../thumbnails/$finalname");
+	move_uploaded_file($file->tmp_name, $UPLOADS . "/files/$finalname");
+	exec("ffmpeg -i $UPLOADS/files/$finalname -vf scale=w=180:h=180:force_original_aspect_ratio=decrease -frames:v 1 thumbnail.png");
+	rename("thumbnail.png", $UPLOADS . "/thumbnails/$finalname");
 	#endregion create thumbnails and move files
 
 	#region insert entry into database
@@ -127,5 +125,17 @@ function sendWebhook(String $filename)
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		$server_output = curl_exec($ch);
 		curl_close($ch);
+	}
+}
+
+function checkApiKey(PDO $conn, String $apiKey)
+{
+	$sql = $conn->prepare("SELECT * FROM `users` WHERE `apiKey` = :apiKey");
+	$sql->bindValue(":apiKey", $apiKey, PDO::PARAM_STR);
+	$sql->execute();
+	$user = $sql->fetchObject();
+	if ($sql->rowCount() > 0) {
+		$GLOBALS['user'] = $user;
+		return true;
 	}
 }

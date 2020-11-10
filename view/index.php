@@ -1,7 +1,7 @@
 <?php
-session_start();
+
 require_once '../login/sql.php';
-require_once '../login/functions.php';
+require_once '../include/functions.php';
 
 preg_match("/\/view\/(.*)/", $_SERVER["REDIRECT_URL"], $match);
 $filename = $match[1];
@@ -283,7 +283,7 @@ require_once "../header.php";
     if ($qq != "")
         $qq = "?q=" . urlencode($qq);
 
-    if (isset($_SESSION["userId"]) && $_SESSION["userId"] < 2) {
+    if ($user && $user->userID < 2) {
         echo '<div class="right top replace">';
         echo '<a href="javascript:document.querySelector(\'#fileUp\').click();">Replace Image</a>';
         echo '
@@ -299,14 +299,14 @@ require_once "../header.php";
     echo "
             <div id=\"picDiv\" class=\"center\">";
     if (isset($left))
-        echo "<a href=\"/view/$left$qq\" target=\"_top\"><img id=\"prev\" class=\"floatLink pic\" src=\"../files/$file->name\"></a>";
+        echo "<a href=\"/view/$left$qq\"><img id=\"prev\" class=\"floatLink pic\" src=\"../files/$file->name\"></a>";
     if (isset($right)) {
         echo "<a href=\"/view/$right$qq";
         if ($slide > 0)
             echo "&slide=$slide";
         if ($random == "on")
             echo "&random=on";
-        echo "\" target=\"_top\">";
+        echo "\">";
     }
     echo "<img id=\"next\" class=\"floatLink pic\" src=\"../files/$file->name\"></a>";
     if (substr(mime_content_type("../files/$file->name"), 0, 5) === "image")
@@ -320,7 +320,7 @@ require_once "../header.php";
             <div class=\"starContainer\">
                 " . rating($rating) . "
             </div>
-            <a href=\"\" target=\"_top\"><button>← Back</button></a>";
+            <a href=\"\"><button>← Back</button></a>";
     if (isset($user)) {
         echo '
                 <button type="button" data-toggle="collapse" data-target="#collapseRandom" aria-expanded="false" aria-controls="collapseRandom" onclick="stopSlide();">&nbsp;<span class="glyphicon glyphicon-picture"></span></button>
@@ -340,7 +340,7 @@ require_once "../header.php";
     }
     if (!isset($user))
         echo '<a href="/login?fw=' . $_SERVER["REQUEST_URI"] . '"><button>Login</button></a>';
-    echo "<span>Uploaded by: <a href=\"/list?q=u%3A$userId\" target=\"_top\">$username</a></span>";
+    echo "<span>Uploaded by: <a href=\"/list?q=u%3A$userId\">$username</a></span>";
     echo "</div>";
     if ($slide > 0) {
         $slide *= 1000;
@@ -358,7 +358,7 @@ require_once "../header.php";
         trigger_error('Wrong SQL: ' . $sql . ' Error: ' . $conn->errno . ' ' . $conn->error, E_USER_ERROR);
     $result = $sql->get_result();
     while ($rows = $result->fetch_object()) {
-        echo "<div class=\"sugg\"><a href=\"/list?q=tag%3A$rows->tagName\" target=\"_top\">$rows->tagName</a>";
+        echo "<div class=\"sugg\"><a href=\"/list?q=tag%3A$rows->tagName\">$rows->tagName</a>";
         if (isset($user))
             // if($user->isAdmin)//if user is admin
             echo "<span class=\"deleteTag glyphicon glyphicon-remove\"></span>";

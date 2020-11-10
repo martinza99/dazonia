@@ -1,5 +1,5 @@
 #SQL and Server login data
-/login/sql.php
+/include/config.json
 
 #uploaded files thumbnails and tag images
 .vscode/

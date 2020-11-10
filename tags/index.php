@@ -1,7 +1,7 @@
 <?php
-session_start();
+
 require_once "../login/sql.php";
-require_once '../login/functions.php';
+require_once '../include/functions.php';
 
 checkLogin();
 $parent = new stdClass();
@@ -41,7 +41,7 @@ require_once "../header.php";
 
     echo "
     <div class=\"right\" style=\"position:absolute; margin-right: 13px; margin-top:6px\">
-        <a href=\"/tags/?q=\" class=\"searchLinkTags\" target=\"_top\" hidden></a>
+        <a href=\"/tags/?q=\" class=\"searchLinkTags\" hidden></a>
         <form class=\"navbar-form navbar-left\" action=\".\" autocomplete=\"off\" onsubmit=\"tagSearchFormSubmit();\">
             <div class=\"input-group\">
                 <input list=\"tagList\" class=\"form-control disableHotkeys searchInputTags\" placeholder=\"Tag search\" name=\"q\" style=\"background-color: rgba(65, 65, 75, 1); border-color: #868686; display:none;\" value=\"$filter\">
@@ -60,12 +60,12 @@ require_once "../header.php";
     echo "<div class=\"potato\">";
     while ($rows = $result->fetch_object()) {
         echo "<div class=\"pics\" id=\"$rows->name\">"; //open table cell
-        echo "<a href=\"/list/?q=tag%3A$rows->name\" target=\"_top\">"; //open list link
+        echo "<a href=\"/list/?q=tag%3A$rows->name\">"; //open list link
         $img = "img/$rows->id.png";
         if (!file_exists($img))
             $img = "img/0.png";
         echo "<img class=\"thumb\" src=\"$img\"></a>"; //print thumbnail
-        echo "<a href=\"/tags/$rows->name\" target=\"_top\">"; //open tag link
+        echo "<a href=\"/tags/$rows->name\">"; //open tag link
         echo "<br><span class=\"tagName\">$rows->name</span></a>"; //print name
         echo "</div>"; // and table cell
     }

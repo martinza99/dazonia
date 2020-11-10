@@ -1,0 +1,4 @@
+RewriteEngine on
+
+#rewrite from /tags/xxx to /tags/index.php
+RewriteRule .* index.php

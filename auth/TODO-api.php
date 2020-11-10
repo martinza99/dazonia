@@ -1,28 +1,28 @@
 <?php
-    session_start();
-    require_once 'sql.php';
-    require_once 'functions.php';
-    checkLogin();
 
-    if (isset($_POST["action"])) {
-        switch (htmlspecialchars($_POST["action"])) {
-            case "reset":
-                $user->apiKey = generateRandomString(64);
-                $sql = $conn->prepare("UPDATE users SET apiKey = ? WHERE id = ?");
-                $sql->bind_param("si", $user->apiKey, $user->id);
-                $sql->execute();
-                header('Location: api.php');
-                die("Key reset");
-                break;
-        }
+require_once 'sql.php';
+require_once 'functions.php';
+checkLogin();
+
+if (isset($_POST["action"])) {
+    switch (htmlspecialchars($_POST["action"])) {
+        case "reset":
+            $user->apiKey = generateRandomString(64);
+            $sql = $conn->prepare("UPDATE users SET apiKey = ? WHERE id = ?");
+            $sql->bind_param("si", $user->apiKey, $user->id);
+            $sql->execute();
+            header('Location: api.php');
+            die("Key reset");
+            break;
     }
+}
 
-    require_once "../header.php";
-    echo '
+require_once "../header.php";
+echo '
             <title>API-Key</title>
             <meta name="viewport" content="width=device-width, initial-scale=1">
-            <script src="../main.js?'. $version .'"></script>
-            <script src="login.js?'.$version.'"></script>
+            <script src="../main.js?' . $version . '"></script>
+            <script src="login.js?' . $version . '"></script>
         </head>
         <body>
             <div>
@@ -70,15 +70,17 @@
             </div>
             <br><br><br><br><br>
             <div class="bottom">';
-    require_once "../footer.php";
+require_once "../footer.php";
 
-    function generateRandomString($length)
-    { //generates random strings
-        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-_';
-        $charactersLength = strlen($characters);
-        $randomString = '';
-        for ($i = 0; $i < $length; $i++) {
-            $randomString .= $characters[rand(0, $charactersLength - 1)];
-        }
-        return $randomString;
+function generateRandomString($length)
+{ //generates random strings
+    $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-_';
+    $charLength = strlen($characters) - 1;
+    $randomString = "";
+
+    for ($j = 0; $j < $length; $j++) {
+        $index = random_int(0, $charLength);
+        $randomString .= $characters[$index];
     }
+    return $randomString;
+}

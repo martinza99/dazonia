@@ -1,13 +1,13 @@
-Options -Indexes
+ErrorDocument 404 /errors/404.php
 
 RewriteEngine on
 
-#rewrite from /view/xxx to /view/index.php, except for js / css file 
-RewriteRule view\/view\.(js|css) - [L]
-RewriteRule view\/.* view\/index.php
-
-#rewrite from /tags/xxx to /tags/index.php, except for js, img dir and tag editor
-RewriteRule tags\/editor\.php|tags\/img\/.*|tags\/tags\.js - [L] 
-RewriteRule tags\/.* tags\/index.php
-
 RewriteRule  "^$" "/home/index.php"
+
+RedirectMatch 403 "/include
+RedirectMatch 403 "/classes
+
+RedirectMatch 403 "/auth/login/login.*\.php"
+RedirectMatch 403 "/auth/register/register.*\.php"
+RedirectMatch 403 "/auth/reset/reset.*\.php"
+RedirectMatch 403 "/upload/upload.*\.php"

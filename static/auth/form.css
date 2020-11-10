@@ -1,0 +1,8 @@
+form {
+	display: grid;
+}
+
+form input[type="text"],
+form input[type="password"] {
+	margin-bottom: 0.5em;
+}

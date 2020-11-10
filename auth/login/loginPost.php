@@ -1,10 +1,10 @@
 <?php
-session_start();
-require_once 'sql.php';
-require_once 'functions.php';
-if (!isset($_POST['username'])) {
+require_once(__DIR__ . "/../../include/functions.php");
+
+if (!isset($_POST['username']) || !isset($_POST['password'])) {
     http_response_code(400);
-    die('400 Bad Request<br>No username given<br><a href="/login">Back to Login!</a>');
+    header("Location: /auth/login?status=missing");
+    die('No username or password given<br><a href="/auth/login">Back to Login!</a>');
 }
 
 $username = htmlspecialchars($_POST['username']);
@@ -13,10 +13,13 @@ $password = htmlspecialchars($_POST['password']);
 
 if (!checkUser($username, $password, $conn)) {
     http_response_code(400);
-    die('400 Bad Request<br>Wrong Username or Password <br><a href="/login/" target=\"_top\">go to Login</a>');
+    header("Location: /auth/login?status=incorrect");
+    die('Wrong Username or Password <a href="/auth/login/">Back to Login!</a>');
 }
-header("Location: /" . $_POST["forward"]);
-echo '<a href="/' . $_POST["forward"] . '">Click here if you don\'t get forwarded</a>';
+
+$domain = "{$_SERVER["REQUEST_SCHEME"]}://{$_SERVER["SERVER_NAME"]}";
+header("Location: $domain" . $_POST["forward"]);
+echo '<a href="' . $domain . $_POST["forward"] . '">Click here if you don\'t get forwarded</a>';
 die();
 
 function checkUser(String $username, String $password, PDO $conn)
@@ -32,6 +35,7 @@ function checkUser(String $username, String $password, PDO $conn)
         $stmt = $conn->prepare("UPDATE user SET lastLogin = NOW() WHERE `userID` = :userID");
         $stmt->bindValue(":userID", $user->userID, PDO::PARAM_INT);
         $stmt->execute();
+        $stmt = null;
         return true;
     }
 }

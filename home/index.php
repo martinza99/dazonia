@@ -1,8 +1,5 @@
 <?php
-session_start();
-require_once "../login/sql.php";
-require_once "../login/functions.php";
-
+require_once("../include/functions.php");
 checkLogin();
 
 $p = $_GET["p"] ?? 1;

@@ -1,7 +1,7 @@
 <?php
-session_start();
+
 require_once "../login/sql.php";
-require_once '../login/functions.php';
+require_once '../include/functions.php';
 
 checkAdmin();
 
@@ -122,22 +122,22 @@ require_once "../header.php";
     echo "<th><a href=\"/tags/editor.php?order=tagsid";
     if ($orderBy == "tagsid" && $orderDir == "ASC")
         echo "&dir=desc";
-    echo "\" target=\"_top\">ID</a></th>";
+    echo "\">ID</a></th>";
 
     echo "<th><a href=\"/tags/editor.php?order=tagname";
     if ($orderBy == "tagname" && $orderDir == "ASC")
         echo "&dir=desc";
-    echo "\" target=\"_top\">Name</a></th>";
+    echo "\">Name</a></th>";
 
     echo "<th><a href=\"/tags/editor.php?order=parent";
     if ($orderBy == "parentname" && $orderDir == "ASC")
         echo "&dir=desc";
-    echo "\" target=\"_top\">Parent</a></th>";
+    echo "\">Parent</a></th>";
 
     echo "<th><a href=\"/tags/editor.php?order=count";
     if ($orderBy == "amount" && $orderDir == "ASC")
         echo "&dir=desc";
-    echo "\" target=\"_top\">Count</a></th>";
+    echo "\">Count</a></th>";
     echo '<th><button class="deleteAllButton">X</button></th></th>';
     while ($rows = $result->fetch_object()) {
         echo "<tr id=\"$rows->tagname\">";
@@ -145,17 +145,17 @@ require_once "../header.php";
         if (!file_exists($img))
             $img = "img/0.png";
         echo "<td><img class=\"thumbScript\" src=\"$img\"></td>";
-        echo "<td><a href=\"/tags/$rows->tagname\" target=\"_top\">$rows->tagsid</a></td>";
-        echo "<td class=\"nameScript\"><a href=\"/list/?q=tag%3A$rows->tagname\" target=\"_top\">$rows->tagname</a></td>"; //print tag name
+        echo "<td><a href=\"/tags/$rows->tagname\">$rows->tagsid</a></td>";
+        echo "<td class=\"nameScript\"><a href=\"/list/?q=tag%3A$rows->tagname\">$rows->tagname</a></td>"; //print tag name
         switch ($rows->parentId) {
             case -1: //no parent
                 echo "<td class=\"parentScript\">(no parent)</td>"; //print no parent
                 break;
             case 0: //root
-                echo "<td class=\"parentScript\"><a href=\"/tags\" target=\"_top\">(root)</a></td>"; //print root
+                echo "<td class=\"parentScript\"><a href=\"/tags\">(root)</a></td>"; //print root
                 break;
             default: //default
-                echo "<td class=\"parentScript\"><a href=\"/tags/$rows->parentname\" target=\"_top\">$rows->parentname</a></td>"; //print parent name
+                echo "<td class=\"parentScript\"><a href=\"/tags/$rows->parentname\">$rows->parentname</a></td>"; //print parent name
         }
         if ($rows->fileid == null)
             $rows->amount = 0;

@@ -1,5 +1,5 @@
 <?php
-session_start();
+
 require_once "sql.php";
 require_once 'functions.php';
 
@@ -41,7 +41,7 @@ require_once "../header.php";
     while ($rows = $result->fetch_object()) {
         echo "<tr id=\"$rows->id\">";
         echo "<td>$rows->id</td>";
-        echo "<td><a href=\"/login/register.php?token=$rows->token\" target=\"_top\">$rows->token</a>"; //print token
+        echo "<td><a href=\"/login/register.php?token=$rows->token\">$rows->token</a>"; //print token
         echo "<td><button class=\"deleteButtonToken\">X</button></td>";
         echo "</tr>";
     }
