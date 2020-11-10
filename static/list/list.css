@@ -1,0 +1,90 @@
+.changeNameInput {
+	display: none;
+	color: black;
+}
+
+.changeNameInput > input {
+	width: calc(100% - 75px);
+	margin-left: 5px;
+}
+
+th {
+	text-align: center;
+}
+
+.navButtons {
+	margin-left: 11%;
+	margin-bottom: -0.9em;
+}
+
+.listTableDiv {
+	width: fit-content;
+}
+
+.starContainer {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.star {
+	width: 32px;
+}
+
+.userStar {
+	opacity: 0.3;
+}
+
+.tempStar {
+	background-color: #141617d9;
+	position: absolute;
+	display: flex;
+	align-self: end;
+	margin-left: 15%;
+	top: 64px;
+}
+
+.fileName {
+	width: 600px;
+	overflow-wrap: break-word;
+}
+
+.userStar:hover {
+	opacity: 1;
+}
+
+.listTable,
+.listTable td,
+.listTable th {
+	margin-left: 40px;
+	margin-top: 22px;
+	border: 2px solid #003aff91;
+}
+
+.listUploader,
+.listUploadDate {
+	width: 7em;
+	text-align: center;
+}
+
+.tagged {
+	outline: 2px lime solid;
+}
+
+.taggedPending {
+	outline: 2px yellowgreen solid;
+}
+
+.taggedFailed {
+	outline: 2px red solid;
+}
+
+.background {
+	position: fixed;
+	right: 0;
+	bottom: 0;
+	z-index: -1;
+	max-width: 35%;
+	max-height: 90%;
+}
