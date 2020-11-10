@@ -2,8 +2,4 @@
 /login/sql.php
 
 #uploaded files thumbnails and tag images
-/files/
-/thumbnails/
-/tags/img/
-/bg/
 .vscode/
