@@ -9,3 +9,5 @@ RewriteRule view\/.* view\/index.php
 #rewrite from /tags/xxx to /tags/index.php, except for js, img dir and tag editor
 RewriteRule tags\/editor\.php|tags\/img\/.*|tags\/tags\.js - [L] 
 RewriteRule tags\/.* tags\/index.php
+
+RewriteRule  "^$" "/home/index.php"
