@@ -8,7 +8,7 @@ if (!(isset($_POST["token"]) && isset($_POST["username"]) && isset($_POST["passw
 }
 
 $token = $_POST["token"];
-$sql = $conn->prepare("SELECT * FROM register WHERE token = :token");
+$sql = $conn->prepare("SELECT tokenID FROM register WHERE token = :token");
 $sql->bindValue(":token", $token, PDO::PARAM_STR);
 $sql->execute();
 
@@ -21,7 +21,7 @@ if ($sql->rowCount() == 0) {
 $username = htmlspecialchars($_POST["username"]);
 $password = password_hash(htmlspecialchars($_POST["password"]), PASSWORD_DEFAULT);
 
-$sql = $conn->prepare("SELECT * FROM user WHERE username = :username");
+$sql = $conn->prepare("SELECT userID FROM user WHERE LOWER(username) = LOWER(:username)");
 $sql->bindValue(":username", $username);
 $sql->execute();
 
