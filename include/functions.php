@@ -2,6 +2,7 @@
 session_start();
 $config = json_decode(file_get_contents(__DIR__ . "/config.json"));
 $conn = new PDO($config->db->dsn, $config->db->username, $config->db->password);
+$conn->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_OBJ);
 $webhookURL = $config->webhookURL;
 $UPLOADS = $config->UPLOADS;
 $CDN = $config->CDN;
@@ -11,7 +12,7 @@ if (isset($_SESSION["userID"])) {
 	$stmt = $conn->prepare("SELECT * FROM user WHERE userID = :userID");
 	$stmt->bindValue(":userID", $_SESSION["userID"], PDO::PARAM_INT);
 	$stmt->execute();
-	$user = $stmt->fetchObject();
+	$user = $stmt->fetch();
 	$stmt = null;
 	if ($user === null) {
 		session_destroy();
@@ -55,7 +56,7 @@ function printDatalistTags($conn)
 	$stmt = $conn->prepare("SELECT tag.tagname AS 'tagname', COUNT(tag.tagname) AS count FROM tag LEFT JOIN tagfile ON tag.tagID = tagfile.tagID GROUP BY tag.tagID ORDER BY COUNT DESC");
 	$stmt->execute();
 	echo '<datalist id="tagList">';
-	while ($rows = $stmt->fetchObject()) {
+	while ($rows = $stmt->fetch()) {
 		echo "<option value=\"$rows->tagName\">";
 	}
 	echo '</datalist>';

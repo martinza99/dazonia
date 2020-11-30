@@ -39,7 +39,7 @@ foreach ($files as $file) {
 	$dupStmt->bindValue(":hash", $file->md5, PDO::PARAM_STR);
 	$dupStmt->execute();
 	if ($dupStmt->rowCount() > 0) {
-		$name = $dupStmt->fetchObject()->fileName;
+		$name = $dupStmt->fetch()->fileName;
 		array_push($errors, [$file, "File already exists: [{$file->md5}] <a href=/view/$name\">$name</a>"]);
 		continue;
 	}
@@ -133,7 +133,7 @@ function checkApiKey(PDO $conn, String $apiKey)
 	$sql = $conn->prepare("SELECT * FROM `users` WHERE `apiKey` = :apiKey");
 	$sql->bindValue(":apiKey", $apiKey, PDO::PARAM_STR);
 	$sql->execute();
-	$user = $sql->fetchObject();
+	$user = $sql->fetch();
 	if ($sql->rowCount() > 0) {
 		$GLOBALS['user'] = $user;
 		return true;

@@ -25,7 +25,7 @@
                 <th>Name</th>
             </tr>
         <?php endif; ?>
-        <?php while ($row = $sql->fetchObject()) : ?>
+        <?php while ($row = $sql->fetch()) : ?>
             <tr id="<?= $row->userID ?>">
                 <td><?= $row->userID ?></td>
                 <td><a href="/list/?q=u%3A<?= $row->userID ?>"><?= $row->username ?></a>

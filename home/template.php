@@ -10,7 +10,7 @@
 <body>
 	<?php include("../include/nav.php"); ?>
 	<main class="potato">
-		<?php while ($file = $sql->fetchObject()) :
+		<?php while ($file = $sql->fetch()) :
 			list($width, $height) = getimagesize($UPLOADS . "/thumbnails/$file->filename");
 		?>
 			<a href="<?= $CDN ?>/files/<?= $file->filename ?>?q=<?= $q ?>">

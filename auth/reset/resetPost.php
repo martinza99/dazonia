@@ -16,7 +16,7 @@ if (isset($_POST["newPassword"])) {
         $sql->bindValue(":apiKey", $_POST["resetKey"], PDO::PARAM_STR);
         $sql->execute();
         if ($sql->rowCount() > 0) {
-            $user = $sql->fetchObject();
+            $user = $sql->fetch();
             $changePass = true;
             $_SESSION["userID"] = $user->userID;
         } else {

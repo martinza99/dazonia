@@ -27,7 +27,7 @@ function checkUser(String $username, String $password, PDO $conn)
     $stmt = $conn->prepare("SELECT * FROM user WHERE username = :username");
     $stmt->bindValue(":username", $username, PDO::PARAM_STR);
     $stmt->execute();
-    $user = $stmt->fetchObject();
+    $user = $stmt->fetch();
     if ($stmt->rowCount() == 0)
         return false;
     if (password_verify($password, $user->password)) {

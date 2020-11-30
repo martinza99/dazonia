@@ -38,7 +38,7 @@
             </thead>
 
             <tbody>
-                <?php while ($file = $sql->fetchObject()) : ?>
+                <?php while ($file = $sql->fetch()) : ?>
                     <tr id="<?= $file->filename ?>">
                         <td>
                             <a href="/view/<?= $file->filename ?>?q=<?= $q ?>">

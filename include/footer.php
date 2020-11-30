@@ -2,7 +2,7 @@
 //get picCount
 $sql = $conn->prepare("SELECT COUNT(file.fileID) AS picCount FROM file");
 $sql->execute();
-$row = $sql->fetchObject();
+$row = $sql->fetch();
 $sql = null;
 $picCount = $row->picCount;
 ?>
