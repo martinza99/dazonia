@@ -1,4 +1,5 @@
 <?php
+require_once(__DIR__ . "/functions.php");
 //get picCount
 $sql = $conn->prepare("SELECT COUNT(file.fileID) AS picCount FROM file");
 $sql->execute();
@@ -9,20 +10,21 @@ $picCount = $row->picCount;
 
 <footer>
     <div class="left">
-        <?php if (isset($user) && $user->isAdmin) : ?>
-            <a href="/login/token.php">create register token</a><br>
-            <a href="/login/update.php">Update Dazonia</a><br>
-            <a href="/users/">User List</a><br>
-            <a href="/tags/editor.php">Tag Editor</a><br>
-        <?php endif; ?>
-        <a href="/misc/settings.php">Settings</a><br>
-        <a href="/misc/hotkeys.php">Hotkey List</a><br>
-        <a href="/auth/api.php">API Info</a><br>
-        <a href="/auth/reset">Change Password</a><br>
-        <a href="/auth/logout.php">
-            <button>Logout</button>
-        </a>
-        <span><?= $user->username ?? "" ?></a></span>
+        <ul>
+            <?php if (isset($user) && $user->isAdmin) : ?>
+                <li><a href="/login/token.php">create register token</a></li>
+                <li><a href="/users/">User List</a></li>
+                <li><a href="/tags/editor.php">Tag Editor</a></li>
+            <?php endif; ?>
+            <li><a href="/misc/settings.php">Settings</a></li>
+            <li><a href="/misc/hotkeys.php">Hotkey List</a></li>
+            <li><a href="/auth/api.php">API Info</a></li>
+            <li><a href="/auth/reset">Change Password</a></li>
+        </ul>
+        <form action="/auth/logout" method="POST">
+            <button type="submit">Logout</button>
+        </form>
+        <span><?= $user->username ?? "" ?></span>
     </div>
     <div class="right">
         <span><b><?= $picCount ?></b> pictures</span><br>

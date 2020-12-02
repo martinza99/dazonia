@@ -56,6 +56,15 @@ footer {
 	width: 100%;
 }
 
+footer ul {
+	list-style: none;
+	padding-left: 0;
+}
+
+footer form {
+	display: inline;
+}
+
 .left {
 	text-align: left;
 }
