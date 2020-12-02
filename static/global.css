@@ -13,11 +13,6 @@ input {
 	cursor: url(cursor/text.cur), text;
 }
 
-.navbar {
-	z-index: 100;
-	width: 100%;
-}
-
 #text {
 	background-color: #1e1e1e;
 }
@@ -44,25 +39,6 @@ button {
 	top: 50%;
 	left: 50%;
 	transform: translate(-50%, -50%);
-}
-
-footer {
-	display: grid;
-	position: fixed;
-	align-items: end;
-	grid-template-columns: auto auto;
-	bottom: 0;
-	z-index: 100;
-	width: 100%;
-}
-
-footer ul {
-	list-style: none;
-	padding-left: 0;
-}
-
-footer form {
-	display: inline;
 }
 
 .left {
