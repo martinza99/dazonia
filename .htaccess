@@ -6,12 +6,12 @@ RewriteEngine on
 RewriteRule  "^$" "/home/index.php"
 
 # forbid direct access to templates
-RedirectMatch 403 "/include
-RedirectMatch 403 "/classes
+RedirectMatch 403 "^/include"
+RedirectMatch 403 "^/classes"
 
 # forbid direct access to endpoint handlers
-RedirectMatch 403 "/auth/login/login.*\.php"
-RedirectMatch 403 "/auth/logout/logout.*\.php"
-RedirectMatch 403 "/auth/register/register.*\.php"
-RedirectMatch 403 "/auth/reset/reset.*\.php"
-RedirectMatch 403 "/upload/upload.*\.php"
+RedirectMatch 403 "^/auth/login/login.*\.php"
+RedirectMatch 403 "^/auth/logout/logout.*\.php"
+RedirectMatch 403 "^/auth/register/register.*\.php"
+RedirectMatch 403 "^/auth/reset/reset.*\.php"
+RedirectMatch 403 "^/upload/upload.*\.php"
